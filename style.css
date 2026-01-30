@@ -91,23 +91,31 @@ body{
 
 #nameSvg{
   width: 100%;
-  max-width: 760px; /* ✅ little wider for safe bigger name */
+  max-width: 760px;
   height: auto;
   display: block;
   margin: 0 auto 10px;
 }
 
-/* ✅ Name text (bigger but safe) */
+/* ✅ NAME: bigger overall + mobile boost */
 .name{
   font-family: "Orbitron", system-ui, sans-serif;
   font-weight: 900;
-
-  /* ✅ Safe responsive size: bigger than before but never overflows */
-  font-size: clamp(78px, 9.5vw, 108px);
-
   letter-spacing: 6px;
   dominant-baseline: middle;
   filter: url(#glow);
+
+  /* Desktop + default */
+  font-size: clamp(90px, 11vw, 120px);
+}
+
+/* 📱 Instagram / Android in-app browser fix */
+@media (max-width: 520px){
+  .name{
+    font-size: 108px;     /* bigger on mobile */
+    letter-spacing: 5px;  /* tighter so it fits */
+  }
+  #nameSvg{ max-width: 100%; }
 }
 
 .name.base{
@@ -130,7 +138,6 @@ body{
   animation: drawName 45s cubic-bezier(0.18, 0.9, 0.18, 1) forwards;
   animation-delay: 1.8s;
 }
-
 @keyframes drawName{
   0%   { stroke-dashoffset: 2400; opacity: 0; }
   12%  { stroke-dashoffset: 2400; opacity: 1; }
@@ -146,11 +153,8 @@ body{
   stroke-linecap: round;
   stroke-linejoin: round;
   pointer-events: none;
-
-  /* ✅ always visible from start */
   opacity: 1;
 
-  /* extra pop */
   filter: drop-shadow(0 0 16px rgba(255,255,255,0.90))
           drop-shadow(0 0 18px rgba(70,247,255,0.22));
 }
