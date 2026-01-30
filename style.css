@@ -90,9 +90,10 @@ body{
 }
 
 #nameSvg{
-  width:min(720px, 96vw);
-  height:auto;
-  display:block;
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  display: block;
   margin: 0 auto 8px;
 }
 
