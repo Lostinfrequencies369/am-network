@@ -122,11 +122,18 @@ body{
   stroke-dasharray: 2400;
   stroke-dashoffset: 2400;
 
-  /* ✅ SLOWER + SMOOTHER NAME DRAW */
-  animation: drawName 14s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  animation-delay: 0.8s;
+  /* ✅ VERY SLOW + SMOOTH NAME DRAW */
+  animation: drawName 45s cubic-bezier(0.18, 0.9, 0.18, 1) forwards;
+  animation-delay: 1.8s;
 }
-@keyframes drawName{ to{ stroke-dashoffset: 0; } }
+
+/* ✅ HOLD + VERY SLOW DRAW + END HOLD */
+@keyframes drawName{
+  0%   { stroke-dashoffset: 2400; opacity: 0; }
+  12%  { stroke-dashoffset: 2400; opacity: 1; }  /* start hold */
+  92%  { stroke-dashoffset: 0;    opacity: 1; }  /* very slow draw */
+  100% { stroke-dashoffset: 0;    opacity: 1; }  /* end hold */
+}
 
 .tagline{
   margin: 6px auto 0;
