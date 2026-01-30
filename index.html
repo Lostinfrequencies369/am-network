@@ -4,16 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>AM Network</title>
-  <meta name="description" content="AM Network - A network built for my ideas." />
+  <meta name="description" content="AM Network — all my important links in one place." />
 
+  <!-- Oxanium -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700&display=swap" rel="stylesheet">
 
-  <!-- ✅ cache-buster (change v each push if IG caches) -->
-  <link rel="stylesheet" href="style.css?v=glowrun3" />
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <!-- Background canvases -->
   <canvas id="bg"></canvas>
   <canvas id="sparks"></canvas>
 
@@ -24,76 +26,199 @@
 
   <main class="wrap">
     <header class="hero">
-      <svg id="nameSvg" viewBox="0 0 1200 220" role="img" aria-label="ANKIT MALIK">
+      <!-- Name sparks overlay (MAX intensity) -->
+      <canvas id="nameSparks"></canvas>
+
+      <!-- NAME SVG -->
+      <svg id="nameSvg" viewBox="0 0 1200 240" aria-label="ANKIT MALIK" role="img">
         <defs>
-          <!-- Main neon stroke -->
+          <!-- Glow filter -->
+          <filter id="glow" x="-50%" y="-80%" width="200%" height="260%">
+            <feGaussianBlur stdDeviation="6" result="b"/>
+            <feColorMatrix in="b" type="matrix"
+              values="1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 0 0.85 0"/>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+
+          <!-- Main neon gradient -->
           <linearGradient id="strokeGrad" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stop-color="#46f7ff"/>
             <stop offset="55%" stop-color="#eaf6ff"/>
             <stop offset="100%" stop-color="#b84bff"/>
           </linearGradient>
 
-          <!-- ✅ Continuous running glow band (starts instantly, loops forever) -->
-          <linearGradient id="runGlow" x1="-120%" y1="0%" x2="-20%" y2="0%">
-            <stop offset="0%"  stop-color="rgba(255,255,255,0)"/>
-            <stop offset="42%" stop-color="rgba(255,255,255,0)"/>
-            <stop offset="50%" stop-color="rgba(255,255,255,0.98)"/>
-            <stop offset="58%" stop-color="rgba(255,255,255,0)"/>
-            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          <!-- ✅ Wave light gradient (animated) -->
+          <linearGradient id="waveGlow" x1="-1" x2="0" y1="0" y2="0">
+            <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
+            <stop offset="35%"  stop-color="rgba(255,255,255,0.20)"/>
+            <stop offset="50%"  stop-color="rgba(255,255,255,1)"/>
+            <stop offset="65%"  stop-color="rgba(70,247,255,0.35)"/>
+            <stop offset="100%" stop-color="rgba(184,75,255,0)"/>
 
-            <!-- Speed control -->
-            <animate attributeName="x1" values="-120%;120%" dur="6s" repeatCount="indefinite" />
-            <animate attributeName="x2" values="-20%;220%"  dur="6s" repeatCount="indefinite" />
+            <!-- A -> K sweep -->
+            <animate attributeName="x1" values="-1;1" dur="var(--waveSpeed)" repeatCount="indefinite"/>
+            <animate attributeName="x2" values="0;2" dur="var(--waveSpeed)" repeatCount="indefinite"/>
           </linearGradient>
 
-          <!-- Glow filter -->
-          <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="4.5" result="b"/>
-            <feColorMatrix in="b" type="matrix"
-              values="1 0 0 0 0
-                      0 1 0 0 0
-                      0 0 1 0 0
-                      0 0 0 0.85 0" />
-            <feMerge>
-              <feMergeNode/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
+          <!-- Thin scan gradient -->
+          <linearGradient id="scanGlow" x1="-1" x2="0" y1="0" y2="0">
+            <stop offset="0%" stop-color="rgba(70,247,255,0)"/>
+            <stop offset="45%" stop-color="rgba(70,247,255,0)"/>
+            <stop offset="50%" stop-color="rgba(255,255,255,1)"/>
+            <stop offset="55%" stop-color="rgba(184,75,255,0)"/>
+            <stop offset="100%" stop-color="rgba(184,75,255,0)"/>
+            <animate attributeName="x1" values="-1;1" dur="var(--scanSpeed)" repeatCount="indefinite"/>
+            <animate attributeName="x2" values="0;2" dur="var(--scanSpeed)" repeatCount="indefinite"/>
+          </linearGradient>
         </defs>
 
-        <!-- Base faint (always there) -->
-        <text x="50%" y="52%" text-anchor="middle" class="name base">ANKIT MALIK</text>
+        <text x="50%" y="54%" class="name base">ANKIT MALIK</text>
+        <text x="50%" y="54%" class="name neon">ANKIT MALIK</text>
 
-        <!-- ✅ Running glow (must be visible instantly) -->
-        <text x="50%" y="52%" text-anchor="middle" class="name glow-run">ANKIT MALIK</text>
+        <!-- ✅ Wave highlight -->
+        <text x="50%" y="54%" class="name wave">ANKIT MALIK</text>
 
-        <!-- Slow draw (top layer) -->
-        <text id="drawText" x="50%" y="52%" text-anchor="middle" class="name draw">ANKIT MALIK</text>
+        <!-- ✅ thin scanner -->
+        <text x="50%" y="54%" class="name scan">ANKIT MALIK</text>
       </svg>
 
       <div class="tagline">AM Network- A network built for my ideas.</div>
     </header>
 
-    <section class="card" aria-label="Featured">
-      <div class="sectionTitle">FEATURED</div>
-      <a id="featuredBtn" class="btn featured" href="#" target="_blank" rel="noopener">
-        <span class="ico" aria-hidden="true">★</span>
-        <span class="txt">Loading...</span>
-      </a>
-    </section>
-
-    <section class="card" aria-label="Links">
-      <div class="sectionTitle">LINKS</div>
-      <div id="linksList" class="list">
-        <div class="skeleton">Loading links from Google Sheet…</div>
+    <!-- FEATURED -->
+    <section class="card">
+      <h3 class="sectionTitle">FEATURED</h3>
+      <div class="list">
+        <a class="btn featured" id="featuredBtn" href="#" target="_blank" rel="noopener">
+          <span class="ico">★</span>
+          <span class="txt">Loading…</span>
+        </a>
       </div>
     </section>
 
-    <footer class="foot">
-      <span>© <span id="yr"></span> AM Network</span>
-    </footer>
+    <!-- LINKS -->
+    <section class="card">
+      <h3 class="sectionTitle">LINKS</h3>
+      <div class="list" id="linksList">
+        <div class="skeleton">Loading links…</div>
+      </div>
+    </section>
+
+    <div class="foot">© <span id="yr"></span> AM Network</div>
   </main>
 
   <script src="script.js"></script>
+
+  <!-- ✅ Name Sparks (MAX intensity) -->
+  <script>
+    (() => {
+      const c = document.getElementById("nameSparks");
+      if(!c) return;
+      const ctx = c.getContext("2d", { alpha:true });
+
+      let W=0,H=0,dpr=1;
+      function resize(){
+        const wrap = document.querySelector(".hero");
+        const svg = document.getElementById("nameSvg");
+        if(!wrap || !svg) return;
+
+        const r = svg.getBoundingClientRect();
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+
+        W = Math.max(1, Math.floor(r.width));
+        H = Math.max(1, 140); // fixed sparkle band height
+
+        c.style.width = W + "px";
+        c.style.height = H + "px";
+        c.width = Math.floor(W * dpr);
+        c.height = Math.floor(H * dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+      addEventListener("resize", resize, { passive:true });
+      resize();
+
+      const sparks = [];
+      const rand = (a,b)=> a + Math.random()*(b-a);
+
+      function spawn(){
+        // ✅ MAX intensity: aggressive spawn
+        for(let k=0;k<3;k++){
+          if(sparks.length > 180) break;
+          if(Math.random() > 0.92) continue;
+
+          const x = rand(W*0.12, W*0.88);
+          const y = rand(H*0.20, H*0.82);
+
+          const len = rand(12, 34);
+          const ang = rand(-0.9, 0.9);
+
+          sparks.push({
+            x,y, ang, len,
+            vx: rand(-0.35,0.35),
+            vy: rand(-0.10,0.10),
+            life: rand(18, 34),
+            a: rand(0.35, 0.85)
+          });
+        }
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+
+        for(let i=sparks.length-1;i>=0;i--){
+          const s = sparks[i];
+          s.x += s.vx;
+          s.y += s.vy;
+          s.life -= 1;
+
+          const fade = Math.max(0, s.life/34);
+          ctx.globalAlpha = s.a * fade;
+
+          const x2 = s.x + Math.cos(s.ang) * s.len;
+          const y2 = s.y + Math.sin(s.ang) * s.len;
+          const mx = (s.x + x2)/2 + rand(-6,6);
+          const my = (s.y + y2)/2 + rand(-5,5);
+
+          // electric bolt
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(mx, my);
+          ctx.lineTo(x2, y2);
+          ctx.lineWidth = 1.8;
+          ctx.strokeStyle = "rgba(255,255,255,1)";
+          ctx.shadowBlur = 16;
+          ctx.shadowColor = "rgba(70,247,255,.85)";
+          ctx.stroke();
+
+          // mag dot
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 1.8, 0, Math.PI*2);
+          ctx.fillStyle = "rgba(184,75,255,1)";
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = "rgba(184,75,255,.75)";
+          ctx.fill();
+
+          if(s.life <= 0) sparks.splice(i,1);
+        }
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(draw);
+      }
+
+      function loop(){
+        spawn();
+        requestAnimationFrame(loop);
+      }
+
+      loop();
+      draw();
+    })();
+  </script>
 </body>
 </html>

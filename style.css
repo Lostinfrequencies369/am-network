@@ -10,6 +10,11 @@
   --shadow: 0 18px 60px rgba(0,0,0,.55);
   --r:18px;
   --safe: max(16px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
+
+  /* Name FX speeds */
+  --waveSpeed: 2.6s;     /* wave runs A -> K */
+  --scanSpeed: 3.4s;     /* thin scanner line */
+  --pulseSpeed: 3.0s;    /* soft neon breathing */
 }
 
 *{ box-sizing:border-box; }
@@ -87,76 +92,95 @@ body{
 .hero{
   text-align:center;
   padding: 18px 14px 10px;
+  position:relative;
 }
 
 #nameSvg{
   width: 100%;
-  max-width: 760px;
+  max-width: 820px;
   height: auto;
   display: block;
   margin: 0 auto 10px;
 }
 
-/* ✅ NAME: bigger overall + mobile boost */
-.name{
-  font-family: "Orbitron", system-ui, sans-serif;
-  font-weight: 900;
-  letter-spacing: 6px;
-  dominant-baseline: middle;
-  filter: url(#glow);
-
-  /* Desktop + default */
-  font-size: clamp(90px, 11vw, 120px);
+/* Spark canvas just for name */
+#nameSparks{
+  position:absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 6px;
+  width: min(820px, 100%);
+  height: 140px;
+  pointer-events:none;
+  z-index: 10;
+  opacity: 1;
+  mix-blend-mode: screen;
 }
 
-/* 📱 Instagram / Android in-app browser fix */
-@media (max-width: 520px){
+/* ✅ Oxanium neon name */
+.name{
+  font-family: "Oxanium", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 6px;
+
+  /* ✅ Bigger mobile-safe */
+  font-size: clamp(78px, 10.8vw, 122px);
+
+  dominant-baseline: middle;
+  filter: url(#glow);
+}
+
+@media (max-width: 420px){
   .name{
-    font-size: 108px;     /* bigger on mobile */
-    letter-spacing: 5px;  /* tighter so it fits */
+    letter-spacing: 4px;
+    font-size: clamp(70px, 12vw, 110px);
   }
-  #nameSvg{ max-width: 100%; }
 }
 
 .name.base{
-  fill: rgba(234,246,255,.08);
-  stroke: rgba(234,246,255,.08);
+  fill: rgba(234,246,255,.07);
+  stroke: rgba(234,246,255,.10);
   stroke-width: 2;
 }
 
-/* Slow draw stroke */
-.name.draw{
+/* Main neon stroke */
+.name.neon{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
-  stroke-width: 5;
+  stroke-width: 6.5;
   stroke-linejoin: round;
   stroke-linecap: round;
   paint-order: stroke;
-  stroke-dasharray: 2400;
-  stroke-dashoffset: 2400;
-
-  animation: drawName 45s cubic-bezier(0.18, 0.9, 0.18, 1) forwards;
-  animation-delay: 1.8s;
-}
-@keyframes drawName{
-  0%   { stroke-dashoffset: 2400; opacity: 0; }
-  12%  { stroke-dashoffset: 2400; opacity: 1; }
-  92%  { stroke-dashoffset: 0;    opacity: 1; }
-  100% { stroke-dashoffset: 0;    opacity: 1; }
-}
-
-/* ✅ Running glow overlay (always ON + continuous) */
-.name.glow-run{
-  fill: none;
-  stroke: url(#runGlow);
-  stroke-width: 7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  pointer-events: none;
   opacity: 1;
+  animation: neonPulse var(--pulseSpeed) ease-in-out infinite;
+}
+@keyframes neonPulse{
+  0%,100%{ opacity: .92; }
+  50%{ opacity: 1; }
+}
 
-  filter: drop-shadow(0 0 16px rgba(255,255,255,0.90))
-          drop-shadow(0 0 18px rgba(70,247,255,0.22));
+/* ✅ WAVE LIGHT (A -> K) continuous */
+.name.wave{
+  fill: rgba(0,0,0,0);
+  stroke: url(#waveGlow);
+  stroke-width: 9.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 1;
+  filter: drop-shadow(0 0 18px rgba(255,255,255,.95))
+          drop-shadow(0 0 22px rgba(70,247,255,.28))
+          drop-shadow(0 0 18px rgba(184,75,255,.22));
+}
+
+/* ✅ Thin scanner (optional but premium) */
+.name.scan{
+  fill: rgba(0,0,0,0);
+  stroke: url(#scanGlow);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: .95;
+  filter: drop-shadow(0 0 14px rgba(255,255,255,.85));
 }
 
 .tagline{
