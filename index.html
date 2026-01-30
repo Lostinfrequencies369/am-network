@@ -6,20 +6,17 @@
   <title>AM Network</title>
   <meta name="description" content="AM Network - A network built for my ideas." />
 
-  <!-- Futuristic font (recommended) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 
-  <!-- ✅ cache-buster so Instagram in-app browser loads latest CSS -->
-  <link rel="stylesheet" href="style.css?v=glowrun1" />
+  <!-- ✅ cache-buster (change v each push if IG caches) -->
+  <link rel="stylesheet" href="style.css?v=glowrun3" />
 </head>
 <body>
-  <!-- Background canvases -->
   <canvas id="bg"></canvas>
   <canvas id="sparks"></canvas>
 
-  <!-- Edge glow rails -->
   <div class="edge edge-top"></div>
   <div class="edge edge-bottom"></div>
   <div class="edge edge-left"></div>
@@ -27,33 +24,29 @@
 
   <main class="wrap">
     <header class="hero">
-      <!-- Sparkler draw name -->
       <svg id="nameSvg" viewBox="0 0 1200 220" role="img" aria-label="ANKIT MALIK">
         <defs>
+          <!-- Main neon stroke -->
           <linearGradient id="strokeGrad" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stop-color="#46f7ff"/>
             <stop offset="55%" stop-color="#eaf6ff"/>
             <stop offset="100%" stop-color="#b84bff"/>
           </linearGradient>
 
-          <!-- ✅ Running glow light (scanner) -->
-          <linearGradient id="runGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+          <!-- ✅ Continuous running glow band (starts instantly, loops forever) -->
+          <linearGradient id="runGlow" x1="-120%" y1="0%" x2="-20%" y2="0%">
             <stop offset="0%"  stop-color="rgba(255,255,255,0)"/>
-            <stop offset="45%" stop-color="rgba(255,255,255,0)"/>
-            <stop offset="50%" stop-color="rgba(255,255,255,0.95)"/>
-            <stop offset="55%" stop-color="rgba(255,255,255,0)"/>
+            <stop offset="42%" stop-color="rgba(255,255,255,0)"/>
+            <stop offset="50%" stop-color="rgba(255,255,255,0.98)"/>
+            <stop offset="58%" stop-color="rgba(255,255,255,0)"/>
             <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
 
-            <!-- Speed control: dur="8s" slower, "6s" normal -->
-            <animateTransform
-              attributeName="gradientTransform"
-              type="translate"
-              from="-1200 0"
-              to="1200 0"
-              dur="8s"
-              repeatCount="indefinite" />
+            <!-- Speed control -->
+            <animate attributeName="x1" values="-120%;120%" dur="6s" repeatCount="indefinite" />
+            <animate attributeName="x2" values="-20%;220%"  dur="6s" repeatCount="indefinite" />
           </linearGradient>
 
+          <!-- Glow filter -->
           <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="4.5" result="b"/>
             <feColorMatrix in="b" type="matrix"
@@ -68,30 +61,27 @@
           </filter>
         </defs>
 
-        <!-- Base shadow -->
+        <!-- Base faint (always there) -->
         <text x="50%" y="52%" text-anchor="middle" class="name base">ANKIT MALIK</text>
 
-        <!-- Slow draw -->
-        <text id="drawText" x="50%" y="52%" text-anchor="middle" class="name draw">ANKIT MALIK</text>
-
-        <!-- Running glow light overlay -->
+        <!-- ✅ Running glow (must be visible instantly) -->
         <text x="50%" y="52%" text-anchor="middle" class="name glow-run">ANKIT MALIK</text>
+
+        <!-- Slow draw (top layer) -->
+        <text id="drawText" x="50%" y="52%" text-anchor="middle" class="name draw">ANKIT MALIK</text>
       </svg>
 
       <div class="tagline">AM Network- A network built for my ideas.</div>
     </header>
 
-    <!-- Featured -->
     <section class="card" aria-label="Featured">
       <div class="sectionTitle">FEATURED</div>
       <a id="featuredBtn" class="btn featured" href="#" target="_blank" rel="noopener">
         <span class="ico" aria-hidden="true">★</span>
         <span class="txt">Loading...</span>
       </a>
-      <!-- <div class="miniNote" id="featuredNote">Auto: most clicked link</div> -->
     </section>
 
-    <!-- Links -->
     <section class="card" aria-label="Links">
       <div class="sectionTitle">LINKS</div>
       <div id="linksList" class="list">

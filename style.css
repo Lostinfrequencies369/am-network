@@ -91,17 +91,21 @@ body{
 
 #nameSvg{
   width: 100%;
-  max-width: 720px;
+  max-width: 760px; /* ✅ little wider for safe bigger name */
   height: auto;
   display: block;
-  margin: 0 auto 8px;
+  margin: 0 auto 10px;
 }
 
+/* ✅ Name text (bigger but safe) */
 .name{
   font-family: "Orbitron", system-ui, sans-serif;
   font-weight: 900;
+
+  /* ✅ Safe responsive size: bigger than before but never overflows */
+  font-size: clamp(78px, 9.5vw, 108px);
+
   letter-spacing: 6px;
-  font-size: 92px;
   dominant-baseline: middle;
   filter: url(#glow);
 }
@@ -112,6 +116,7 @@ body{
   stroke-width: 2;
 }
 
+/* Slow draw stroke */
 .name.draw{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
@@ -122,20 +127,18 @@ body{
   stroke-dasharray: 2400;
   stroke-dashoffset: 2400;
 
-  /* ✅ VERY SLOW + SMOOTH NAME DRAW */
   animation: drawName 45s cubic-bezier(0.18, 0.9, 0.18, 1) forwards;
   animation-delay: 1.8s;
 }
 
-/* ✅ HOLD + VERY SLOW DRAW + END HOLD */
 @keyframes drawName{
   0%   { stroke-dashoffset: 2400; opacity: 0; }
-  12%  { stroke-dashoffset: 2400; opacity: 1; }  /* start hold */
-  92%  { stroke-dashoffset: 0;    opacity: 1; }  /* very slow draw */
-  100% { stroke-dashoffset: 0;    opacity: 1; }  /* end hold */
+  12%  { stroke-dashoffset: 2400; opacity: 1; }
+  92%  { stroke-dashoffset: 0;    opacity: 1; }
+  100% { stroke-dashoffset: 0;    opacity: 1; }
 }
 
-/* ✅ Running glow scanner overlay */
+/* ✅ Running glow overlay (always ON + continuous) */
 .name.glow-run{
   fill: none;
   stroke: url(#runGlow);
@@ -143,8 +146,13 @@ body{
   stroke-linecap: round;
   stroke-linejoin: round;
   pointer-events: none;
-  opacity: 0.9;
-  filter: drop-shadow(0 0 14px rgba(255,255,255,0.85));
+
+  /* ✅ always visible from start */
+  opacity: 1;
+
+  /* extra pop */
+  filter: drop-shadow(0 0 16px rgba(255,255,255,0.90))
+          drop-shadow(0 0 18px rgba(70,247,255,0.22));
 }
 
 .tagline{
@@ -212,12 +220,6 @@ body{
 .btn.featured{
   border-color: rgba(184,75,255,.35);
   background: linear-gradient(90deg, rgba(70,247,255,.10), rgba(184,75,255,.12));
-}
-
-.miniNote{
-  margin-top: 10px;
-  font-size: 12px;
-  color: rgba(234,246,255,.62);
 }
 
 .skeleton{
