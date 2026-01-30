@@ -11,10 +11,11 @@
   --r:18px;
   --safe: max(16px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
 
-  /* Name FX speeds */
-  --waveSpeed: 2.6s;     /* wave runs A -> K */
-  --scanSpeed: 3.4s;     /* thin scanner line */
-  --pulseSpeed: 3.0s;    /* soft neon breathing */
+  /* Name FX */
+  --waveSpeed: 2.9s;     /* A -> K wave */
+  --pulseSpeed: 1.35s;   /* electric pulse flicker */
+  --pulseRun: 1.55s;     /* running dash speed */
+  --microFlicker: 5.8s;  /* subtle loop */
 }
 
 *{ box-sizing:border-box; }
@@ -95,92 +96,138 @@ body{
   position:relative;
 }
 
+/* ✅ Name fits mobile properly */
 #nameSvg{
   width: 100%;
-  max-width: 820px;
+  max-width: 920px; /* allow bigger on mobile */
   height: auto;
   display: block;
   margin: 0 auto 10px;
 }
 
-/* Spark canvas just for name */
+/* Name sparks canvas (band over name) */
 #nameSparks{
   position:absolute;
   left: 50%;
   transform: translateX(-50%);
   top: 6px;
-  width: min(820px, 100%);
-  height: 140px;
+  width: min(920px, 100%);
+  height: 150px;
   pointer-events:none;
   z-index: 10;
   opacity: 1;
   mix-blend-mode: screen;
 }
 
-/* ✅ Oxanium neon name */
+/* ✅ Oxanium premium name (bigger + centered always) */
 .name{
   font-family: "Oxanium", system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: 6px;
 
-  /* ✅ Bigger mobile-safe */
-  font-size: clamp(78px, 10.8vw, 122px);
+  /* bigger than before but safe */
+  font-size: clamp(88px, 12vw, 150px);
 
+  text-anchor: middle;
   dominant-baseline: middle;
   filter: url(#glow);
 }
 
+/* Extra tuning for small phones */
 @media (max-width: 420px){
   .name{
     letter-spacing: 4px;
-    font-size: clamp(70px, 12vw, 110px);
+    font-size: clamp(86px, 13.6vw, 140px);
+  }
+}
+@media (max-width: 360px){
+  .name{
+    letter-spacing: 3px;
+    font-size: clamp(80px, 14.2vw, 132px);
   }
 }
 
 .name.base{
-  fill: rgba(234,246,255,.07);
+  fill: rgba(234,246,255,.06);
   stroke: rgba(234,246,255,.10);
   stroke-width: 2;
 }
 
-/* Main neon stroke */
+/* Main neon body */
 .name.neon{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
-  stroke-width: 6.5;
+  stroke-width: 6.4;
   stroke-linejoin: round;
   stroke-linecap: round;
   paint-order: stroke;
   opacity: 1;
-  animation: neonPulse var(--pulseSpeed) ease-in-out infinite;
+  animation: neonBreath 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(255,255,255,.55))
+          drop-shadow(0 0 18px rgba(70,247,255,.18))
+          drop-shadow(0 0 18px rgba(184,75,255,.14));
 }
-@keyframes neonPulse{
-  0%,100%{ opacity: .92; }
+@keyframes neonBreath{
+  0%,100%{ opacity: .90; }
   50%{ opacity: 1; }
 }
 
-/* ✅ WAVE LIGHT (A -> K) continuous */
+/* ✅ Electric Edge Pulse (controlled energy) */
+.name.pulse{
+  fill: rgba(0,0,0,0);
+  stroke: rgba(255,255,255,0.95);
+  stroke-width: 2.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+
+  /* makes it look like current running on outline */
+  stroke-dasharray: 10 26;
+  animation:
+    pulseRun var(--pulseRun) linear infinite,
+    pulseFlicker var(--pulseSpeed) ease-in-out infinite,
+    microFlicker var(--microFlicker) linear infinite;
+  filter:
+    drop-shadow(0 0 12px rgba(70,247,255,.55))
+    drop-shadow(0 0 12px rgba(184,75,255,.35));
+  opacity: .95;
+}
+
+@keyframes pulseRun{
+  to { stroke-dashoffset: -72; }
+}
+
+@keyframes pulseFlicker{
+  0%,100%{ opacity: .75; }
+  50%{ opacity: 1; }
+}
+
+/* extremely subtle occasional micro-flicker */
+@keyframes microFlicker{
+  0%, 86%, 100%{ filter:
+      drop-shadow(0 0 12px rgba(70,247,255,.55))
+      drop-shadow(0 0 12px rgba(184,75,255,.35));
+  }
+  88%{ filter:
+      drop-shadow(0 0 16px rgba(70,247,255,.72))
+      drop-shadow(0 0 16px rgba(184,75,255,.52));
+  }
+  90%{ filter:
+      drop-shadow(0 0 11px rgba(70,247,255,.50))
+      drop-shadow(0 0 11px rgba(184,75,255,.30));
+  }
+}
+
+/* ✅ Wave light (A -> K) */
 .name.wave{
   fill: rgba(0,0,0,0);
   stroke: url(#waveGlow);
-  stroke-width: 9.5;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  opacity: 1;
-  filter: drop-shadow(0 0 18px rgba(255,255,255,.95))
-          drop-shadow(0 0 22px rgba(70,247,255,.28))
-          drop-shadow(0 0 18px rgba(184,75,255,.22));
-}
-
-/* ✅ Thin scanner (optional but premium) */
-.name.scan{
-  fill: rgba(0,0,0,0);
-  stroke: url(#scanGlow);
-  stroke-width: 6;
+  stroke-width: 9.2;
   stroke-linejoin: round;
   stroke-linecap: round;
   opacity: .95;
-  filter: drop-shadow(0 0 14px rgba(255,255,255,.85));
+  filter: drop-shadow(0 0 18px rgba(255,255,255,.85))
+          drop-shadow(0 0 22px rgba(70,247,255,.22))
+          drop-shadow(0 0 18px rgba(184,75,255,.18));
 }
 
 .tagline{

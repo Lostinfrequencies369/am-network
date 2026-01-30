@@ -13,7 +13,7 @@ const $ = (id) => document.getElementById(id);
   const yr = $("yr");
   if (yr) yr.textContent = new Date().getFullYear();
 
-  // ---------- Background visuals (stars + subtle sparks) ----------
+  // ---------- Background visuals (stars + subtle dust) ----------
   const bg = $("bg");
   const sparks = $("sparks");
   const bctx = bg?.getContext("2d", { alpha: true });
@@ -38,10 +38,11 @@ const $ = (id) => document.getElementById(id);
   addEventListener("resize", resize, { passive: true });
   resize();
 
+  const rand = (a, b) => a + Math.random() * (b - a);
+
   // Starfield: slow circular motion
   const STAR_COUNT = Math.floor(Math.max(140, Math.min(220, innerWidth * 0.16)));
   const stars = [];
-  const rand = (a, b) => a + Math.random() * (b - a);
 
   function initStars() {
     stars.length = 0;
@@ -51,7 +52,7 @@ const $ = (id) => document.getElementById(id);
         x: rand(0, innerWidth),
         y: rand(0, innerHeight),
         r: rand(0.6, layer === 3 ? 1.6 : 1.2),
-        a: rand(0.25, 0.85),
+        a: rand(0.22, 0.82),
         tw: rand(0.004, 0.015),
         phase: rand(0, Math.PI * 2),
         layer
@@ -93,20 +94,20 @@ const $ = (id) => document.getElementById(id);
     bctx.globalAlpha = 1;
   }
 
-  // subtle spark dust (ambient only)
+  // Ambient dust (subtle)
   const dust = [];
   function emitDust() {
     if (!sctx) return;
-    if (dust.length > 120) return;
-    if (Math.random() > 0.35) return;
+    if (dust.length > 90) return;
+    if (Math.random() > 0.30) return;
 
     dust.push({
       x: rand(0, innerWidth),
       y: rand(0, innerHeight * 0.6),
       vx: rand(-0.08, 0.08),
-      vy: rand(0.04, 0.16),
-      life: rand(120, 220),
-      a: rand(0.08, 0.22)
+      vy: rand(0.04, 0.14),
+      life: rand(130, 220),
+      a: rand(0.06, 0.18)
     });
   }
 
@@ -124,7 +125,7 @@ const $ = (id) => document.getElementById(id);
 
       sctx.globalAlpha = Math.max(0, p.a);
       sctx.beginPath();
-      sctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2);
+      sctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
       sctx.fillStyle = "rgba(70,247,255,1)";
       sctx.fill();
 
@@ -143,11 +144,7 @@ const $ = (id) => document.getElementById(id);
 
   // ---------- API: fetch + render ----------
   const featuredBtn = $("featuredBtn");
-  const featuredNote = $("featuredNote");
   const linksList = $("linksList");
-
-  // We are removing the "Auto-featured..." text from UI completely
-  if (featuredNote) featuredNote.style.display = "none";
 
   function safeText(v) {
     return (v === null || v === undefined) ? "" : String(v);
@@ -163,8 +160,6 @@ const $ = (id) => document.getElementById(id);
 
   function pickFeatured(list) {
     if (!list.length) return null;
-
-    // Highest clicks, tie => lowest Order
     let best = list[0];
     for (const item of list) {
       const c1 = Number(item.Clicks || 0);
@@ -192,7 +187,6 @@ const $ = (id) => document.getElementById(id);
 
     const url = `${API_BASE}?action=click&id=${encodeURIComponent(clean)}`;
 
-    // best effort: sendBeacon
     try {
       if (navigator.sendBeacon) {
         navigator.sendBeacon(url, new Blob([], { type: "text/plain" }));
@@ -200,7 +194,6 @@ const $ = (id) => document.getElementById(id);
       }
     } catch (_) {}
 
-    // fallback fetch
     try {
       fetch(url, { method: "POST", mode: "no-cors" }).catch(() => {});
     } catch (_) {}
@@ -226,10 +219,7 @@ const $ = (id) => document.getElementById(id);
     a.appendChild(ico);
     a.appendChild(txt);
 
-    a.addEventListener("click", () => {
-      pingClick(item.ID);
-    });
-
+    a.addEventListener("click", () => pingClick(item.ID));
     return a;
   }
 
@@ -267,17 +257,14 @@ const $ = (id) => document.getElementById(id);
 
       const featured = pickFeatured(list);
 
-      // Featured render
       featuredBtn.href = safeText(featured.URL) || "#";
       featuredBtn.target = (featuredBtn.href.startsWith("http")) ? "_blank" : "_self";
       const ft = featuredBtn.querySelector(".txt");
       if (ft) ft.textContent = safeText(featured.Title) || "Featured";
 
-      // Ensure featured click tracked
       featuredBtn.onclick = null;
       featuredBtn.addEventListener("click", () => pingClick(featured.ID));
 
-      // Links render
       linksList.innerHTML = "";
       for (const item of list) {
         linksList.appendChild(makeButton(item, ""));

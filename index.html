@@ -26,14 +26,15 @@
 
   <main class="wrap">
     <header class="hero">
-      <!-- Name sparks overlay (MAX intensity) -->
-      <canvas id="nameSparks"></canvas>
+
+      <!-- Name sparks overlay (controlled premium intensity) -->
+      <canvas id="nameSparks" aria-hidden="true"></canvas>
 
       <!-- NAME SVG -->
       <svg id="nameSvg" viewBox="0 0 1200 240" aria-label="ANKIT MALIK" role="img">
         <defs>
           <!-- Glow filter -->
-          <filter id="glow" x="-50%" y="-80%" width="200%" height="260%">
+          <filter id="glow" x="-60%" y="-90%" width="220%" height="300%">
             <feGaussianBlur stdDeviation="6" result="b"/>
             <feColorMatrix in="b" type="matrix"
               values="1 0 0 0 0
@@ -53,42 +54,32 @@
             <stop offset="100%" stop-color="#b84bff"/>
           </linearGradient>
 
-          <!-- ✅ Wave light gradient (animated) -->
+          <!-- ✅ A -> K wave highlight (animated gradient sweep) -->
           <linearGradient id="waveGlow" x1="-1" x2="0" y1="0" y2="0">
             <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
-            <stop offset="35%"  stop-color="rgba(255,255,255,0.20)"/>
+            <stop offset="35%"  stop-color="rgba(255,255,255,0.15)"/>
             <stop offset="50%"  stop-color="rgba(255,255,255,1)"/>
-            <stop offset="65%"  stop-color="rgba(70,247,255,0.35)"/>
+            <stop offset="65%"  stop-color="rgba(70,247,255,0.30)"/>
             <stop offset="100%" stop-color="rgba(184,75,255,0)"/>
-
-            <!-- A -> K sweep -->
             <animate attributeName="x1" values="-1;1" dur="var(--waveSpeed)" repeatCount="indefinite"/>
             <animate attributeName="x2" values="0;2" dur="var(--waveSpeed)" repeatCount="indefinite"/>
           </linearGradient>
-
-          <!-- Thin scan gradient -->
-          <linearGradient id="scanGlow" x1="-1" x2="0" y1="0" y2="0">
-            <stop offset="0%" stop-color="rgba(70,247,255,0)"/>
-            <stop offset="45%" stop-color="rgba(70,247,255,0)"/>
-            <stop offset="50%" stop-color="rgba(255,255,255,1)"/>
-            <stop offset="55%" stop-color="rgba(184,75,255,0)"/>
-            <stop offset="100%" stop-color="rgba(184,75,255,0)"/>
-            <animate attributeName="x1" values="-1;1" dur="var(--scanSpeed)" repeatCount="indefinite"/>
-            <animate attributeName="x2" values="0;2" dur="var(--scanSpeed)" repeatCount="indefinite"/>
-          </linearGradient>
         </defs>
 
+        <!-- Base faint body -->
         <text x="50%" y="54%" class="name base">ANKIT MALIK</text>
+
+        <!-- Main neon stroke -->
         <text x="50%" y="54%" class="name neon">ANKIT MALIK</text>
 
-        <!-- ✅ Wave highlight -->
-        <text x="50%" y="54%" class="name wave">ANKIT MALIK</text>
+        <!-- ✅ Electric Edge Pulse (controlled energy running on edges) -->
+        <text x="50%" y="54%" class="name pulse">ANKIT MALIK</text>
 
-        <!-- ✅ thin scanner -->
-        <text x="50%" y="54%" class="name scan">ANKIT MALIK</text>
+        <!-- ✅ Smooth wave highlight (A -> K) -->
+        <text x="50%" y="54%" class="name wave">ANKIT MALIK</text>
       </svg>
 
-      <div class="tagline">AM Network- A network built for my ideas.</div>
+      <div class="tagline">AM Network — A network built for my ideas.</div>
     </header>
 
     <!-- FEATURED -->
@@ -115,7 +106,7 @@
 
   <script src="script.js"></script>
 
-  <!-- ✅ Name Sparks (MAX intensity) -->
+  <!-- ✅ Name Sparks: controlled premium intensity -->
   <script>
     (() => {
       const c = document.getElementById("nameSparks");
@@ -123,16 +114,16 @@
       const ctx = c.getContext("2d", { alpha:true });
 
       let W=0,H=0,dpr=1;
+
       function resize(){
-        const wrap = document.querySelector(".hero");
         const svg = document.getElementById("nameSvg");
-        if(!wrap || !svg) return;
+        if(!svg) return;
 
         const r = svg.getBoundingClientRect();
         dpr = Math.min(2, window.devicePixelRatio || 1);
 
         W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, 140); // fixed sparkle band height
+        H = Math.max(1, Math.floor(Math.min(160, Math.max(120, r.height * 0.75))));
 
         c.style.width = W + "px";
         c.style.height = H + "px";
@@ -147,23 +138,23 @@
       const rand = (a,b)=> a + Math.random()*(b-a);
 
       function spawn(){
-        // ✅ MAX intensity: aggressive spawn
-        for(let k=0;k<3;k++){
-          if(sparks.length > 180) break;
-          if(Math.random() > 0.92) continue;
+        // ✅ controlled, premium: not noisy
+        for(let k=0;k<2;k++){
+          if(sparks.length > 70) break;
+          if(Math.random() > 0.80) continue;
 
-          const x = rand(W*0.12, W*0.88);
-          const y = rand(H*0.20, H*0.82);
+          const x = rand(W*0.14, W*0.86);
+          const y = rand(H*0.26, H*0.78);
 
-          const len = rand(12, 34);
-          const ang = rand(-0.9, 0.9);
+          const len = rand(10, 22);
+          const ang = rand(-0.75, 0.75);
 
           sparks.push({
             x,y, ang, len,
-            vx: rand(-0.35,0.35),
-            vy: rand(-0.10,0.10),
-            life: rand(18, 34),
-            a: rand(0.35, 0.85)
+            vx: rand(-0.22,0.22),
+            vy: rand(-0.08,0.08),
+            life: rand(16, 26),
+            a: rand(0.22, 0.55)
           });
         }
       }
@@ -177,31 +168,31 @@
           s.y += s.vy;
           s.life -= 1;
 
-          const fade = Math.max(0, s.life/34);
+          const fade = Math.max(0, s.life/26);
           ctx.globalAlpha = s.a * fade;
 
           const x2 = s.x + Math.cos(s.ang) * s.len;
           const y2 = s.y + Math.sin(s.ang) * s.len;
-          const mx = (s.x + x2)/2 + rand(-6,6);
-          const my = (s.y + y2)/2 + rand(-5,5);
+          const mx = (s.x + x2)/2 + rand(-4,4);
+          const my = (s.y + y2)/2 + rand(-3,3);
 
-          // electric bolt
+          // bolt
           ctx.beginPath();
           ctx.moveTo(s.x, s.y);
           ctx.lineTo(mx, my);
           ctx.lineTo(x2, y2);
-          ctx.lineWidth = 1.8;
+          ctx.lineWidth = 1.4;
           ctx.strokeStyle = "rgba(255,255,255,1)";
-          ctx.shadowBlur = 16;
-          ctx.shadowColor = "rgba(70,247,255,.85)";
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = "rgba(70,247,255,.75)";
           ctx.stroke();
 
           // mag dot
           ctx.beginPath();
-          ctx.arc(s.x, s.y, 1.8, 0, Math.PI*2);
+          ctx.arc(s.x, s.y, 1.4, 0, Math.PI*2);
           ctx.fillStyle = "rgba(184,75,255,1)";
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = "rgba(184,75,255,.75)";
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = "rgba(184,75,255,.65)";
           ctx.fill();
 
           if(s.life <= 0) sparks.splice(i,1);
