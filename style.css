@@ -1,30 +1,43 @@
+/* =========================================================
+   AM Network — style.css (FULLY REPLACEABLE)
+   Includes: Background + Edge rails + Cards + Buttons
+             Oxanium Neon Name (BIGGER for mobile)
+             Wave Light (A -> K) + Thin Scan + Soft Pulse
+   ========================================================= */
+
 :root{
   --bg0:#070a14;
   --bg1:#0b1022;
+
   --glass: rgba(10,14,28,.62);
   --stroke: rgba(140, 210, 255, .14);
+
   --cyan:#46f7ff;
   --mag:#b84bff;
+
   --text:#eaf6ff;
   --muted: rgba(234, 246, 255, .72);
+
   --shadow: 0 18px 60px rgba(0,0,0,.55);
   --r:18px;
+
   --safe: max(16px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
 
-  /* Name FX */
-  --waveSpeed: 2.9s;     /* A -> K wave */
-  --pulseSpeed: 1.35s;   /* electric pulse flicker */
-  --pulseRun: 1.55s;     /* running dash speed */
-  --microFlicker: 5.8s;  /* subtle loop */
+  /* Name FX speeds */
+  --waveSpeed: 2.9s;     /* wave runs A -> K */
+  --scanSpeed: 3.4s;     /* thin scanner line */
+  --pulseSpeed: 3.0s;    /* neon breathing */
 }
 
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
+
 body{
   margin:0;
-  background: radial-gradient(1200px 800px at 20% 10%, rgba(70,247,255,.10), transparent 55%),
-              radial-gradient(1000px 700px at 80% 30%, rgba(184,75,255,.08), transparent 55%),
-              linear-gradient(180deg, var(--bg0), var(--bg1));
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(70,247,255,.10), transparent 55%),
+    radial-gradient(1000px 700px at 80% 30%, rgba(184,75,255,.08), transparent 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
   color: var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
   overflow-x:hidden;
@@ -70,12 +83,14 @@ body{
 .edge::after{
   content:"";
   position:absolute; inset:-14px;
-  background: radial-gradient(circle at 20% 50%, rgba(70,247,255,.35), transparent 55%),
-              radial-gradient(circle at 80% 50%, rgba(184,75,255,.28), transparent 55%);
+  background:
+    radial-gradient(circle at 20% 50%, rgba(70,247,255,.35), transparent 55%),
+    radial-gradient(circle at 80% 50%, rgba(184,75,255,.28), transparent 55%);
   opacity:.55;
   animation: edgeSweep 6.5s linear infinite;
 }
 .edge-left::after, .edge-right::after{ animation-duration:7.2s; }
+
 @keyframes edgeSweep{
   0%{ transform: translateX(-35%); }
   100%{ transform: translateX(35%); }
@@ -96,138 +111,106 @@ body{
   position:relative;
 }
 
-/* ✅ Name fits mobile properly */
+/* Name SVG wrapper */
 #nameSvg{
   width: 100%;
-  max-width: 920px; /* allow bigger on mobile */
+  max-width: 980px; /* allow bigger name on mobile */
   height: auto;
   display: block;
   margin: 0 auto 10px;
 }
 
-/* Name sparks canvas (band over name) */
+/* Spark canvas just for name */
 #nameSparks{
   position:absolute;
   left: 50%;
   transform: translateX(-50%);
   top: 6px;
-  width: min(920px, 100%);
-  height: 150px;
+  width: min(980px, 100%);
+  height: 140px;
   pointer-events:none;
   z-index: 10;
   opacity: 1;
   mix-blend-mode: screen;
 }
 
-/* ✅ Oxanium premium name (bigger + centered always) */
+/* ✅ Oxanium neon name — BIGGER (mobile priority) */
 .name{
   font-family: "Oxanium", system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: 6px;
 
-  /* bigger than before but safe */
-  font-size: clamp(88px, 12vw, 150px);
+  /* ✅ MUCH bigger than FEATURED on mobile, still safe */
+  font-size: clamp(120px, 17.5vw, 180px);
 
-  text-anchor: middle;
   dominant-baseline: middle;
+  text-anchor: middle;
   filter: url(#glow);
 }
 
-/* Extra tuning for small phones */
-@media (max-width: 420px){
+/* Phones (Instagram in-app browser often narrower) */
+@media (max-width: 480px){
   .name{
     letter-spacing: 4px;
-    font-size: clamp(86px, 13.6vw, 140px);
+    font-size: clamp(112px, 18.8vw, 176px);
   }
+  #nameSparks{ height: 150px; }
 }
-@media (max-width: 360px){
+
+/* Very small phones */
+@media (max-width: 380px){
   .name{
     letter-spacing: 3px;
-    font-size: clamp(80px, 14.2vw, 132px);
+    font-size: clamp(104px, 19.5vw, 168px);
   }
 }
 
+/* Base (dim underlay) */
 .name.base{
-  fill: rgba(234,246,255,.06);
+  fill: rgba(234,246,255,.07);
   stroke: rgba(234,246,255,.10);
   stroke-width: 2;
 }
 
-/* Main neon body */
+/* Main neon stroke */
 .name.neon{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
-  stroke-width: 6.4;
+  stroke-width: 7.2;
   stroke-linejoin: round;
   stroke-linecap: round;
   paint-order: stroke;
   opacity: 1;
-  animation: neonBreath 2.6s ease-in-out infinite;
-  filter: drop-shadow(0 0 18px rgba(255,255,255,.55))
-          drop-shadow(0 0 18px rgba(70,247,255,.18))
-          drop-shadow(0 0 18px rgba(184,75,255,.14));
+  animation: neonPulse var(--pulseSpeed) ease-in-out infinite;
 }
-@keyframes neonBreath{
-  0%,100%{ opacity: .90; }
+@keyframes neonPulse{
+  0%,100%{ opacity: .92; }
   50%{ opacity: 1; }
 }
 
-/* ✅ Electric Edge Pulse (controlled energy) */
-.name.pulse{
-  fill: rgba(0,0,0,0);
-  stroke: rgba(255,255,255,0.95);
-  stroke-width: 2.7;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-
-  /* makes it look like current running on outline */
-  stroke-dasharray: 10 26;
-  animation:
-    pulseRun var(--pulseRun) linear infinite,
-    pulseFlicker var(--pulseSpeed) ease-in-out infinite,
-    microFlicker var(--microFlicker) linear infinite;
-  filter:
-    drop-shadow(0 0 12px rgba(70,247,255,.55))
-    drop-shadow(0 0 12px rgba(184,75,255,.35));
-  opacity: .95;
-}
-
-@keyframes pulseRun{
-  to { stroke-dashoffset: -72; }
-}
-
-@keyframes pulseFlicker{
-  0%,100%{ opacity: .75; }
-  50%{ opacity: 1; }
-}
-
-/* extremely subtle occasional micro-flicker */
-@keyframes microFlicker{
-  0%, 86%, 100%{ filter:
-      drop-shadow(0 0 12px rgba(70,247,255,.55))
-      drop-shadow(0 0 12px rgba(184,75,255,.35));
-  }
-  88%{ filter:
-      drop-shadow(0 0 16px rgba(70,247,255,.72))
-      drop-shadow(0 0 16px rgba(184,75,255,.52));
-  }
-  90%{ filter:
-      drop-shadow(0 0 11px rgba(70,247,255,.50))
-      drop-shadow(0 0 11px rgba(184,75,255,.30));
-  }
-}
-
-/* ✅ Wave light (A -> K) */
+/* ✅ WAVE LIGHT (A -> K) continuous */
 .name.wave{
   fill: rgba(0,0,0,0);
   stroke: url(#waveGlow);
-  stroke-width: 9.2;
+  stroke-width: 11.5;
   stroke-linejoin: round;
   stroke-linecap: round;
-  opacity: .95;
-  filter: drop-shadow(0 0 18px rgba(255,255,255,.85))
-          drop-shadow(0 0 22px rgba(70,247,255,.22))
-          drop-shadow(0 0 18px rgba(184,75,255,.18));
+  opacity: 1;
+  filter:
+    drop-shadow(0 0 20px rgba(255,255,255,.95))
+    drop-shadow(0 0 26px rgba(70,247,255,.32))
+    drop-shadow(0 0 22px rgba(184,75,255,.26));
+}
+
+/* ✅ Thin scanner (premium) */
+.name.scan{
+  fill: rgba(0,0,0,0);
+  stroke: url(#scanGlow);
+  stroke-width: 6.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: .92;
+  filter: drop-shadow(0 0 16px rgba(255,255,255,.85));
 }
 
 .tagline{
@@ -252,8 +235,13 @@ body{
   margin: 0 0 10px;
   letter-spacing: 3px;
   color: rgba(234,246,255,.75);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 13px;
+}
+
+/* Make FEATURED / LINKS headings crisp on mobile */
+@media (max-width: 480px){
+  .sectionTitle{ font-size: 13px; letter-spacing: 3.4px; }
 }
 
 .list{ display:flex; flex-direction:column; gap: 10px; }
@@ -308,4 +296,10 @@ body{
   text-align:center;
   color: rgba(234,246,255,.55);
   font-size: 12px;
+}
+
+/* Motion accessibility */
+@media (prefers-reduced-motion: reduce){
+  .edge::after{ animation: none !important; }
+  .name.neon{ animation: none !important; }
 }
