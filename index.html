@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>AM Network</title>
+  <meta name="description" content="AM Network — all my important links in one place." />
+
+  <!-- Futuristic font (recommended) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Background canvases -->
+  <canvas id="bg"></canvas>
+  <canvas id="sparks"></canvas>
+
+  <!-- Edge glow rails -->
+  <div class="edge edge-top"></div>
+  <div class="edge edge-bottom"></div>
+  <div class="edge edge-left"></div>
+  <div class="edge edge-right"></div>
+
+  <main class="wrap">
+    <header class="hero">
+      <!-- Sparkler draw name -->
+      <svg id="nameSvg" viewBox="0 0 1200 220" role="img" aria-label="ANKIT MALIK">
+        <defs>
+          <linearGradient id="strokeGrad" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#46f7ff"/>
+            <stop offset="55%" stop-color="#eaf6ff"/>
+            <stop offset="100%" stop-color="#b84bff"/>
+          </linearGradient>
+
+          <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="4.5" result="b"/>
+            <feColorMatrix in="b" type="matrix"
+              values="1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 0 0.85 0" />
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <text x="50%" y="52%" text-anchor="middle" class="name base">ANKIT MALIK</text>
+        <text id="drawText" x="50%" y="52%" text-anchor="middle" class="name draw">ANKIT MALIK</text>
+      </svg>
+
+      <div class="tagline">AM Network — all my important links in one place.</div>
+    </header>
+
+    <!-- Featured -->
+    <section class="card" aria-label="Featured">
+      <div class="sectionTitle">FEATURED</div>
+      <a id="featuredBtn" class="btn featured" href="#" target="_blank" rel="noopener">
+        <span class="ico" aria-hidden="true">★</span>
+        <span class="txt">Loading...</span>
+      </a>
+      <!-- <div class="miniNote" id="featuredNote">Auto: most clicked link</div> -->
+    </section>
+
+    <!-- Links -->
+    <section class="card" aria-label="Links">
+      <div class="sectionTitle">LINKS</div>
+      <div id="linksList" class="list">
+        <div class="skeleton">Loading links from Google Sheet…</div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>© <span id="yr"></span> AM Network</span>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
