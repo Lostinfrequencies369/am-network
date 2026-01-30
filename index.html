@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 
   <!-- ✅ cache-buster so Instagram in-app browser loads latest CSS -->
-  <link rel="stylesheet" href="style.css?v=slow1" />
+  <link rel="stylesheet" href="style.css?v=glowrun1" />
 </head>
 <body>
   <!-- Background canvases -->
@@ -36,6 +36,24 @@
             <stop offset="100%" stop-color="#b84bff"/>
           </linearGradient>
 
+          <!-- ✅ Running glow light (scanner) -->
+          <linearGradient id="runGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"  stop-color="rgba(255,255,255,0)"/>
+            <stop offset="45%" stop-color="rgba(255,255,255,0)"/>
+            <stop offset="50%" stop-color="rgba(255,255,255,0.95)"/>
+            <stop offset="55%" stop-color="rgba(255,255,255,0)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+
+            <!-- Speed control: dur="8s" slower, "6s" normal -->
+            <animateTransform
+              attributeName="gradientTransform"
+              type="translate"
+              from="-1200 0"
+              to="1200 0"
+              dur="8s"
+              repeatCount="indefinite" />
+          </linearGradient>
+
           <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="4.5" result="b"/>
             <feColorMatrix in="b" type="matrix"
@@ -50,12 +68,17 @@
           </filter>
         </defs>
 
+        <!-- Base shadow -->
         <text x="50%" y="52%" text-anchor="middle" class="name base">ANKIT MALIK</text>
+
+        <!-- Slow draw -->
         <text id="drawText" x="50%" y="52%" text-anchor="middle" class="name draw">ANKIT MALIK</text>
+
+        <!-- Running glow light overlay -->
+        <text x="50%" y="52%" text-anchor="middle" class="name glow-run">ANKIT MALIK</text>
       </svg>
 
-      <!-- ✅ UPDATED TAGLINE -->
-      <div class="tagline">AM Network- A Network built for my Ideas.</div>
+      <div class="tagline">AM Network- A network built for my ideas.</div>
     </header>
 
     <!-- Featured -->

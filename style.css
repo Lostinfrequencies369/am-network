@@ -135,6 +135,18 @@ body{
   100% { stroke-dashoffset: 0;    opacity: 1; }  /* end hold */
 }
 
+/* ✅ Running glow scanner overlay */
+.name.glow-run{
+  fill: none;
+  stroke: url(#runGlow);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 14px rgba(255,255,255,0.85));
+}
+
 .tagline{
   margin: 6px auto 0;
   color: var(--muted);
