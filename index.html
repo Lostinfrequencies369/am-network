@@ -483,7 +483,7 @@
     })();
   </script>
 
-  <!-- NATURAL THUNDER EFFECT - Rare but intense -->
+  <!-- REALISTIC THUNDER EFFECT - Natural lightning -->
   <script>
     (() => {
       const flash = document.getElementById("thunderFlash");
@@ -499,7 +499,7 @@
         const r = svg.getBoundingClientRect();
         dpr = Math.min(2, window.devicePixelRatio || 1);
         W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(250, Math.max(200, r.height * 1.2))));
+        H = Math.max(1, Math.floor(Math.min(280, Math.max(220, r.height * 1.3))));
         boltCanvas.style.width = W + "px";
         boltCanvas.style.height = H + "px";
         boltCanvas.width = Math.floor(W * dpr);
@@ -510,121 +510,262 @@
       resize();
 
       const rand = (a, b) => a + Math.random() * (b - a);
+      const randInt = (a, b) => Math.floor(rand(a, b + 1));
 
-      function drawThunderBolt(startX, startY, endX, endY, width, branches){
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-
-        let x = startX, y = startY;
-        const dx = endX - startX;
-        const dy = endY - startY;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        const segments = Math.floor(dist / 15);
+      // Realistic lightning bolt generator
+      function generateBoltPath(x1, y1, x2, y2, displace, minSegLen = 5){
+        const points = [];
         
-        const points = [{x, y}];
-
-        for(let i = 1; i <= segments; i++){
-          const t = i / segments;
-          const nx = startX + dx * t + rand(-25, 25);
-          const ny = startY + dy * t + rand(-8, 8);
-          ctx.lineTo(nx, ny);
-          points.push({x: nx, y: ny});
-          x = nx; y = ny;
+        if(displace < minSegLen){
+          points.push({x: x1, y: y1});
+          points.push({x: x2, y: y2});
+        } else {
+          // Midpoint with displacement
+          let midX = (x1 + x2) / 2;
+          let midY = (y1 + y2) / 2;
+          
+          // Displace perpendicular to line
+          const angle = Math.atan2(y2 - y1, x2 - x1);
+          const perpAngle = angle + Math.PI / 2;
+          const displacement = rand(-displace, displace);
+          
+          midX += Math.cos(perpAngle) * displacement;
+          midY += Math.sin(perpAngle) * displacement;
+          
+          // Recursively generate
+          const left = generateBoltPath(x1, y1, midX, midY, displace / 2, minSegLen);
+          const right = generateBoltPath(midX, midY, x2, y2, displace / 2, minSegLen);
+          
+          // Combine (skip duplicate midpoint)
+          points.push(...left);
+          points.push(...right.slice(1));
         }
+        
+        return points;
+      }
 
-        ctx.strokeStyle = "rgba(255,255,255,1)";
-        ctx.lineWidth = width;
-        ctx.shadowBlur = 35;
-        ctx.shadowColor = "rgba(70,247,255,1)";
+      // Draw a single bolt with glow layers
+      function drawBolt(points, intensity = 1, isMain = true){
+        if(points.length < 2) return;
+
+        // Layer 1: Outer glow (wide, faint)
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for(let i = 1; i < points.length; i++){
+          ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.strokeStyle = `rgba(180, 200, 255, ${0.15 * intensity})`;
+        ctx.lineWidth = isMain ? 12 : 6;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.shadowBlur = 40;
+        ctx.shadowColor = `rgba(150, 180, 255, ${0.5 * intensity})`;
         ctx.stroke();
 
-        // Outer glow
-        ctx.strokeStyle = "rgba(70,247,255,0.6)";
-        ctx.lineWidth = width + 4;
-        ctx.shadowBlur = 50;
+        // Layer 2: Middle glow (electric blue)
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for(let i = 1; i < points.length; i++){
+          ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.strokeStyle = `rgba(100, 150, 255, ${0.4 * intensity})`;
+        ctx.lineWidth = isMain ? 6 : 3;
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = `rgba(100, 150, 255, ${0.7 * intensity})`;
         ctx.stroke();
 
-        // Draw branches
-        if(branches > 0){
-          for(let i = 0; i < branches; i++){
-            const pIdx = Math.floor(rand(1, points.length - 1));
-            const p = points[pIdx];
-            const bEndX = p.x + rand(-80, 80);
-            const bEndY = p.y + rand(20, 60);
+        // Layer 3: Inner glow (cyan/white)
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for(let i = 1; i < points.length; i++){
+          ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.strokeStyle = `rgba(200, 230, 255, ${0.7 * intensity})`;
+        ctx.lineWidth = isMain ? 3 : 1.5;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = `rgba(200, 230, 255, ${0.9 * intensity})`;
+        ctx.stroke();
+
+        // Layer 4: Hot core (pure white, thin)
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for(let i = 1; i < points.length; i++){
+          ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.95 * intensity})`;
+        ctx.lineWidth = isMain ? 1.5 : 0.8;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `rgba(255, 255, 255, ${intensity})`;
+        ctx.stroke();
+      }
+
+      // Generate branches from main bolt
+      function generateBranches(mainPoints, count){
+        const branches = [];
+        
+        for(let i = 0; i < count; i++){
+          // Pick random point along main bolt (not too close to ends)
+          const idx = randInt(Math.floor(mainPoints.length * 0.15), Math.floor(mainPoints.length * 0.75));
+          const startPoint = mainPoints[idx];
+          
+          // Branch direction - mostly downward with sideways spread
+          const mainAngle = Math.atan2(
+            mainPoints[Math.min(idx + 1, mainPoints.length - 1)].y - startPoint.y,
+            mainPoints[Math.min(idx + 1, mainPoints.length - 1)].x - startPoint.x
+          );
+          const branchAngle = mainAngle + rand(-0.8, 0.8);
+          const branchLen = rand(30, 90);
+          
+          const endX = startPoint.x + Math.cos(branchAngle) * branchLen;
+          const endY = startPoint.y + Math.sin(branchAngle) * branchLen;
+          
+          const branchPoints = generateBoltPath(
+            startPoint.x, startPoint.y,
+            endX, endY,
+            branchLen * 0.3,
+            4
+          );
+          
+          branches.push({
+            points: branchPoints,
+            intensity: rand(0.4, 0.8)
+          });
+          
+          // Sub-branches (smaller forks)
+          if(Math.random() > 0.5 && branchPoints.length > 3){
+            const subIdx = randInt(1, branchPoints.length - 2);
+            const subStart = branchPoints[subIdx];
+            const subAngle = branchAngle + rand(-0.6, 0.6);
+            const subLen = rand(15, 40);
             
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
+            const subPoints = generateBoltPath(
+              subStart.x, subStart.y,
+              subStart.x + Math.cos(subAngle) * subLen,
+              subStart.y + Math.sin(subAngle) * subLen,
+              subLen * 0.25,
+              3
+            );
             
-            const bSegs = 3;
-            for(let j = 1; j <= bSegs; j++){
-              const bt = j / bSegs;
-              ctx.lineTo(
-                p.x + (bEndX - p.x) * bt + rand(-15, 15),
-                p.y + (bEndY - p.y) * bt + rand(-5, 5)
-              );
-            }
-            
-            ctx.strokeStyle = "rgba(255,255,255,0.8)";
-            ctx.lineWidth = width * 0.5;
-            ctx.shadowBlur = 25;
-            ctx.shadowColor = "rgba(184,75,255,0.8)";
-            ctx.stroke();
+            branches.push({
+              points: subPoints,
+              intensity: rand(0.2, 0.5)
+            });
           }
         }
+        
+        return branches;
       }
 
-      function triggerThunder(){
-        // Clear canvas
+      // Render full lightning strike
+      function renderLightning(alpha = 1){
         ctx.clearRect(0, 0, W, H);
+        ctx.globalAlpha = alpha;
         
-        // Flash sequence: quick double flash like real lightning
-        flash.classList.add("active");
+        // Main bolt path
+        const startX = rand(W * 0.25, W * 0.75);
+        const startY = -10;
+        const endX = startX + rand(-60, 60);
+        const endY = H + 10;
         
-        // Draw main bolt
-        const startX = rand(W * 0.2, W * 0.8);
-        const startY = 0;
-        const endX = startX + rand(-50, 50);
-        const endY = H * 0.9;
+        const mainPoints = generateBoltPath(startX, startY, endX, endY, 70, 6);
         
-        drawThunderBolt(startX, startY, endX, endY, rand(2.5, 4), Math.floor(rand(2, 5)));
+        // Generate branches
+        const branches = generateBranches(mainPoints, randInt(3, 7));
         
-        // First flash off
-        setTimeout(() => {
-          flash.classList.remove("active");
-        }, 80);
+        // Draw branches first (behind main bolt)
+        for(const branch of branches){
+          drawBolt(branch.points, branch.intensity * alpha, false);
+        }
         
-        // Second flash (aftershock)
-        setTimeout(() => {
-          flash.classList.add("active");
-          // Redraw slightly different bolt
-          ctx.clearRect(0, 0, W, H);
-          drawThunderBolt(startX + rand(-20, 20), startY, endX + rand(-30, 30), endY, rand(2, 3.5), Math.floor(rand(1, 4)));
-        }, 150);
+        // Draw main bolt on top
+        drawBolt(mainPoints, alpha, true);
         
-        // Final fade
-        setTimeout(() => {
-          flash.classList.remove("active");
-        }, 220);
+        ctx.globalAlpha = 1;
         
-        // Clear bolt
-        setTimeout(() => {
-          ctx.clearRect(0, 0, W, H);
-        }, 400);
+        return { mainPoints, branches };
       }
 
-      // Random thunder - rare occurrence (every 4-12 seconds)
+      // Animate lightning with flicker
+      function triggerThunder(){
+        let frame = 0;
+        const totalFrames = 18;
+        let boltData = null;
+        
+        // Flash pattern: bright -> dim -> bright -> fade
+        const flashPattern = [
+          1, 0.9, 1, 0.3, 0.1, 0.8, 1, 0.95, 0.7, 0.4,
+          0.2, 0.5, 0.3, 0.15, 0.1, 0.05, 0.02, 0
+        ];
+
+        function animateFrame(){
+          if(frame >= totalFrames){
+            ctx.clearRect(0, 0, W, H);
+            flash.classList.remove("active");
+            return;
+          }
+
+          const alpha = flashPattern[frame] || 0;
+          
+          // Screen flash
+          if(alpha > 0.5){
+            flash.classList.add("active");
+            flash.style.opacity = alpha * 0.7;
+          } else {
+            flash.classList.remove("active");
+          }
+
+          // Redraw bolt with slight variation each frame for flicker
+          if(alpha > 0.05){
+            if(!boltData || frame === 0 || frame === 5){
+              // Generate new bolt at key frames
+              boltData = renderLightning(alpha);
+            } else {
+              // Slight jitter on existing bolt
+              ctx.clearRect(0, 0, W, H);
+              ctx.globalAlpha = alpha;
+              
+              // Add micro-jitter to points
+              const jitteredMain = boltData.mainPoints.map(p => ({
+                x: p.x + rand(-1.5, 1.5),
+                y: p.y + rand(-0.8, 0.8)
+              }));
+              
+              drawBolt(jitteredMain, alpha, true);
+              
+              for(const branch of boltData.branches){
+                const jitteredBranch = branch.points.map(p => ({
+                  x: p.x + rand(-1, 1),
+                  y: p.y + rand(-0.5, 0.5)
+                }));
+                drawBolt(jitteredBranch, branch.intensity * alpha, false);
+              }
+              
+              ctx.globalAlpha = 1;
+            }
+          } else {
+            ctx.clearRect(0, 0, W, H);
+          }
+
+          frame++;
+          requestAnimationFrame(animateFrame);
+        }
+
+        animateFrame();
+      }
+
+      // Random thunder - rare occurrence
       function scheduleThunder(){
-        const delay = rand(4000, 12000);
+        const delay = rand(5000, 15000);
         setTimeout(() => {
-          if(Math.random() > 0.3){ // 70% chance when scheduled
+          if(Math.random() > 0.25){
             triggerThunder();
           }
           scheduleThunder();
         }, delay);
       }
 
-      // Start thunder cycle after initial delay
-      setTimeout(scheduleThunder, rand(2000, 5000));
+      // Start after initial delay
+      setTimeout(scheduleThunder, rand(2000, 4000));
     })();
   </script>
 
