@@ -221,17 +221,26 @@ body{
 
 #diamondSparks{ z-index: 12; }
 #arcLightning{ z-index: 11; }
-#thunderBolt{ z-index: 15; mix-blend-mode: normal; }
+
+/* Thunder bolt - FIXED, fullscreen, behind everything except bg */
+#thunderBolt{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
 
 /* ============================================
-   NAME TEXT - ORBITRON FONT
+   NAME TEXT - AUDIOWIDE FONT (clean gaming)
    ============================================ */
 
 .name{
-  font-family: "Orbitron", 'Rajdhani', system-ui, sans-serif;
-  font-weight: 900;
+  font-family: "Audiowide", 'Rajdhani', system-ui, sans-serif;
+  font-weight: 400;
   letter-spacing: 8px;
-  /* Smaller viewBox = bigger text relative to container */
   font-size: clamp(52px, 11vw, 72px);
   dominant-baseline: middle;
   text-anchor: middle;
@@ -303,73 +312,72 @@ body{
   filter: url(#chrome);
 }
 
-/* Main neon stroke */
+/* Main neon stroke (controlled glow) */
 .name.neon{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
-  stroke-width: 6;
+  stroke-width: 4.5;
   stroke-linejoin: round;
   stroke-linecap: round;
   paint-order: stroke;
-  opacity: 1;
+  opacity: 0.9;
   animation: neonPulse var(--pulseSpeed) ease-in-out infinite;
   filter: 
-    drop-shadow(0 0 18px rgba(70,247,255,.60))
-    drop-shadow(0 0 30px rgba(184,75,255,.50))
-    drop-shadow(0 0 42px rgba(255,75,139,.28));
+    drop-shadow(0 0 6px rgba(70,247,255,.30))
+    drop-shadow(0 0 12px rgba(184,75,255,.20));
 }
 @keyframes neonPulse{
-  0%,100%{ opacity: .85; }
-  50%{ opacity: 1; }
+  0%,100%{ opacity: .80; }
+  50%{ opacity: .92; }
 }
 
-/* Electric pulse */
+/* Electric pulse (controlled) */
 .name.pulse{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
-  stroke-width: 5;
+  stroke-width: 3.5;
   stroke-linejoin: round;
   stroke-linecap: round;
-  opacity: .65;
-  animation: electricPulse 1.4s ease-in-out infinite;
+  opacity: .45;
+  animation: electricPulse 1.6s ease-in-out infinite;
   filter: 
-    drop-shadow(0 0 20px rgba(70,247,255,.70))
-    drop-shadow(0 0 32px rgba(184,75,255,.60));
+    drop-shadow(0 0 8px rgba(70,247,255,.35))
+    drop-shadow(0 0 14px rgba(184,75,255,.25));
 }
 @keyframes electricPulse{
-  0%,100%{ opacity: .55; stroke-width: 5; }
-  25%{ opacity: .85; stroke-width: 6.5; }
-  50%{ opacity: .60; stroke-width: 4.5; }
-  75%{ opacity: .80; stroke-width: 6; }
+  0%,100%{ opacity: .35; stroke-width: 3.5; }
+  25%{ opacity: .55; stroke-width: 4.5; }
+  50%{ opacity: .38; stroke-width: 3; }
+  75%{ opacity: .50; stroke-width: 4; }
 }
 
-/* Chrome shine */
+/* Chrome shine (subtle) */
 .name.chrome-shine{
   fill: rgba(0,0,0,0);
   stroke: url(#chromeGrad);
-  stroke-width: 2.5;
+  stroke-width: 2;
   stroke-linejoin: round;
-  opacity: 0.35;
+  opacity: 0.22;
   animation: chromeShine var(--chromeSpeed) ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(255,255,255,.65));
+  filter: drop-shadow(0 0 5px rgba(255,255,255,.35));
 }
 @keyframes chromeShine{
-  0%,100%{ opacity: 0.25; }
-  50%{ opacity: 0.50; }
+  0%,100%{ opacity: 0.15; }
+  50%{ opacity: 0.30; }
 }
 
-/* Metallic wave sweep */
+/* Metallic wave sweep (controlled) */
 .name.wave{
   fill: rgba(0,0,0,0);
   stroke: url(#waveGlow);
-  stroke-width: 12;
+  stroke-width: 8;
   stroke-linejoin: round;
   stroke-linecap: round;
-  opacity: 1;
+  opacity: 0.85;
   filter:
-    drop-shadow(0 0 28px rgba(255,255,255,1))
-    drop-shadow(0 0 40px rgba(70,247,255,.45))
-    drop-shadow(0 0 35px rgba(184,75,255,.38));
+    drop-shadow(0 0 10px rgba(255,255,255,.50))
+    drop-shadow(0 0 16px rgba(70,247,255,.20))
+    drop-shadow(0 0 14px rgba(184,75,255,.15));
 }
 
 /* Glitch displacement */
@@ -420,7 +428,7 @@ body{
   font-weight: 700;
   font-size: 12px;
   text-shadow: 0 0 22px rgba(70,247,255,0.35);
-  font-family: 'Orbitron', 'Rajdhani', sans-serif;
+  font-family: 'Audiowide', 'Rajdhani', sans-serif;
 }
 
 @media (max-width: 480px){
@@ -566,7 +574,7 @@ body{
   color: rgba(234,246,255,.50);
   font-size: 11px;
   letter-spacing: 1.5px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Audiowide', sans-serif;
 }
 
 /* Motion accessibility */
