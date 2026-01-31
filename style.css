@@ -121,28 +121,28 @@ body{
   margin: 0 auto 10px;
 }
 
-/* Spark canvas just for name - properly sized */
+/* Spark canvas just for name - GIANT text ke liye */
 #nameSparks{
   position:absolute;
   left: 50%;
   transform: translateX(-50%);
   top: 6px;
   width: min(1100px, 100%);
-  height: 120px; /* ✅ adjusted for new size */
+  height: 190px; /* ✅ GIANT text ke liye */
   pointer-events:none;
   z-index: 10;
   opacity: 1;
   mix-blend-mode: screen;
 }
 
-/* ✅ Oxanium neon name — MAXIMUM SIZE for screen dominance */
+/* ✅ Oxanium neon name — EXTREME H1 SIZE */
 .name{
   font-family: "Oxanium", system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: 10px;
 
-  /* ✅ MAXIMUM BIGGER - proper screen presence */
-  font-size: clamp(68px, 11vw, 95px);
+  /* ✅ EXTREME SIZE - with small viewBox this will be GIANT */
+  font-size: clamp(75px, 13vw, 105px);
 
   dominant-baseline: middle;
   text-anchor: middle;
@@ -152,17 +152,18 @@ body{
 /* Phones (Instagram in-app browser often narrower) */
 @media (max-width: 480px){
   .name{
-    letter-spacing: 7px;
-    font-size: clamp(62px, 12.5vw, 90px);
+    letter-spacing: 8px;
+    /* ✅ GIANT on mobile */
+    font-size: clamp(70px, 14vw, 100px);
   }
-  #nameSparks{ height: 120px; }
+  #nameSparks{ height: 180px; }
 }
 
 /* Very small phones */
 @media (max-width: 380px){
   .name{
-    letter-spacing: 5px;
-    font-size: clamp(56px, 13.5vw, 85px);
+    letter-spacing: 6px;
+    font-size: clamp(65px, 15vw, 95px);
   }
 }
 
@@ -269,17 +270,31 @@ body{
   border: 1px solid rgba(140, 210, 255, .18);
   background: rgba(6,10,20,.35);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+  transition: transform .12s ease, box-shadow .12s ease;
   user-select:none;
+  /* ✅ Remove tap highlight */
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
+/* ✅ NO hover highlight on mobile, just subtle movement */
 .btn:hover{
   transform: translateY(-1px);
-  border-color: rgba(70,247,255,.35);
-  background: rgba(6,10,20,.48);
 }
 
-.btn:active{ transform: translateY(0px) scale(.99); }
+/* ✅ Click response: scale down for feedback */
+.btn:active{ 
+  transform: translateY(0px) scale(.97); 
+  box-shadow: inset 0 0 0 1px rgba(70,247,255,.15);
+}
+
+/* ✅ Remove focus outline rectangle */
+.btn:focus{
+  outline: none;
+}
+.btn:focus-visible{
+  outline: none;
+}
 
 .btn .ico{
   width: 28px; height: 28px;

@@ -30,8 +30,8 @@
       <!-- Name sparks overlay (PREMIUM continuous sparks) -->
       <canvas id="nameSparks" aria-hidden="true"></canvas>
 
-      <!-- NAME SVG - BIGGER viewBox for proper scaling -->
-      <svg id="nameSvg" viewBox="0 0 1000 180" aria-label="ANKIT MALIK" role="img">
+      <!-- NAME SVG - EXTREME COMPACT viewBox for GIANT text -->
+      <svg id="nameSvg" viewBox="0 0 600 100" aria-label="ANKIT MALIK" role="img">
         <defs>
           <!-- Glow filter -->
           <filter id="glow" x="-60%" y="-90%" width="220%" height="300%">
@@ -70,16 +70,16 @@
         </defs>
 
         <!-- Base faint body -->
-        <text x="50%" y="50%" class="name base">ANKIT MALIK</text>
+        <text x="50%" y="55%" class="name base">ANKIT MALIK</text>
 
         <!-- Main neon stroke -->
-        <text x="50%" y="50%" class="name neon">ANKIT MALIK</text>
+        <text x="50%" y="55%" class="name neon">ANKIT MALIK</text>
 
         <!-- ✅ Electric Edge Pulse (premium energy) -->
-        <text x="50%" y="50%" class="name pulse">ANKIT MALIK</text>
+        <text x="50%" y="55%" class="name pulse">ANKIT MALIK</text>
 
         <!-- ✅ METALLIC SHEEN WAVE (A -> K continuous sweep) -->
-        <text x="50%" y="50%" class="name wave">ANKIT MALIK</text>
+        <text x="50%" y="55%" class="name wave">ANKIT MALIK</text>
       </svg>
 
       <div class="tagline">AM Network — A network built for my ideas.</div>
@@ -126,7 +126,7 @@
         dpr = Math.min(2, window.devicePixelRatio || 1);
 
         W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(120, Math.max(90, r.height * 0.75))));
+        H = Math.max(1, Math.floor(Math.min(190, Math.max(150, r.height * 0.85))));
 
         c.style.width = W + "px";
         c.style.height = H + "px";
