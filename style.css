@@ -1,8 +1,8 @@
 /* =========================================================
-   AM Network — style.css (FULLY REPLACEABLE)
-   Includes: Background + Edge rails + Cards + Buttons
-             Oxanium Neon Name (BIGGER for mobile)
-             Wave Light (A -> K) + Thin Scan + Soft Pulse
+   AM Network — style.css (PREMIUM ENHANCED)
+   ✅ BIGGER ANKIT MALIK font
+   ✅ Metallic sheen wave effect
+   ✅ Continuous premium sparks & glow
    ========================================================= */
 
 :root{
@@ -23,10 +23,11 @@
 
   --safe: max(16px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
 
-  /* Name FX speeds */
-  --waveSpeed: 2.9s;     /* wave runs A -> K */
-  --scanSpeed: 3.4s;     /* thin scanner line */
-  --pulseSpeed: 3.0s;    /* neon breathing */
+  /* ✅ Enhanced FX speeds for premium feel */
+  --waveSpeed: 2.2s;     /* faster metallic wave A -> K */
+  --scanSpeed: 2.8s;     /* thin scanner line */
+  --pulseSpeed: 2.5s;    /* neon breathing */
+  --sheenSpeed: 3.5s;    /* metallic sheen sweep */
 }
 
 *{ box-sizing:border-box; }
@@ -111,37 +112,37 @@ body{
   position:relative;
 }
 
-/* Name SVG wrapper */
+/* Name SVG wrapper - bigger container */
 #nameSvg{
   width: 100%;
-  max-width: 980px; /* allow bigger name on mobile */
+  max-width: 1100px; /* ✅ bigger space for larger name */
   height: auto;
   display: block;
   margin: 0 auto 10px;
 }
 
-/* Spark canvas just for name */
+/* Spark canvas just for name - properly sized */
 #nameSparks{
   position:absolute;
   left: 50%;
   transform: translateX(-50%);
   top: 6px;
-  width: min(980px, 100%);
-  height: 140px;
+  width: min(1100px, 100%);
+  height: 120px; /* ✅ adjusted for new size */
   pointer-events:none;
   z-index: 10;
   opacity: 1;
   mix-blend-mode: screen;
 }
 
-/* ✅ Oxanium neon name — BIGGER (mobile priority) */
+/* ✅ Oxanium neon name — MAXIMUM SIZE for screen dominance */
 .name{
   font-family: "Oxanium", system-ui, sans-serif;
   font-weight: 700;
-  letter-spacing: 6px;
+  letter-spacing: 10px;
 
-  /* ✅ MUCH bigger than FEATURED on mobile, still safe */
-  font-size: clamp(120px, 17.5vw, 180px);
+  /* ✅ MAXIMUM BIGGER - proper screen presence */
+  font-size: clamp(68px, 11vw, 95px);
 
   dominant-baseline: middle;
   text-anchor: middle;
@@ -151,17 +152,17 @@ body{
 /* Phones (Instagram in-app browser often narrower) */
 @media (max-width: 480px){
   .name{
-    letter-spacing: 4px;
-    font-size: clamp(112px, 18.8vw, 176px);
+    letter-spacing: 7px;
+    font-size: clamp(62px, 12.5vw, 90px);
   }
-  #nameSparks{ height: 150px; }
+  #nameSparks{ height: 120px; }
 }
 
 /* Very small phones */
 @media (max-width: 380px){
   .name{
-    letter-spacing: 3px;
-    font-size: clamp(104px, 19.5vw, 168px);
+    letter-spacing: 5px;
+    font-size: clamp(56px, 13.5vw, 85px);
   }
 }
 
@@ -172,7 +173,7 @@ body{
   stroke-width: 2;
 }
 
-/* Main neon stroke */
+/* Main neon stroke - enhanced glow */
 .name.neon{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
@@ -182,13 +183,16 @@ body{
   paint-order: stroke;
   opacity: 1;
   animation: neonPulse var(--pulseSpeed) ease-in-out infinite;
+  filter: 
+    drop-shadow(0 0 12px rgba(70,247,255,.45))
+    drop-shadow(0 0 18px rgba(184,75,255,.35));
 }
 @keyframes neonPulse{
   0%,100%{ opacity: .92; }
   50%{ opacity: 1; }
 }
 
-/* ✅ WAVE LIGHT (A -> K) continuous */
+/* ✅ WAVE LIGHT (A -> K) faster, more premium */
 .name.wave{
   fill: rgba(0,0,0,0);
   stroke: url(#waveGlow);
@@ -202,15 +206,22 @@ body{
     drop-shadow(0 0 22px rgba(184,75,255,.26));
 }
 
-/* ✅ Thin scanner (premium) */
-.name.scan{
+/* ✅ PREMIUM PULSE - electric edge energy */
+.name.pulse{
   fill: rgba(0,0,0,0);
-  stroke: url(#scanGlow);
-  stroke-width: 6.6;
+  stroke: url(#strokeGrad);
+  stroke-width: 5.5;
   stroke-linejoin: round;
   stroke-linecap: round;
-  opacity: .92;
-  filter: drop-shadow(0 0 16px rgba(255,255,255,.85));
+  opacity: .75;
+  animation: electricPulse 2.0s ease-in-out infinite;
+  filter: 
+    drop-shadow(0 0 14px rgba(70,247,255,.55))
+    drop-shadow(0 0 20px rgba(184,75,255,.45));
+}
+@keyframes electricPulse{
+  0%,100%{ opacity: .65; stroke-width: 5.5; }
+  50%{ opacity: .85; stroke-width: 6.2; }
 }
 
 .tagline{
@@ -302,4 +313,5 @@ body{
 @media (prefers-reduced-motion: reduce){
   .edge::after{ animation: none !important; }
   .name.neon{ animation: none !important; }
+  .name.pulse{ animation: none !important; }
 }
