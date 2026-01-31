@@ -6,10 +6,10 @@
   <title>AM Network</title>
   <meta name="description" content="AM Network — all my important links in one place." />
 
-  <!-- Oxanium -->
+  <!-- Orbitron - Aggressive Gaming Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -18,6 +18,9 @@
   <!-- Background canvases -->
   <canvas id="bg"></canvas>
   <canvas id="sparks"></canvas>
+
+  <!-- Thunder flash overlay -->
+  <div class="thunder-flash" id="thunderFlash" aria-hidden="true"></div>
 
   <!-- Glitch overlay -->
   <div class="glitch-overlay" aria-hidden="true"></div>
@@ -33,23 +36,26 @@
       <!-- Diamond sparkle canvas -->
       <canvas id="diamondSparks" aria-hidden="true"></canvas>
 
-      <!-- Name sparks overlay (PREMIUM continuous sparks) -->
+      <!-- Name sparks overlay -->
       <canvas id="nameSparks" aria-hidden="true"></canvas>
 
       <!-- Arc lightning canvas -->
       <canvas id="arcLightning" aria-hidden="true"></canvas>
 
-      <!-- NAME SVG - EXTREME COMPACT viewBox for GIANT text -->
-      <svg id="nameSvg" viewBox="0 0 600 100" aria-label="ANKIT MALIK" role="img">
+      <!-- Thunder bolt canvas -->
+      <canvas id="thunderBolt" aria-hidden="true"></canvas>
+
+      <!-- NAME SVG - ULTRA WIDE viewBox for MAXIMUM size -->
+      <svg id="nameSvg" viewBox="0 0 420 80" preserveAspectRatio="xMidYMid meet" aria-label="ANKIT MALIK" role="img">
         <defs>
           <!-- Enhanced Glow filter -->
-          <filter id="glow" x="-80%" y="-100%" width="260%" height="320%">
-            <feGaussianBlur stdDeviation="8" result="b"/>
+          <filter id="glow" x="-100%" y="-120%" width="300%" height="360%">
+            <feGaussianBlur stdDeviation="10" result="b"/>
             <feColorMatrix in="b" type="matrix"
               values="1 0 0 0 0
                       0 1 0 0 0
                       0 0 1 0 0
-                      0 0 0 1 0"/>
+                      0 0 0 1.2 0"/>
             <feMerge>
               <feMergeNode/>
               <feMergeNode in="SourceGraphic"/>
@@ -60,7 +66,7 @@
           <filter id="chrome" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
             <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1" specularExponent="20" result="spec">
-              <fePointLight x="300" y="-100" z="200"/>
+              <fePointLight x="200" y="-100" z="200"/>
             </feSpecularLighting>
             <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOut"/>
             <feMerge>
@@ -75,7 +81,7 @@
               <animate attributeName="seed" values="0;100;0" dur="0.5s" repeatCount="indefinite"/>
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G">
-              <animate attributeName="scale" values="0;8;0;0;0;12;0;0;0;0" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="scale" values="0;6;0;0;0;10;0;0;0;0" dur="2.5s" repeatCount="indefinite"/>
             </feDisplacementMap>
           </filter>
 
@@ -96,7 +102,7 @@
             <stop offset="100%" stop-color="#e0e0e0"/>
           </linearGradient>
 
-          <!-- Metallic sheen wave - FASTER -->
+          <!-- Metallic sheen wave -->
           <linearGradient id="waveGlow" x1="-1" x2="0" y1="0" y2="0">
             <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
             <stop offset="20%"  stop-color="rgba(255,255,255,0.15)"/>
@@ -109,7 +115,7 @@
             <animate attributeName="x2" values="0;2.5" dur="1.8s" repeatCount="indefinite"/>
           </linearGradient>
 
-          <!-- RGB Split gradients for glitch -->
+          <!-- RGB Split gradients -->
           <linearGradient id="redShift" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stop-color="#ff0040"/>
             <stop offset="100%" stop-color="#ff4b8b"/>
@@ -170,7 +176,7 @@
 
   <script src="script.js"></script>
 
-  <!-- INTENSE DIAMOND SPARKLES -->
+  <!-- DIAMOND SPARKLES -->
   <script>
     (() => {
       const c = document.getElementById("diamondSparks");
@@ -186,7 +192,7 @@
         const r = svg.getBoundingClientRect();
         dpr = Math.min(2, window.devicePixelRatio || 1);
         W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(200, Math.max(160, r.height * 0.9))));
+        H = Math.max(1, Math.floor(Math.min(220, Math.max(180, r.height * 1.1))));
         c.style.width = W + "px";
         c.style.height = H + "px";
         c.width = Math.floor(W * dpr);
@@ -199,17 +205,17 @@
       const rand = (a,b) => a + Math.random()*(b-a);
 
       function spawnDiamond(){
-        if(sparkles.length > 40) return;
-        if(Math.random() > 0.15) return;
+        if(sparkles.length > 35) return;
+        if(Math.random() > 0.12) return;
         
         sparkles.push({
-          x: rand(W*0.08, W*0.92),
-          y: rand(H*0.20, H*0.75),
-          size: rand(2, 6),
-          life: rand(15, 40),
-          maxLife: rand(15, 40),
+          x: rand(W*0.05, W*0.95),
+          y: rand(H*0.15, H*0.80),
+          size: rand(2, 7),
+          life: rand(18, 45),
+          maxLife: rand(18, 45),
           rotation: rand(0, Math.PI),
-          rotSpeed: rand(-0.15, 0.15),
+          rotSpeed: rand(-0.12, 0.12),
           color: Math.random() > 0.5 ? '#ffffff' : (Math.random() > 0.5 ? '#46f7ff' : '#b84bff')
         });
       }
@@ -220,7 +226,6 @@
         ctx.rotate(rotation);
         ctx.globalAlpha = alpha;
         
-        // 4-point star/diamond
         ctx.beginPath();
         ctx.moveTo(0, -size);
         ctx.lineTo(size*0.3, 0);
@@ -229,11 +234,10 @@
         ctx.closePath();
         
         ctx.fillStyle = color;
-        ctx.shadowBlur = 15;
+        ctx.shadowBlur = 18;
         ctx.shadowColor = color;
         ctx.fill();
         
-        // Cross highlight
         ctx.beginPath();
         ctx.moveTo(-size, 0);
         ctx.lineTo(size, 0);
@@ -241,7 +245,7 @@
         ctx.lineTo(0, size);
         ctx.strokeStyle = color;
         ctx.lineWidth = 1;
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 22;
         ctx.stroke();
         
         ctx.restore();
@@ -270,7 +274,7 @@
     })();
   </script>
 
-  <!-- PREMIUM LIGHTNING SPARKS -->
+  <!-- LIGHTNING SPARKS -->
   <script>
     (() => {
       const c = document.getElementById("nameSparks");
@@ -285,7 +289,7 @@
         const r = svg.getBoundingClientRect();
         dpr = Math.min(2, window.devicePixelRatio || 1);
         W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(200, Math.max(160, r.height * 0.9))));
+        H = Math.max(1, Math.floor(Math.min(220, Math.max(180, r.height * 1.1))));
         c.style.width = W + "px";
         c.style.height = H + "px";
         c.width = Math.floor(W * dpr);
@@ -299,21 +303,21 @@
       const rand = (a,b)=> a + Math.random()*(b-a);
 
       function spawn(){
-        for(let k=0;k<4;k++){
-          if(sparks.length > 120) break;
-          if(Math.random() > 0.75) continue;
+        for(let k=0;k<3;k++){
+          if(sparks.length > 100) break;
+          if(Math.random() > 0.70) continue;
 
-          const x = rand(W*0.08, W*0.92);
-          const y = rand(H*0.20, H*0.82);
-          const len = rand(15, 35);
+          const x = rand(W*0.05, W*0.95);
+          const y = rand(H*0.18, H*0.85);
+          const len = rand(12, 30);
           const ang = rand(-0.9, 0.9);
 
           sparks.push({
             x,y, ang, len,
-            vx: rand(-0.35,0.35),
-            vy: rand(-0.15,0.15),
-            life: rand(25, 45),
-            a: rand(0.35, 0.85),
+            vx: rand(-0.30,0.30),
+            vy: rand(-0.12,0.12),
+            life: rand(22, 40),
+            a: rand(0.30, 0.80),
             branches: Math.floor(rand(1, 3))
           });
         }
@@ -328,34 +332,31 @@
           s.y += s.vy;
           s.life -= 1;
 
-          const fade = Math.max(0, s.life/45);
+          const fade = Math.max(0, s.life/40);
           ctx.globalAlpha = s.a * fade;
 
-          // Main lightning bolt
           const x2 = s.x + Math.cos(s.ang) * s.len;
           const y2 = s.y + Math.sin(s.ang) * s.len;
           
           ctx.beginPath();
           ctx.moveTo(s.x, s.y);
           
-          // Jagged lightning path
           let px = s.x, py = s.y;
           const segments = 4;
           for(let j=1; j<=segments; j++){
             const t = j/segments;
-            const nx = s.x + (x2-s.x)*t + rand(-8,8);
-            const ny = s.y + (y2-s.y)*t + rand(-6,6);
+            const nx = s.x + (x2-s.x)*t + rand(-6,6);
+            const ny = s.y + (y2-s.y)*t + rand(-5,5);
             ctx.lineTo(nx, ny);
             px = nx; py = ny;
           }
           
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.8;
           ctx.strokeStyle = "rgba(255,255,255,1)";
-          ctx.shadowBlur = 18;
+          ctx.shadowBlur = 16;
           ctx.shadowColor = Math.random() > 0.5 ? "rgba(70,247,255,.9)" : "rgba(184,75,255,.9)";
           ctx.stroke();
 
-          // Branches
           for(let b=0; b<s.branches; b++){
             const bt = rand(0.3, 0.7);
             const bx = s.x + (x2-s.x)*bt;
@@ -365,16 +366,15 @@
             
             ctx.beginPath();
             ctx.moveTo(bx, by);
-            ctx.lineTo(bx + Math.cos(bang)*blen + rand(-4,4), by + Math.sin(bang)*blen + rand(-4,4));
-            ctx.lineWidth = 1.2;
+            ctx.lineTo(bx + Math.cos(bang)*blen + rand(-3,3), by + Math.sin(bang)*blen + rand(-3,3));
+            ctx.lineWidth = 1;
             ctx.stroke();
           }
 
-          // Glow dots at endpoints
           ctx.beginPath();
-          ctx.arc(s.x, s.y, 2.5, 0, Math.PI*2);
+          ctx.arc(s.x, s.y, 2, 0, Math.PI*2);
           ctx.fillStyle = "rgba(255,255,255,1)";
-          ctx.shadowBlur = 15;
+          ctx.shadowBlur = 12;
           ctx.fill();
 
           if(s.life <= 0) sparks.splice(i,1);
@@ -386,7 +386,7 @@
 
       function loop(){
         spawn();
-        setTimeout(loop, 50);
+        setTimeout(loop, 60);
       }
 
       loop();
@@ -394,7 +394,7 @@
     })();
   </script>
 
-  <!-- ARC LIGHTNING BETWEEN LETTERS -->
+  <!-- ARC LIGHTNING -->
   <script>
     (() => {
       const c = document.getElementById("arcLightning");
@@ -410,7 +410,7 @@
         const r = svg.getBoundingClientRect();
         dpr = Math.min(2, window.devicePixelRatio || 1);
         W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(200, Math.max(160, r.height * 0.9))));
+        H = Math.max(1, Math.floor(Math.min(220, Math.max(180, r.height * 1.1))));
         c.style.width = W + "px";
         c.style.height = H + "px";
         c.width = Math.floor(W * dpr);
@@ -423,48 +423,46 @@
       const rand = (a,b) => a + Math.random()*(b-a);
 
       function spawnArc(){
-        if(arcs.length > 8) return;
-        if(Math.random() > 0.03) return; // Rare but impactful
+        if(arcs.length > 6) return;
+        if(Math.random() > 0.025) return;
         
-        const x1 = rand(W*0.15, W*0.45);
-        const x2 = rand(W*0.55, W*0.85);
-        const y = rand(H*0.35, H*0.65);
+        const x1 = rand(W*0.12, W*0.42);
+        const x2 = rand(W*0.58, W*0.88);
+        const y = rand(H*0.30, H*0.70);
         
         arcs.push({
           x1, x2,
-          y1: y + rand(-15, 15),
-          y2: y + rand(-15, 15),
-          life: rand(8, 18),
-          intensity: rand(0.6, 1)
+          y1: y + rand(-12, 12),
+          y2: y + rand(-12, 12),
+          life: rand(6, 14),
+          intensity: rand(0.5, 1)
         });
       }
 
       function drawArc(arc){
-        const fade = arc.life / 18;
+        const fade = arc.life / 14;
         ctx.globalAlpha = arc.intensity * fade;
         
         ctx.beginPath();
         ctx.moveTo(arc.x1, arc.y1);
         
-        // Jagged arc path
-        const segments = 8;
+        const segments = 6;
         for(let i=1; i<=segments; i++){
           const t = i/segments;
           const x = arc.x1 + (arc.x2 - arc.x1) * t;
-          const y = arc.y1 + (arc.y2 - arc.y1) * t + rand(-12, 12);
+          const y = arc.y1 + (arc.y2 - arc.y1) * t + rand(-10, 10);
           ctx.lineTo(x, y);
         }
         
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = rand(1.5, 3);
-        ctx.shadowBlur = 25;
+        ctx.lineWidth = rand(1.2, 2.5);
+        ctx.shadowBlur = 22;
         ctx.shadowColor = Math.random() > 0.5 ? '#46f7ff' : '#b84bff';
         ctx.stroke();
         
-        // Secondary glow
         ctx.strokeStyle = ctx.shadowColor;
-        ctx.lineWidth = 1;
-        ctx.shadowBlur = 35;
+        ctx.lineWidth = 0.8;
+        ctx.shadowBlur = 30;
         ctx.stroke();
       }
 
@@ -485,18 +483,163 @@
     })();
   </script>
 
-  <!-- GLITCH SCANLINE EFFECT -->
+  <!-- NATURAL THUNDER EFFECT - Rare but intense -->
+  <script>
+    (() => {
+      const flash = document.getElementById("thunderFlash");
+      const boltCanvas = document.getElementById("thunderBolt");
+      if(!flash || !boltCanvas) return;
+      
+      const ctx = boltCanvas.getContext("2d", { alpha: true });
+      let W = 0, H = 0, dpr = 1;
+
+      function resize(){
+        const svg = document.getElementById("nameSvg");
+        if(!svg) return;
+        const r = svg.getBoundingClientRect();
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+        W = Math.max(1, Math.floor(r.width));
+        H = Math.max(1, Math.floor(Math.min(250, Math.max(200, r.height * 1.2))));
+        boltCanvas.style.width = W + "px";
+        boltCanvas.style.height = H + "px";
+        boltCanvas.width = Math.floor(W * dpr);
+        boltCanvas.height = Math.floor(H * dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+      addEventListener("resize", resize, { passive: true });
+      resize();
+
+      const rand = (a, b) => a + Math.random() * (b - a);
+
+      function drawThunderBolt(startX, startY, endX, endY, width, branches){
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+
+        let x = startX, y = startY;
+        const dx = endX - startX;
+        const dy = endY - startY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const segments = Math.floor(dist / 15);
+        
+        const points = [{x, y}];
+
+        for(let i = 1; i <= segments; i++){
+          const t = i / segments;
+          const nx = startX + dx * t + rand(-25, 25);
+          const ny = startY + dy * t + rand(-8, 8);
+          ctx.lineTo(nx, ny);
+          points.push({x: nx, y: ny});
+          x = nx; y = ny;
+        }
+
+        ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.lineWidth = width;
+        ctx.shadowBlur = 35;
+        ctx.shadowColor = "rgba(70,247,255,1)";
+        ctx.stroke();
+
+        // Outer glow
+        ctx.strokeStyle = "rgba(70,247,255,0.6)";
+        ctx.lineWidth = width + 4;
+        ctx.shadowBlur = 50;
+        ctx.stroke();
+
+        // Draw branches
+        if(branches > 0){
+          for(let i = 0; i < branches; i++){
+            const pIdx = Math.floor(rand(1, points.length - 1));
+            const p = points[pIdx];
+            const bEndX = p.x + rand(-80, 80);
+            const bEndY = p.y + rand(20, 60);
+            
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            
+            const bSegs = 3;
+            for(let j = 1; j <= bSegs; j++){
+              const bt = j / bSegs;
+              ctx.lineTo(
+                p.x + (bEndX - p.x) * bt + rand(-15, 15),
+                p.y + (bEndY - p.y) * bt + rand(-5, 5)
+              );
+            }
+            
+            ctx.strokeStyle = "rgba(255,255,255,0.8)";
+            ctx.lineWidth = width * 0.5;
+            ctx.shadowBlur = 25;
+            ctx.shadowColor = "rgba(184,75,255,0.8)";
+            ctx.stroke();
+          }
+        }
+      }
+
+      function triggerThunder(){
+        // Clear canvas
+        ctx.clearRect(0, 0, W, H);
+        
+        // Flash sequence: quick double flash like real lightning
+        flash.classList.add("active");
+        
+        // Draw main bolt
+        const startX = rand(W * 0.2, W * 0.8);
+        const startY = 0;
+        const endX = startX + rand(-50, 50);
+        const endY = H * 0.9;
+        
+        drawThunderBolt(startX, startY, endX, endY, rand(2.5, 4), Math.floor(rand(2, 5)));
+        
+        // First flash off
+        setTimeout(() => {
+          flash.classList.remove("active");
+        }, 80);
+        
+        // Second flash (aftershock)
+        setTimeout(() => {
+          flash.classList.add("active");
+          // Redraw slightly different bolt
+          ctx.clearRect(0, 0, W, H);
+          drawThunderBolt(startX + rand(-20, 20), startY, endX + rand(-30, 30), endY, rand(2, 3.5), Math.floor(rand(1, 4)));
+        }, 150);
+        
+        // Final fade
+        setTimeout(() => {
+          flash.classList.remove("active");
+        }, 220);
+        
+        // Clear bolt
+        setTimeout(() => {
+          ctx.clearRect(0, 0, W, H);
+        }, 400);
+      }
+
+      // Random thunder - rare occurrence (every 4-12 seconds)
+      function scheduleThunder(){
+        const delay = rand(4000, 12000);
+        setTimeout(() => {
+          if(Math.random() > 0.3){ // 70% chance when scheduled
+            triggerThunder();
+          }
+          scheduleThunder();
+        }, delay);
+      }
+
+      // Start thunder cycle after initial delay
+      setTimeout(scheduleThunder, rand(2000, 5000));
+    })();
+  </script>
+
+  <!-- GLITCH EFFECT -->
   <script>
     (() => {
       const overlay = document.querySelector('.glitch-overlay');
       if(!overlay) return;
 
       function triggerGlitch(){
-        if(Math.random() > 0.85){
+        if(Math.random() > 0.88){
           overlay.classList.add('active');
-          setTimeout(() => overlay.classList.remove('active'), rand(50, 200));
+          setTimeout(() => overlay.classList.remove('active'), rand(40, 150));
         }
-        setTimeout(triggerGlitch, rand(500, 2000));
+        setTimeout(triggerGlitch, rand(600, 2500));
       }
 
       function rand(a,b){ return a + Math.random()*(b-a); }
