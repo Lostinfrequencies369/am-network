@@ -1,6 +1,7 @@
 // ===========================================
-// AM Network (v1) — Auto links + Featured
+// AM Network (v2) — Auto links + Featured
 // Fetches from Google Apps Script Web App
+// ENHANCED with Intense Gaming visuals
 // ===========================================
 
 // 1) Web App URL here (must end with /exec)
@@ -55,7 +56,11 @@ const $ = (id) => document.getElementById(id);
         a: rand(0.22, 0.82),
         tw: rand(0.004, 0.015),
         phase: rand(0, Math.PI * 2),
-        layer
+        layer,
+        // Enhanced: random color tint
+        color: Math.random() > 0.85 ? 
+          (Math.random() > 0.5 ? "rgba(70,247,255,1)" : "rgba(184,75,255,1)") : 
+          "rgba(234,246,255,1)"
       });
     }
   }
@@ -88,33 +93,51 @@ const $ = (id) => document.getElementById(id);
       bctx.globalAlpha = Math.max(0.05, Math.min(0.9, tw));
       bctx.beginPath();
       bctx.arc(x, y, st.r, 0, Math.PI * 2);
-      bctx.fillStyle = "rgba(234,246,255,1)";
+      bctx.fillStyle = st.color;
+      
+      // Enhanced: subtle glow for colored stars
+      if(st.color !== "rgba(234,246,255,1)"){
+        bctx.shadowBlur = 8;
+        bctx.shadowColor = st.color;
+      } else {
+        bctx.shadowBlur = 0;
+      }
+      
       bctx.fill();
     }
     bctx.globalAlpha = 1;
+    bctx.shadowBlur = 0;
   }
 
-  // Ambient dust (subtle)
+  // Ambient dust (enhanced with more colors)
   const dust = [];
   function emitDust() {
     if (!sctx) return;
-    if (dust.length > 90) return;
-    if (Math.random() > 0.30) return;
+    if (dust.length > 120) return;
+    if (Math.random() > 0.35) return;
+
+    const colorRand = Math.random();
+    let color;
+    if(colorRand > 0.7) color = "rgba(184,75,255,1)";
+    else if(colorRand > 0.4) color = "rgba(70,247,255,1)";
+    else color = "rgba(255,75,139,0.8)";
 
     dust.push({
       x: rand(0, innerWidth),
-      y: rand(0, innerHeight * 0.6),
-      vx: rand(-0.08, 0.08),
-      vy: rand(0.04, 0.14),
-      life: rand(130, 220),
-      a: rand(0.06, 0.18)
+      y: rand(0, innerHeight * 0.7),
+      vx: rand(-0.12, 0.12),
+      vy: rand(0.05, 0.18),
+      life: rand(140, 240),
+      a: rand(0.08, 0.25),
+      color: color,
+      size: rand(1, 2.5)
     });
   }
 
   function drawDust() {
     if (!sctx) return;
 
-    sctx.fillStyle = "rgba(7,10,20,0.10)";
+    sctx.fillStyle = "rgba(5,8,16,0.12)";
     sctx.fillRect(0, 0, innerWidth, innerHeight);
 
     for (let i = dust.length - 1; i >= 0; i--) {
@@ -123,15 +146,19 @@ const $ = (id) => document.getElementById(id);
       p.y += p.vy;
       p.life -= 1;
 
-      sctx.globalAlpha = Math.max(0, p.a);
+      const fade = Math.min(1, p.life / 60);
+      sctx.globalAlpha = Math.max(0, p.a * fade);
       sctx.beginPath();
-      sctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
-      sctx.fillStyle = "rgba(70,247,255,1)";
+      sctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      sctx.fillStyle = p.color;
+      sctx.shadowBlur = 10;
+      sctx.shadowColor = p.color;
       sctx.fill();
 
       if (p.life <= 0 || p.y > innerHeight + 20) dust.splice(i, 1);
     }
     sctx.globalAlpha = 1;
+    sctx.shadowBlur = 0;
   }
 
   function loop(t) {

@@ -1,33 +1,37 @@
 /* =========================================================
-   AM Network — style.css (PREMIUM ENHANCED)
-   ✅ BIGGER ANKIT MALIK font
-   ✅ Metallic sheen wave effect
-   ✅ Continuous premium sparks & glow
+   AM Network — style.css
+   INTENSE GAMING + LUXURY EDITION
+   ✅ Glitch + RGB Split
+   ✅ Chrome Reflection + Diamond Sparkle
+   ✅ Arc Lightning + Electric Edges
+   ✅ NO tap highlight / focus outline on buttons
    ========================================================= */
 
 :root{
-  --bg0:#070a14;
-  --bg1:#0b1022;
+  --bg0:#050810;
+  --bg1:#0a0f1a;
 
-  --glass: rgba(10,14,28,.62);
-  --stroke: rgba(140, 210, 255, .14);
+  --glass: rgba(8,12,24,.72);
+  --stroke: rgba(140, 210, 255, .16);
 
   --cyan:#46f7ff;
   --mag:#b84bff;
+  --pink:#ff4b8b;
+  --white:#ffffff;
 
   --text:#eaf6ff;
   --muted: rgba(234, 246, 255, .72);
 
-  --shadow: 0 18px 60px rgba(0,0,0,.55);
+  --shadow: 0 20px 70px rgba(0,0,0,.65);
   --r:18px;
 
   --safe: max(16px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
 
-  /* ✅ Enhanced FX speeds for premium feel */
-  --waveSpeed: 2.2s;     /* faster metallic wave A -> K */
-  --scanSpeed: 2.8s;     /* thin scanner line */
-  --pulseSpeed: 2.5s;    /* neon breathing */
-  --sheenSpeed: 3.5s;    /* metallic sheen sweep */
+  /* FX speeds */
+  --waveSpeed: 1.8s;
+  --glitchSpeed: 2s;
+  --pulseSpeed: 2s;
+  --chromeSpeed: 3s;
 }
 
 *{ box-sizing:border-box; }
@@ -36,12 +40,54 @@ html,body{ height:100%; }
 body{
   margin:0;
   background:
-    radial-gradient(1200px 800px at 20% 10%, rgba(70,247,255,.10), transparent 55%),
-    radial-gradient(1000px 700px at 80% 30%, rgba(184,75,255,.08), transparent 55%),
+    radial-gradient(1400px 900px at 15% 5%, rgba(70,247,255,.12), transparent 50%),
+    radial-gradient(1200px 800px at 85% 25%, rgba(184,75,255,.10), transparent 50%),
+    radial-gradient(800px 600px at 50% 80%, rgba(255,75,139,.06), transparent 50%),
     linear-gradient(180deg, var(--bg0), var(--bg1));
   color: var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
   overflow-x:hidden;
+}
+
+/* Glitch overlay */
+.glitch-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+  mix-blend-mode: overlay;
+  transition: opacity 0.05s;
+}
+.glitch-overlay.active{
+  opacity: 1;
+}
+.glitch-overlay::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(70,247,255,0.08) 15%,
+    transparent 15.5%,
+    transparent 50%,
+    rgba(184,75,255,0.08) 50.5%,
+    transparent 51%
+  );
+  animation: scanline 0.1s linear infinite;
+}
+@keyframes scanline{
+  0%{ transform: translateX(-100%); }
+  100%{ transform: translateX(100%); }
 }
 
 /* Fullscreen canvases */
@@ -57,25 +103,39 @@ body{
   pointer-events:none;
 }
 
-/* Edge glow rails */
+/* Edge glow rails - ENHANCED */
 .edge{
   position:fixed;
   z-index:1;
   pointer-events:none;
-  opacity:.9;
-  filter: drop-shadow(0 0 10px rgba(70,247,255,.18)) drop-shadow(0 0 12px rgba(184,75,255,.12));
+  opacity:1;
+  filter: drop-shadow(0 0 15px rgba(70,247,255,.25)) drop-shadow(0 0 20px rgba(184,75,255,.18));
 }
 .edge-top,.edge-bottom{
-  left:0; right:0; height:10px;
-  background: linear-gradient(90deg, rgba(70,247,255,.0), rgba(70,247,255,.18), rgba(184,75,255,.18), rgba(70,247,255,.18), rgba(70,247,255,.0));
+  left:0; right:0; height:12px;
+  background: linear-gradient(90deg, 
+    rgba(70,247,255,.0), 
+    rgba(70,247,255,.25), 
+    rgba(255,255,255,.4),
+    rgba(184,75,255,.25), 
+    rgba(255,75,139,.15),
+    rgba(70,247,255,.0)
+  );
   mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
 .edge-top{ top:0; }
 .edge-bottom{ bottom:0; }
 
 .edge-left,.edge-right{
-  top:0; bottom:0; width:10px;
-  background: linear-gradient(180deg, rgba(70,247,255,.0), rgba(70,247,255,.18), rgba(184,75,255,.18), rgba(70,247,255,.18), rgba(70,247,255,.0));
+  top:0; bottom:0; width:12px;
+  background: linear-gradient(180deg, 
+    rgba(70,247,255,.0), 
+    rgba(70,247,255,.25), 
+    rgba(255,255,255,.4),
+    rgba(184,75,255,.25), 
+    rgba(255,75,139,.15),
+    rgba(70,247,255,.0)
+  );
   mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
 }
 .edge-left{ left:0; }
@@ -83,245 +143,382 @@ body{
 
 .edge::after{
   content:"";
-  position:absolute; inset:-14px;
+  position:absolute; inset:-18px;
   background:
-    radial-gradient(circle at 20% 50%, rgba(70,247,255,.35), transparent 55%),
-    radial-gradient(circle at 80% 50%, rgba(184,75,255,.28), transparent 55%);
-  opacity:.55;
-  animation: edgeSweep 6.5s linear infinite;
+    radial-gradient(circle at 20% 50%, rgba(70,247,255,.45), transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(184,75,255,.38), transparent 50%);
+  opacity:.65;
+  animation: edgeSweep 5s linear infinite;
 }
-.edge-left::after, .edge-right::after{ animation-duration:7.2s; }
+.edge-left::after, .edge-right::after{ animation-duration:6s; }
 
 @keyframes edgeSweep{
-  0%{ transform: translateX(-35%); }
-  100%{ transform: translateX(35%); }
+  0%{ transform: translateX(-40%); }
+  100%{ transform: translateX(40%); }
 }
 
 /* Layout */
 .wrap{
   position:relative;
   z-index:3;
-  width:min(760px, calc(100vw - (var(--safe) * 2)));
+  width:min(800px, calc(100vw - (var(--safe) * 2)));
   margin: 0 auto;
-  padding: calc(var(--safe) + 18px) 0 32px;
+  padding: calc(var(--safe) + 20px) 0 36px;
 }
 
 .hero{
   text-align:center;
-  padding: 18px 14px 10px;
+  padding: 20px 14px 12px;
   position:relative;
 }
 
-/* Name SVG wrapper - bigger container */
+/* Name SVG wrapper */
 #nameSvg{
   width: 100%;
-  max-width: 1100px; /* ✅ bigger space for larger name */
+  max-width: 1200px;
   height: auto;
   display: block;
-  margin: 0 auto 10px;
+  margin: 0 auto 12px;
 }
 
-/* Spark canvas just for name - GIANT text ke liye */
-#nameSparks{
+/* Spark/effect canvases */
+#nameSparks,
+#diamondSparks,
+#arcLightning{
   position:absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 6px;
-  width: min(1100px, 100%);
-  height: 190px; /* ✅ GIANT text ke liye */
+  top: 8px;
+  width: min(1200px, 100%);
+  height: 200px;
   pointer-events:none;
   z-index: 10;
   opacity: 1;
   mix-blend-mode: screen;
 }
 
-/* ✅ Oxanium neon name — EXTREME H1 SIZE */
+#diamondSparks{ z-index: 12; }
+#arcLightning{ z-index: 11; }
+
+/* ============================================
+   NAME TEXT STYLES - INTENSE GAMING + LUXURY
+   ============================================ */
+
 .name{
   font-family: "Oxanium", system-ui, sans-serif;
-  font-weight: 700;
-  letter-spacing: 10px;
-
-  /* ✅ EXTREME SIZE - with small viewBox this will be GIANT */
-  font-size: clamp(75px, 13vw, 105px);
-
+  font-weight: 800;
+  letter-spacing: 12px;
+  font-size: clamp(78px, 14vw, 110px);
   dominant-baseline: middle;
   text-anchor: middle;
-  filter: url(#glow);
 }
 
-/* Phones (Instagram in-app browser often narrower) */
+/* Phones */
 @media (max-width: 480px){
   .name{
     letter-spacing: 8px;
-    /* ✅ GIANT on mobile */
-    font-size: clamp(70px, 14vw, 100px);
+    font-size: clamp(72px, 15vw, 105px);
   }
-  #nameSparks{ height: 180px; }
+  #nameSparks, #diamondSparks, #arcLightning{ height: 185px; }
 }
 
-/* Very small phones */
 @media (max-width: 380px){
   .name{
     letter-spacing: 6px;
-    font-size: clamp(65px, 15vw, 95px);
+    font-size: clamp(65px, 16vw, 98px);
   }
 }
 
-/* Base (dim underlay) */
-.name.base{
-  fill: rgba(234,246,255,.07);
-  stroke: rgba(234,246,255,.10);
-  stroke-width: 2;
+/* RGB GLITCH - Red channel */
+.name.glitch-r{
+  fill: rgba(0,0,0,0);
+  stroke: url(#redShift);
+  stroke-width: 4;
+  opacity: 0;
+  animation: glitchR var(--glitchSpeed) ease-in-out infinite;
+}
+@keyframes glitchR{
+  0%, 90%, 100%{ opacity: 0; transform: translate(0, 0); }
+  92%{ opacity: 0.7; transform: translate(-4px, 0); }
+  94%{ opacity: 0.5; transform: translate(3px, -1px); }
+  96%{ opacity: 0.6; transform: translate(-2px, 1px); }
+  98%{ opacity: 0; transform: translate(0, 0); }
 }
 
-/* Main neon stroke - enhanced glow */
+/* RGB GLITCH - Cyan channel */
+.name.glitch-c{
+  fill: rgba(0,0,0,0);
+  stroke: url(#cyanShift);
+  stroke-width: 4;
+  opacity: 0;
+  animation: glitchC var(--glitchSpeed) ease-in-out infinite;
+  animation-delay: 0.05s;
+}
+@keyframes glitchC{
+  0%, 90%, 100%{ opacity: 0; transform: translate(0, 0); }
+  91%{ opacity: 0.6; transform: translate(4px, 1px); }
+  93%{ opacity: 0.5; transform: translate(-3px, 0); }
+  95%{ opacity: 0.7; transform: translate(2px, -1px); }
+  97%{ opacity: 0; transform: translate(0, 0); }
+}
+
+/* Chrome metallic base */
+.name.chrome-base{
+  fill: url(#chromeGrad);
+  fill-opacity: 0.15;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 2;
+  filter: url(#chrome);
+}
+
+/* Main neon stroke - ENHANCED */
 .name.neon{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
-  stroke-width: 7.2;
+  stroke-width: 8;
   stroke-linejoin: round;
   stroke-linecap: round;
   paint-order: stroke;
   opacity: 1;
   animation: neonPulse var(--pulseSpeed) ease-in-out infinite;
   filter: 
-    drop-shadow(0 0 12px rgba(70,247,255,.45))
-    drop-shadow(0 0 18px rgba(184,75,255,.35));
+    drop-shadow(0 0 15px rgba(70,247,255,.55))
+    drop-shadow(0 0 25px rgba(184,75,255,.45))
+    drop-shadow(0 0 35px rgba(255,75,139,.25));
 }
 @keyframes neonPulse{
-  0%,100%{ opacity: .92; }
+  0%,100%{ opacity: .88; }
   50%{ opacity: 1; }
 }
 
-/* ✅ WAVE LIGHT (A -> K) faster, more premium */
+/* Electric pulse - INTENSE */
+.name.pulse{
+  fill: rgba(0,0,0,0);
+  stroke: url(#strokeGrad);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: .7;
+  animation: electricPulse 1.5s ease-in-out infinite;
+  filter: 
+    drop-shadow(0 0 18px rgba(70,247,255,.65))
+    drop-shadow(0 0 28px rgba(184,75,255,.55));
+}
+@keyframes electricPulse{
+  0%,100%{ opacity: .6; stroke-width: 6; }
+  25%{ opacity: .9; stroke-width: 7.5; }
+  50%{ opacity: .65; stroke-width: 5.5; }
+  75%{ opacity: .85; stroke-width: 7; }
+}
+
+/* Chrome shine highlight */
+.name.chrome-shine{
+  fill: rgba(0,0,0,0);
+  stroke: url(#chromeGrad);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  opacity: 0.4;
+  animation: chromeShine var(--chromeSpeed) ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,.6));
+}
+@keyframes chromeShine{
+  0%,100%{ opacity: 0.3; }
+  50%{ opacity: 0.55; }
+}
+
+/* Metallic wave sweep - FASTER */
 .name.wave{
   fill: rgba(0,0,0,0);
   stroke: url(#waveGlow);
-  stroke-width: 11.5;
+  stroke-width: 14;
   stroke-linejoin: round;
   stroke-linecap: round;
   opacity: 1;
   filter:
-    drop-shadow(0 0 20px rgba(255,255,255,.95))
-    drop-shadow(0 0 26px rgba(70,247,255,.32))
-    drop-shadow(0 0 22px rgba(184,75,255,.26));
+    drop-shadow(0 0 25px rgba(255,255,255,1))
+    drop-shadow(0 0 35px rgba(70,247,255,.4))
+    drop-shadow(0 0 30px rgba(184,75,255,.35));
 }
 
-/* ✅ PREMIUM PULSE - electric edge energy */
-.name.pulse{
+/* Glitch displacement layer */
+.name.glitch-main{
   fill: rgba(0,0,0,0);
-  stroke: url(#strokeGrad);
-  stroke-width: 5.5;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  opacity: .75;
-  animation: electricPulse 2.0s ease-in-out infinite;
-  filter: 
-    drop-shadow(0 0 14px rgba(70,247,255,.55))
-    drop-shadow(0 0 20px rgba(184,75,255,.45));
-}
-@keyframes electricPulse{
-  0%,100%{ opacity: .65; stroke-width: 5.5; }
-  50%{ opacity: .85; stroke-width: 6.2; }
+  stroke: rgba(255,255,255,0.15);
+  stroke-width: 2;
+  filter: url(#glitchFilter);
+  opacity: 0.8;
 }
 
 .tagline{
-  margin: 6px auto 0;
+  margin: 8px auto 0;
   color: var(--muted);
-  max-width: 46ch;
+  max-width: 48ch;
   font-size: 14px;
+  letter-spacing: 1px;
 }
 
 /* Cards */
 .card{
-  margin: 14px 0;
+  margin: 16px 0;
   background: var(--glass);
   border: 1px solid var(--stroke);
   border-radius: var(--r);
   box-shadow: var(--shadow);
-  padding: 14px;
-  backdrop-filter: blur(10px);
+  padding: 16px;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Card inner glow */
+.card::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 0%, rgba(70,247,255,0.08), transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(184,75,255,0.06), transparent 50%);
+  pointer-events: none;
 }
 
 .sectionTitle{
-  margin: 0 0 10px;
-  letter-spacing: 3px;
-  color: rgba(234,246,255,.75);
+  margin: 0 0 12px;
+  letter-spacing: 4px;
+  color: rgba(234,246,255,.8);
   font-weight: 800;
   font-size: 13px;
+  text-shadow: 0 0 20px rgba(70,247,255,0.3);
 }
 
-/* Make FEATURED / LINKS headings crisp on mobile */
 @media (max-width: 480px){
-  .sectionTitle{ font-size: 13px; letter-spacing: 3.4px; }
+  .sectionTitle{ font-size: 13px; letter-spacing: 3.5px; }
 }
 
-.list{ display:flex; flex-direction:column; gap: 10px; }
+.list{ display:flex; flex-direction:column; gap: 12px; }
+
+/* ============================================
+   BUTTONS - NO TAP HIGHLIGHT / FOCUS OUTLINE
+   ============================================ */
 
 .btn{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap: 10px;
+  gap: 12px;
   text-decoration:none;
   color: var(--text);
-  padding: 16px 14px;
+  padding: 18px 16px;
   border-radius: 16px;
-  border: 1px solid rgba(140, 210, 255, .18);
-  background: rgba(6,10,20,.35);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-  transition: transform .12s ease, box-shadow .12s ease;
-  user-select:none;
-  /* ✅ Remove tap highlight */
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
+  border: 1px solid rgba(140, 210, 255, .20);
+  background: rgba(6,10,20,.45);
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,.03),
+    0 4px 20px rgba(0,0,0,0.3);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  position: relative;
+  overflow: hidden;
+
+  /* ✅ COMPLETE TAP HIGHLIGHT REMOVAL */
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  outline: none !important;
+  outline-style: none !important;
+  outline-width: 0 !important;
 }
 
-/* ✅ NO hover highlight on mobile, just subtle movement */
+/* ✅ Remove ALL focus states */
+.btn:focus,
+.btn:focus-visible,
+.btn:focus-within,
+.btn:-moz-focusring{
+  outline: none !important;
+  outline-style: none !important;
+  outline-width: 0 !important;
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,.03),
+    0 4px 20px rgba(0,0,0,0.3) !important;
+}
+
+/* ✅ Custom focus indicator (accessible but subtle) */
+.btn:focus-visible{
+  border-color: rgba(70, 247, 255, 0.5) !important;
+}
+
+/* Hover glow effect */
+.btn::before{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    transparent,
+    rgba(70,247,255,0.08),
+    rgba(184,75,255,0.08),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn:hover::before{
+  opacity: 1;
+}
+
 .btn:hover{
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  border-color: rgba(70, 247, 255, 0.35);
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    0 8px 30px rgba(0,0,0,0.4),
+    0 0 20px rgba(70,247,255,0.15);
 }
 
-/* ✅ Click response: scale down for feedback */
+/* ✅ Active/pressed state - NO highlight */
 .btn:active{ 
   transform: translateY(0px) scale(.97); 
-  box-shadow: inset 0 0 0 1px rgba(70,247,255,.15);
-}
-
-/* ✅ Remove focus outline rectangle */
-.btn:focus{
-  outline: none;
-}
-.btn:focus-visible{
-  outline: none;
+  border-color: rgba(184, 75, 255, 0.4);
+  box-shadow: 
+    inset 0 0 0 1px rgba(184,75,255,.15),
+    0 2px 10px rgba(0,0,0,0.3);
 }
 
 .btn .ico{
-  width: 28px; height: 28px;
+  width: 30px; height: 30px;
   display:grid; place-items:center;
   border-radius: 10px;
-  background: rgba(70,247,255,.10);
-  border: 1px solid rgba(70,247,255,.22);
-  filter: drop-shadow(0 0 10px rgba(70,247,255,.12));
+  background: linear-gradient(135deg, rgba(70,247,255,.15), rgba(184,75,255,.10));
+  border: 1px solid rgba(70,247,255,.28);
+  filter: drop-shadow(0 0 12px rgba(70,247,255,.18));
   font-weight: 900;
+  font-size: 14px;
 }
 
 .btn.featured{
+  border-color: rgba(184,75,255,.40);
+  background: linear-gradient(90deg, rgba(70,247,255,.12), rgba(184,75,255,.15), rgba(255,75,139,.08));
+}
+
+.btn.featured .ico{
+  background: linear-gradient(135deg, rgba(184,75,255,.2), rgba(255,75,139,.15));
   border-color: rgba(184,75,255,.35);
-  background: linear-gradient(90deg, rgba(70,247,255,.10), rgba(184,75,255,.12));
+  filter: drop-shadow(0 0 12px rgba(184,75,255,.25));
 }
 
 .skeleton{
   color: rgba(234,246,255,.62);
-  padding: 12px 6px;
+  padding: 14px 8px;
   font-size: 13px;
 }
 
 .foot{
-  margin-top: 14px;
+  margin-top: 16px;
   text-align:center;
   color: rgba(234,246,255,.55);
   font-size: 12px;
+  letter-spacing: 1px;
 }
 
 /* Motion accessibility */
@@ -329,4 +526,24 @@ body{
   .edge::after{ animation: none !important; }
   .name.neon{ animation: none !important; }
   .name.pulse{ animation: none !important; }
+  .name.glitch-r{ animation: none !important; }
+  .name.glitch-c{ animation: none !important; }
+  .name.chrome-shine{ animation: none !important; }
+  .glitch-overlay{ display: none !important; }
+}
+
+/* ============================================
+   GLOBAL TAP HIGHLIGHT FIX (backup)
+   ============================================ */
+*{
+  -webkit-tap-highlight-color: transparent;
+}
+
+a, button, input, select, textarea{
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+a:focus, button:focus, input:focus, select:focus, textarea:focus{
+  outline: none;
 }

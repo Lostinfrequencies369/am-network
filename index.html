@@ -9,7 +9,7 @@
   <!-- Oxanium -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -19,6 +19,9 @@
   <canvas id="bg"></canvas>
   <canvas id="sparks"></canvas>
 
+  <!-- Glitch overlay -->
+  <div class="glitch-overlay" aria-hidden="true"></div>
+
   <div class="edge edge-top"></div>
   <div class="edge edge-bottom"></div>
   <div class="edge edge-left"></div>
@@ -27,59 +30,117 @@
   <main class="wrap">
     <header class="hero">
 
+      <!-- Diamond sparkle canvas -->
+      <canvas id="diamondSparks" aria-hidden="true"></canvas>
+
       <!-- Name sparks overlay (PREMIUM continuous sparks) -->
       <canvas id="nameSparks" aria-hidden="true"></canvas>
+
+      <!-- Arc lightning canvas -->
+      <canvas id="arcLightning" aria-hidden="true"></canvas>
 
       <!-- NAME SVG - EXTREME COMPACT viewBox for GIANT text -->
       <svg id="nameSvg" viewBox="0 0 600 100" aria-label="ANKIT MALIK" role="img">
         <defs>
-          <!-- Glow filter -->
-          <filter id="glow" x="-60%" y="-90%" width="220%" height="300%">
-            <feGaussianBlur stdDeviation="6" result="b"/>
+          <!-- Enhanced Glow filter -->
+          <filter id="glow" x="-80%" y="-100%" width="260%" height="320%">
+            <feGaussianBlur stdDeviation="8" result="b"/>
             <feColorMatrix in="b" type="matrix"
               values="1 0 0 0 0
                       0 1 0 0 0
                       0 0 1 0 0
-                      0 0 0 0.85 0"/>
+                      0 0 0 1 0"/>
             <feMerge>
               <feMergeNode/>
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
 
+          <!-- Chrome reflection filter -->
+          <filter id="chrome" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+            <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1" specularExponent="20" result="spec">
+              <fePointLight x="300" y="-100" z="200"/>
+            </feSpecularLighting>
+            <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOut"/>
+            <feMerge>
+              <feMergeNode in="SourceGraphic"/>
+              <feMergeNode in="specOut"/>
+            </feMerge>
+          </filter>
+
+          <!-- Glitch displacement -->
+          <filter id="glitchFilter" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise" seed="0">
+              <animate attributeName="seed" values="0;100;0" dur="0.5s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G">
+              <animate attributeName="scale" values="0;8;0;0;0;12;0;0;0;0" dur="2s" repeatCount="indefinite"/>
+            </feDisplacementMap>
+          </filter>
+
           <!-- Main neon gradient -->
           <linearGradient id="strokeGrad" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stop-color="#46f7ff"/>
-            <stop offset="55%" stop-color="#eaf6ff"/>
-            <stop offset="100%" stop-color="#b84bff"/>
+            <stop offset="35%" stop-color="#eaf6ff"/>
+            <stop offset="65%" stop-color="#b84bff"/>
+            <stop offset="100%" stop-color="#ff4b8b"/>
           </linearGradient>
 
-          <!-- ✅ METALLIC SHEEN WAVE (premium sweep effect) -->
+          <!-- Chrome metallic gradient -->
+          <linearGradient id="chromeGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="25%" stop-color="#c0c0c0"/>
+            <stop offset="50%" stop-color="#ffffff"/>
+            <stop offset="75%" stop-color="#a0a0a0"/>
+            <stop offset="100%" stop-color="#e0e0e0"/>
+          </linearGradient>
+
+          <!-- Metallic sheen wave - FASTER -->
           <linearGradient id="waveGlow" x1="-1" x2="0" y1="0" y2="0">
             <stop offset="0%"   stop-color="rgba(255,255,255,0)"/>
-            <stop offset="25%"  stop-color="rgba(255,255,255,0.12)"/>
-            <stop offset="40%"  stop-color="rgba(234,246,255,0.85)"/>
+            <stop offset="20%"  stop-color="rgba(255,255,255,0.15)"/>
+            <stop offset="35%"  stop-color="rgba(234,246,255,0.9)"/>
             <stop offset="50%"  stop-color="rgba(255,255,255,1)"/>
-            <stop offset="60%"  stop-color="rgba(70,247,255,0.80)"/>
-            <stop offset="75%"  stop-color="rgba(184,75,255,0.25)"/>
+            <stop offset="65%"  stop-color="rgba(70,247,255,0.85)"/>
+            <stop offset="80%"  stop-color="rgba(184,75,255,0.3)"/>
             <stop offset="100%" stop-color="rgba(184,75,255,0)"/>
-            <!-- ✅ Faster metallic sheen sweep -->
-            <animate attributeName="x1" values="-1;1" dur="2.2s" repeatCount="indefinite"/>
-            <animate attributeName="x2" values="0;2" dur="2.2s" repeatCount="indefinite"/>
+            <animate attributeName="x1" values="-1;1.5" dur="1.8s" repeatCount="indefinite"/>
+            <animate attributeName="x2" values="0;2.5" dur="1.8s" repeatCount="indefinite"/>
+          </linearGradient>
+
+          <!-- RGB Split gradients for glitch -->
+          <linearGradient id="redShift" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#ff0040"/>
+            <stop offset="100%" stop-color="#ff4b8b"/>
+          </linearGradient>
+          <linearGradient id="cyanShift" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#00ffff"/>
+            <stop offset="100%" stop-color="#46f7ff"/>
           </linearGradient>
         </defs>
 
-        <!-- Base faint body -->
-        <text x="50%" y="55%" class="name base">ANKIT MALIK</text>
+        <!-- RGB Split layers (Glitch effect) -->
+        <text x="50%" y="55%" class="name glitch-r">ANKIT MALIK</text>
+        <text x="50%" y="55%" class="name glitch-c">ANKIT MALIK</text>
+
+        <!-- Base chrome body -->
+        <text x="50%" y="55%" class="name chrome-base">ANKIT MALIK</text>
 
         <!-- Main neon stroke -->
         <text x="50%" y="55%" class="name neon">ANKIT MALIK</text>
 
-        <!-- ✅ Electric Edge Pulse (premium energy) -->
+        <!-- Electric Edge Pulse -->
         <text x="50%" y="55%" class="name pulse">ANKIT MALIK</text>
 
-        <!-- ✅ METALLIC SHEEN WAVE (A -> K continuous sweep) -->
+        <!-- Chrome highlight -->
+        <text x="50%" y="55%" class="name chrome-shine">ANKIT MALIK</text>
+
+        <!-- Metallic sheen wave -->
         <text x="50%" y="55%" class="name wave">ANKIT MALIK</text>
+
+        <!-- Glitch displacement layer -->
+        <text x="50%" y="55%" class="name glitch-main">ANKIT MALIK</text>
       </svg>
 
       <div class="tagline">AM Network — A network built for my ideas.</div>
@@ -109,7 +170,107 @@
 
   <script src="script.js"></script>
 
-  <!-- ✅ PREMIUM NAME SPARKS: continuous advertisement-quality effects -->
+  <!-- INTENSE DIAMOND SPARKLES -->
+  <script>
+    (() => {
+      const c = document.getElementById("diamondSparks");
+      if(!c) return;
+      const ctx = c.getContext("2d", { alpha:true });
+
+      let W=0, H=0, dpr=1;
+      const sparkles = [];
+
+      function resize(){
+        const svg = document.getElementById("nameSvg");
+        if(!svg) return;
+        const r = svg.getBoundingClientRect();
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+        W = Math.max(1, Math.floor(r.width));
+        H = Math.max(1, Math.floor(Math.min(200, Math.max(160, r.height * 0.9))));
+        c.style.width = W + "px";
+        c.style.height = H + "px";
+        c.width = Math.floor(W * dpr);
+        c.height = Math.floor(H * dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+      addEventListener("resize", resize, { passive:true });
+      resize();
+
+      const rand = (a,b) => a + Math.random()*(b-a);
+
+      function spawnDiamond(){
+        if(sparkles.length > 40) return;
+        if(Math.random() > 0.15) return;
+        
+        sparkles.push({
+          x: rand(W*0.08, W*0.92),
+          y: rand(H*0.20, H*0.75),
+          size: rand(2, 6),
+          life: rand(15, 40),
+          maxLife: rand(15, 40),
+          rotation: rand(0, Math.PI),
+          rotSpeed: rand(-0.15, 0.15),
+          color: Math.random() > 0.5 ? '#ffffff' : (Math.random() > 0.5 ? '#46f7ff' : '#b84bff')
+        });
+      }
+
+      function drawDiamond(x, y, size, rotation, alpha, color){
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        ctx.globalAlpha = alpha;
+        
+        // 4-point star/diamond
+        ctx.beginPath();
+        ctx.moveTo(0, -size);
+        ctx.lineTo(size*0.3, 0);
+        ctx.lineTo(0, size);
+        ctx.lineTo(-size*0.3, 0);
+        ctx.closePath();
+        
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = color;
+        ctx.fill();
+        
+        // Cross highlight
+        ctx.beginPath();
+        ctx.moveTo(-size, 0);
+        ctx.lineTo(size, 0);
+        ctx.moveTo(0, -size);
+        ctx.lineTo(0, size);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.shadowBlur = 20;
+        ctx.stroke();
+        
+        ctx.restore();
+      }
+
+      function animate(){
+        ctx.clearRect(0,0,W,H);
+        spawnDiamond();
+
+        for(let i=sparkles.length-1; i>=0; i--){
+          const s = sparkles[i];
+          s.life--;
+          s.rotation += s.rotSpeed;
+          
+          const progress = s.life / s.maxLife;
+          const alpha = progress < 0.3 ? progress/0.3 : (progress > 0.7 ? (1-progress)/0.3 : 1);
+          
+          drawDiamond(s.x, s.y, s.size * (0.5 + alpha*0.5), s.rotation, alpha * 0.9, s.color);
+          
+          if(s.life <= 0) sparkles.splice(i, 1);
+        }
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+  </script>
+
+  <!-- PREMIUM LIGHTNING SPARKS -->
   <script>
     (() => {
       const c = document.getElementById("nameSparks");
@@ -121,13 +282,10 @@
       function resize(){
         const svg = document.getElementById("nameSvg");
         if(!svg) return;
-
         const r = svg.getBoundingClientRect();
         dpr = Math.min(2, window.devicePixelRatio || 1);
-
         W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(190, Math.max(150, r.height * 0.85))));
-
+        H = Math.max(1, Math.floor(Math.min(200, Math.max(160, r.height * 0.9))));
         c.style.width = W + "px";
         c.style.height = H + "px";
         c.width = Math.floor(W * dpr);
@@ -141,23 +299,22 @@
       const rand = (a,b)=> a + Math.random()*(b-a);
 
       function spawn(){
-        // ✅ PREMIUM: more frequent, smoother sparks
-        for(let k=0;k<3;k++){
-          if(sparks.length > 95) break;
-          if(Math.random() > 0.70) continue; // higher spawn rate
+        for(let k=0;k<4;k++){
+          if(sparks.length > 120) break;
+          if(Math.random() > 0.75) continue;
 
-          const x = rand(W*0.10, W*0.90);
-          const y = rand(H*0.22, H*0.80);
-
-          const len = rand(12, 26);
-          const ang = rand(-0.85, 0.85);
+          const x = rand(W*0.08, W*0.92);
+          const y = rand(H*0.20, H*0.82);
+          const len = rand(15, 35);
+          const ang = rand(-0.9, 0.9);
 
           sparks.push({
             x,y, ang, len,
-            vx: rand(-0.28,0.28),
-            vy: rand(-0.10,0.10),
-            life: rand(20, 32), // longer life for smoother effect
-            a: rand(0.28, 0.68)
+            vx: rand(-0.35,0.35),
+            vy: rand(-0.15,0.15),
+            life: rand(25, 45),
+            a: rand(0.35, 0.85),
+            branches: Math.floor(rand(1, 3))
           });
         }
       }
@@ -171,31 +328,53 @@
           s.y += s.vy;
           s.life -= 1;
 
-          const fade = Math.max(0, s.life/32);
+          const fade = Math.max(0, s.life/45);
           ctx.globalAlpha = s.a * fade;
 
+          // Main lightning bolt
           const x2 = s.x + Math.cos(s.ang) * s.len;
           const y2 = s.y + Math.sin(s.ang) * s.len;
-          const mx = (s.x + x2)/2 + rand(-5,5);
-          const my = (s.y + y2)/2 + rand(-4,4);
-
-          // ✅ Premium lightning bolt
+          
           ctx.beginPath();
           ctx.moveTo(s.x, s.y);
-          ctx.lineTo(mx, my);
-          ctx.lineTo(x2, y2);
-          ctx.lineWidth = 1.6;
+          
+          // Jagged lightning path
+          let px = s.x, py = s.y;
+          const segments = 4;
+          for(let j=1; j<=segments; j++){
+            const t = j/segments;
+            const nx = s.x + (x2-s.x)*t + rand(-8,8);
+            const ny = s.y + (y2-s.y)*t + rand(-6,6);
+            ctx.lineTo(nx, ny);
+            px = nx; py = ny;
+          }
+          
+          ctx.lineWidth = 2;
           ctx.strokeStyle = "rgba(255,255,255,1)";
-          ctx.shadowBlur = 14;
-          ctx.shadowColor = "rgba(70,247,255,.80)";
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = Math.random() > 0.5 ? "rgba(70,247,255,.9)" : "rgba(184,75,255,.9)";
           ctx.stroke();
 
-          // ✅ Premium glow dot
+          // Branches
+          for(let b=0; b<s.branches; b++){
+            const bt = rand(0.3, 0.7);
+            const bx = s.x + (x2-s.x)*bt;
+            const by = s.y + (y2-s.y)*bt;
+            const bang = s.ang + rand(-1.2, 1.2);
+            const blen = s.len * rand(0.3, 0.5);
+            
+            ctx.beginPath();
+            ctx.moveTo(bx, by);
+            ctx.lineTo(bx + Math.cos(bang)*blen + rand(-4,4), by + Math.sin(bang)*blen + rand(-4,4));
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+          }
+
+          // Glow dots at endpoints
           ctx.beginPath();
-          ctx.arc(s.x, s.y, 1.6, 0, Math.PI*2);
-          ctx.fillStyle = "rgba(184,75,255,1)";
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = "rgba(184,75,255,.70)";
+          ctx.arc(s.x, s.y, 2.5, 0, Math.PI*2);
+          ctx.fillStyle = "rgba(255,255,255,1)";
+          ctx.shadowBlur = 15;
           ctx.fill();
 
           if(s.life <= 0) sparks.splice(i,1);
@@ -207,11 +386,121 @@
 
       function loop(){
         spawn();
-        requestAnimationFrame(loop);
+        setTimeout(loop, 50);
       }
 
       loop();
       draw();
+    })();
+  </script>
+
+  <!-- ARC LIGHTNING BETWEEN LETTERS -->
+  <script>
+    (() => {
+      const c = document.getElementById("arcLightning");
+      if(!c) return;
+      const ctx = c.getContext("2d", { alpha:true });
+
+      let W=0, H=0, dpr=1;
+      const arcs = [];
+
+      function resize(){
+        const svg = document.getElementById("nameSvg");
+        if(!svg) return;
+        const r = svg.getBoundingClientRect();
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+        W = Math.max(1, Math.floor(r.width));
+        H = Math.max(1, Math.floor(Math.min(200, Math.max(160, r.height * 0.9))));
+        c.style.width = W + "px";
+        c.style.height = H + "px";
+        c.width = Math.floor(W * dpr);
+        c.height = Math.floor(H * dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+      addEventListener("resize", resize, { passive:true });
+      resize();
+
+      const rand = (a,b) => a + Math.random()*(b-a);
+
+      function spawnArc(){
+        if(arcs.length > 8) return;
+        if(Math.random() > 0.03) return; // Rare but impactful
+        
+        const x1 = rand(W*0.15, W*0.45);
+        const x2 = rand(W*0.55, W*0.85);
+        const y = rand(H*0.35, H*0.65);
+        
+        arcs.push({
+          x1, x2,
+          y1: y + rand(-15, 15),
+          y2: y + rand(-15, 15),
+          life: rand(8, 18),
+          intensity: rand(0.6, 1)
+        });
+      }
+
+      function drawArc(arc){
+        const fade = arc.life / 18;
+        ctx.globalAlpha = arc.intensity * fade;
+        
+        ctx.beginPath();
+        ctx.moveTo(arc.x1, arc.y1);
+        
+        // Jagged arc path
+        const segments = 8;
+        for(let i=1; i<=segments; i++){
+          const t = i/segments;
+          const x = arc.x1 + (arc.x2 - arc.x1) * t;
+          const y = arc.y1 + (arc.y2 - arc.y1) * t + rand(-12, 12);
+          ctx.lineTo(x, y);
+        }
+        
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = rand(1.5, 3);
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = Math.random() > 0.5 ? '#46f7ff' : '#b84bff';
+        ctx.stroke();
+        
+        // Secondary glow
+        ctx.strokeStyle = ctx.shadowColor;
+        ctx.lineWidth = 1;
+        ctx.shadowBlur = 35;
+        ctx.stroke();
+      }
+
+      function animate(){
+        ctx.clearRect(0,0,W,H);
+        spawnArc();
+
+        for(let i=arcs.length-1; i>=0; i--){
+          drawArc(arcs[i]);
+          arcs[i].life--;
+          if(arcs[i].life <= 0) arcs.splice(i, 1);
+        }
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+  </script>
+
+  <!-- GLITCH SCANLINE EFFECT -->
+  <script>
+    (() => {
+      const overlay = document.querySelector('.glitch-overlay');
+      if(!overlay) return;
+
+      function triggerGlitch(){
+        if(Math.random() > 0.85){
+          overlay.classList.add('active');
+          setTimeout(() => overlay.classList.remove('active'), rand(50, 200));
+        }
+        setTimeout(triggerGlitch, rand(500, 2000));
+      }
+
+      function rand(a,b){ return a + Math.random()*(b-a); }
+      triggerGlitch();
     })();
   </script>
 </body>
