@@ -246,15 +246,15 @@ body{
   text-anchor: middle;
 }
 
-/* Tablets */
-@media (max-width: 768px){
+/* Tablets - reduce to fit without clipping */
+@media (min-width: 481px) and (max-width: 850px){
   .name{
-    letter-spacing: 6px;
-    font-size: clamp(48px, 12vw, 68px);
+    letter-spacing: 5px;
+    font-size: clamp(44px, 9vw, 58px);
   }
 }
 
-/* Phones */
+/* Phones - KEEP AS IS (already fits perfectly) */
 @media (max-width: 480px){
   .name{
     letter-spacing: 4px;
