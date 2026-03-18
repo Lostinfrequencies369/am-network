@@ -400,36 +400,44 @@ body{
   transition: all var(--mood-transition) ease;
 }
 
-/* Card container — dark solid background, no extra padding */
+/* Card container — dark solid background, relative so absolute children anchor here */
 .ecard-container {
   border-radius: 20px;
   position: relative;
   background: rgba(6,10,20,0.94);
   transition: background var(--mood-transition) ease;
   overflow: visible;
+  /* padding keeps content from touching the electric border */
+  padding: 2px;
 }
 
-/* Inner stack — positions electric border layers */
+/* Inner stack — absolute, covers full card, holds all border layers */
 .ecard-inner {
   position: absolute;
   inset: 0;
   border-radius: 20px;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
+  /* no border, no background — purely a positioning wrapper */
 }
 
-/* ecard-border-outer — transparent, no visible static ring */
+/* ecard-border-outer — completely invisible, just a passthrough */
 .ecard-border-outer {
   border: none;
   border-radius: 20px;
   position: absolute;
   inset: 0;
+  padding: 0;
+  margin: 0;
 }
 
-/* Main electric border — covers ALL FOUR sides via position:absolute inset:0 */
+/* Main electric border — position:absolute inset:0 = all four sides */
 .ecard-main {
   position: absolute;
   inset: 0;
+  width: auto;
+  height: auto;
+  margin: 0;
   border-radius: 20px;
   border: 2px solid var(--electric-border-color);
   filter: url(#turbulent-displace);
