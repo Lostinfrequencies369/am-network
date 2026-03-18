@@ -29,8 +29,6 @@
     <header class="hero">
 
       <canvas id="diamondSparks" aria-hidden="true"></canvas>
-      <canvas id="nameSparks" aria-hidden="true"></canvas>
-      <canvas id="arcLightning" aria-hidden="true"></canvas>
 
       <svg id="nameSvg" viewBox="0 0 660 80" preserveAspectRatio="xMidYMid meet" aria-label="Dr. Ankit Malik" role="img">
         <defs>
@@ -185,7 +183,7 @@
         <div class="ecard-overlay-2"></div>
         <div class="ecard-bg-glow"></div>
         <div class="ecard-content">
-          <h3 class="sectionTitle">AM-369-Network — Unified Access Point</h3>
+          <h3 class="sectionTitle">LINKS</h3>
           <div class="list" id="linksList">
             <div class="skeleton">Loading links…</div>
           </div>
@@ -286,188 +284,7 @@
     })();
   </script>
 
-  <!-- LIGHTNING SPARKS -->
-  <script>
-    (() => {
-      const c = document.getElementById("nameSparks");
-      if(!c) return;
-      const ctx = c.getContext("2d", { alpha:true });
-      let W=0,H=0,dpr=1;
 
-      function resize(){
-        const svg = document.getElementById("nameSvg");
-        if(!svg) return;
-        const r = svg.getBoundingClientRect();
-        dpr = Math.min(2, window.devicePixelRatio || 1);
-        W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(220, Math.max(180, r.height * 1.1))));
-        c.style.width = W + "px";
-        c.style.height = H + "px";
-        c.width = Math.floor(W * dpr);
-        c.height = Math.floor(H * dpr);
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-      }
-      addEventListener("resize", resize, { passive:true });
-      resize();
-
-      const sparks = [];
-      const rand = (a,b)=> a + Math.random()*(b-a);
-
-      function spawn(){
-        for(let k=0;k<3;k++){
-          if(sparks.length > 100) break;
-          if(Math.random() > 0.70) continue;
-          const x = rand(W*0.05, W*0.95);
-          const y = rand(H*0.18, H*0.85);
-          const len = rand(12, 30);
-          const ang = rand(-0.9, 0.9);
-          sparks.push({
-            x,y, ang, len,
-            vx: rand(-0.30,0.30),
-            vy: rand(-0.12,0.12),
-            life: rand(22, 40),
-            a: rand(0.30, 0.80),
-            branches: Math.floor(rand(1, 3))
-          });
-        }
-      }
-
-      function draw(){
-        ctx.clearRect(0,0,W,H);
-        for(let i=sparks.length-1;i>=0;i--){
-          const s = sparks[i];
-          s.x += s.vx;
-          s.y += s.vy;
-          s.life -= 1;
-          const fade = Math.max(0, s.life/40);
-          ctx.globalAlpha = s.a * fade;
-          const x2 = s.x + Math.cos(s.ang) * s.len;
-          const y2 = s.y + Math.sin(s.ang) * s.len;
-          ctx.beginPath();
-          ctx.moveTo(s.x, s.y);
-          const segments = 4;
-          for(let j=1; j<=segments; j++){
-            const t = j/segments;
-            const nx = s.x + (x2-s.x)*t + rand(-6,6);
-            const ny = s.y + (y2-s.y)*t + rand(-5,5);
-            ctx.lineTo(nx, ny);
-          }
-          ctx.lineWidth = 1.8;
-          ctx.strokeStyle = "rgba(255,255,255,1)";
-          ctx.shadowBlur = 16;
-          ctx.shadowColor = Math.random() > 0.5 ? "rgba(70,247,255,.9)" : "rgba(184,75,255,.9)";
-          ctx.stroke();
-          for(let b=0; b<s.branches; b++){
-            const bt = rand(0.3, 0.7);
-            const bx = s.x + (x2-s.x)*bt;
-            const by = s.y + (y2-s.y)*bt;
-            const bang = s.ang + rand(-1.2, 1.2);
-            const blen = s.len * rand(0.3, 0.5);
-            ctx.beginPath();
-            ctx.moveTo(bx, by);
-            ctx.lineTo(bx + Math.cos(bang)*blen + rand(-3,3), by + Math.sin(bang)*blen + rand(-3,3));
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, 2, 0, Math.PI*2);
-          ctx.fillStyle = "rgba(255,255,255,1)";
-          ctx.shadowBlur = 12;
-          ctx.fill();
-          if(s.life <= 0) sparks.splice(i,1);
-        }
-        ctx.globalAlpha = 1;
-        requestAnimationFrame(draw);
-      }
-
-      function loop(){
-        spawn();
-        setTimeout(loop, 60);
-      }
-      loop();
-      draw();
-    })();
-  </script>
-
-  <!-- ARC LIGHTNING -->
-  <script>
-    (() => {
-      const c = document.getElementById("arcLightning");
-      if(!c) return;
-      const ctx = c.getContext("2d", { alpha:true });
-      let W=0, H=0, dpr=1;
-      const arcs = [];
-
-      function resize(){
-        const svg = document.getElementById("nameSvg");
-        if(!svg) return;
-        const r = svg.getBoundingClientRect();
-        dpr = Math.min(2, window.devicePixelRatio || 1);
-        W = Math.max(1, Math.floor(r.width));
-        H = Math.max(1, Math.floor(Math.min(220, Math.max(180, r.height * 1.1))));
-        c.style.width = W + "px";
-        c.style.height = H + "px";
-        c.width = Math.floor(W * dpr);
-        c.height = Math.floor(H * dpr);
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-      }
-      addEventListener("resize", resize, { passive:true });
-      resize();
-
-      const rand = (a,b) => a + Math.random()*(b-a);
-
-      function spawnArc(){
-        if(arcs.length > 6) return;
-        if(Math.random() > 0.025) return;
-        const x1 = rand(W*0.12, W*0.42);
-        const x2 = rand(W*0.58, W*0.88);
-        const y = rand(H*0.30, H*0.70);
-        arcs.push({
-          x1, x2,
-          y1: y + rand(-12, 12),
-          y2: y + rand(-12, 12),
-          life: rand(6, 14),
-          intensity: rand(0.5, 1)
-        });
-      }
-
-      function drawArc(arc){
-        const fade = arc.life / 14;
-        ctx.globalAlpha = arc.intensity * fade;
-        ctx.beginPath();
-        ctx.moveTo(arc.x1, arc.y1);
-        const segments = 6;
-        for(let i=1; i<=segments; i++){
-          const t = i/segments;
-          const x = arc.x1 + (arc.x2 - arc.x1) * t;
-          const y = arc.y1 + (arc.y2 - arc.y1) * t + rand(-10, 10);
-          ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = rand(1.2, 2.5);
-        ctx.shadowBlur = 22;
-        ctx.shadowColor = Math.random() > 0.5 ? '#46f7ff' : '#b84bff';
-        ctx.stroke();
-        ctx.strokeStyle = ctx.shadowColor;
-        ctx.lineWidth = 0.8;
-        ctx.shadowBlur = 30;
-        ctx.stroke();
-      }
-
-      function animate(){
-        ctx.clearRect(0,0,W,H);
-        spawnArc();
-        for(let i=arcs.length-1; i>=0; i--){
-          drawArc(arcs[i]);
-          arcs[i].life--;
-          if(arcs[i].life <= 0) arcs.splice(i, 1);
-        }
-        ctx.globalAlpha = 1;
-        requestAnimationFrame(animate);
-      }
-      animate();
-    })();
-  </script>
 
   <!-- THUNDER EFFECT -->
   <script>
