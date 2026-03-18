@@ -41,7 +41,7 @@ const $ = (id) => document.getElementById(id);
 
   const rand = (a, b) => a + Math.random() * (b - a);
 
-  // Starfield: slow circular motion
+  // Starfield
   const STAR_COUNT = Math.floor(Math.max(140, Math.min(220, innerWidth * 0.16)));
   const stars = [];
 
@@ -57,9 +57,8 @@ const $ = (id) => document.getElementById(id);
         tw: rand(0.004, 0.015),
         phase: rand(0, Math.PI * 2),
         layer,
-        // Enhanced: random color tint
-        color: Math.random() > 0.85 ? 
-          (Math.random() > 0.5 ? "rgba(70,247,255,1)" : "rgba(184,75,255,1)") : 
+        color: Math.random() > 0.85 ?
+          (Math.random() > 0.5 ? "rgba(70,247,255,1)" : "rgba(184,75,255,1)") :
           "rgba(234,246,255,1)"
       });
     }
@@ -94,22 +93,21 @@ const $ = (id) => document.getElementById(id);
       bctx.beginPath();
       bctx.arc(x, y, st.r, 0, Math.PI * 2);
       bctx.fillStyle = st.color;
-      
-      // Enhanced: subtle glow for colored stars
+
       if(st.color !== "rgba(234,246,255,1)"){
         bctx.shadowBlur = 8;
         bctx.shadowColor = st.color;
       } else {
         bctx.shadowBlur = 0;
       }
-      
+
       bctx.fill();
     }
     bctx.globalAlpha = 1;
     bctx.shadowBlur = 0;
   }
 
-  // Ambient dust (enhanced with more colors)
+  // Ambient dust
   const dust = [];
   function emitDust() {
     if (!sctx) return;
