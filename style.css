@@ -393,157 +393,115 @@ body{
   --electric-accent-color: #ff4b8b;
 }
 
-/* =============================================
-   ELECTRIC CARD — Premium turbulent border
-   Matches reference CSS approach exactly
-   ============================================= */
-
-/* Outer wrapper — mood animation target */
+/* Outer wrapper — carries mood animation classes */
 .ecard-wrap {
   margin: 14px 0;
   position: relative;
   transition: all var(--mood-transition) ease;
 }
 
-/* Card container — padding:2px creates the border track */
+/* Card container — dark solid background, no extra padding */
 .ecard-container {
-  padding: 2px;
   border-radius: 20px;
   position: relative;
-  /* Dark base + subtle mood gradient — matches reference .card-container */
-  background:
-    linear-gradient(
-      -30deg,
-      rgba(var(--mood-glow1-raw), 0.25),
-      transparent,
-      rgba(var(--mood-glow2-raw), 0.20)
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(6,10,20,0.96),
-      rgba(6,10,20,0.96)
-    );
+  background: rgba(6,10,20,0.94);
   transition: background var(--mood-transition) ease;
   overflow: visible;
-  /* min-height so absolute ecard-content has space to render */
-  min-height: 60px;
 }
 
-/* Inner — relative, so ecard-main + glow layers size from here */
+/* Inner stack — positions electric border layers */
 .ecard-inner {
-  position: relative;
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ecard-border-outer — invisible structural wrapper only, NO border */
+/* ecard-border-outer — transparent, no visible static ring */
 .ecard-border-outer {
   border: none;
   border-radius: 20px;
-  /* No padding, no margin — clean slate */
+  position: absolute;
+  inset: 0;
 }
 
-/* THE electric border — position:absolute covers all 4 sides of ecard-inner
-   turbulent filter distorts it into living electric motion */
+/* Main electric border — covers ALL FOUR sides via position:absolute inset:0 */
 .ecard-main {
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
+  inset: 0;
   border-radius: 20px;
   border: 2px solid var(--electric-border-color);
   filter: url(#turbulent-displace);
   transition: border-color var(--mood-transition) ease;
   background: transparent;
-  pointer-events: none;
-  z-index: 0;
 }
 
-/* Glow layer 1 — matches reference .glow-layer-1, soft blur on all sides */
+/* Glow layer 1 — soft 2px blur ring, all four sides */
 .ecard-glow-1 {
-  border: 2px solid var(--electric-border-color);
+  border: 2.5px solid var(--electric-border-color);
   border-radius: 20px;
-  width: 100%;
-  height: 100%;
   position: absolute;
   inset: 0;
-  filter: blur(1px);
-  opacity: 0.65;
+  filter: blur(2px);
+  opacity: 0.7;
   pointer-events: none;
   transition: border-color var(--mood-transition) ease;
 }
 
-/* Glow layer 2 — matches reference .glow-layer-2, wide bloom */
+/* Glow layer 2 — wide bloom ring, all four sides */
 .ecard-glow-2 {
-  border: 2px solid var(--electric-border-color);
+  border: 3px solid var(--electric-border-color);
   border-radius: 20px;
-  width: 100%;
-  height: 100%;
   position: absolute;
-  inset: 0;
-  filter: blur(5px);
-  opacity: 0.55;
+  inset: -1px;
+  filter: blur(6px);
+  opacity: 0.5;
   pointer-events: none;
   transition: border-color var(--mood-transition) ease;
 }
 
-/* Overlay sheen 1 — matches reference .overlay-1 */
+/* Overlay sheen — subtle corner highlights only */
 .ecard-overlay-1 {
   position: absolute;
   inset: 0;
   border-radius: 20px;
-  opacity: 1;
+  opacity: 0.6;
   mix-blend-mode: overlay;
-  transform: scale(1.1);
-  filter: blur(16px);
-  background: linear-gradient(
-    -30deg,
-    white,
-    transparent 30%,
-    transparent 70%,
-    white
-  );
+  filter: blur(12px);
+  background: linear-gradient(-30deg, white, transparent 25%, transparent 75%, white);
   pointer-events: none;
 }
 
-/* Overlay sheen 2 — matches reference .overlay-2 */
 .ecard-overlay-2 {
   position: absolute;
   inset: 0;
   border-radius: 20px;
-  opacity: 0.5;
+  opacity: 0.28;
   mix-blend-mode: overlay;
-  transform: scale(1.1);
-  filter: blur(16px);
-  background: linear-gradient(
-    -30deg,
-    white,
-    transparent 30%,
-    transparent 70%,
-    white
-  );
+  filter: blur(10px);
+  background: linear-gradient(-30deg, white, transparent 25%, transparent 75%, white);
   pointer-events: none;
 }
 
-/* Background bloom — matches reference .background-glow */
+/* Background bloom — outer glow beyond card boundary */
 .ecard-bg-glow {
   position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  filter: blur(32px);
-  transform: scale(1.1);
-  opacity: 0.32;
+  inset: -8px;
+  border-radius: 24px;
+  filter: blur(22px);
+  opacity: 0.28;
   z-index: -1;
-  background: linear-gradient(
-    -30deg,
+  background: linear-gradient(135deg,
     var(--electric-border-color),
-    transparent,
+    transparent 40%,
     var(--electric-glow-color)
   );
   pointer-events: none;
   transition: background var(--mood-transition) ease;
 }
 
-/* Content — drives card height, sits above border layers */
+/* Content — sits above all border layers */
 .ecard-content {
   position: relative;
   z-index: 2;
