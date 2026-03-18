@@ -1,11 +1,10 @@
 /* =========================================================
-   AM Network — style.css
-   INTENSE GAMING + LUXURY EDITION v2
-   ✅ Orbitron font (aggressive gaming)
-   ✅ Ultra-wide viewBox for bigger name
-   ✅ Smaller link button text
-   ✅ Natural thunder flash effect
-   ✅ NO tap highlight / focus outline
+   AM-369-Network — style.css
+   MOOD CYCLING EDITION — 15 auto-shifting themes
+   ✅ Wavy animated borders
+   ✅ Multi-gradient glow moods
+   ✅ Random speed transitions
+   ✅ Rhythmic + wavy + pulse + storm cycles
    ========================================================= */
 
 :root{
@@ -33,6 +32,23 @@
   --glitchSpeed: 2.5s;
   --pulseSpeed: 1.8s;
   --chromeSpeed: 3s;
+
+  /* MOOD SYSTEM — JS overrides these at runtime */
+  --mood-c1: #46f7ff;
+  --mood-c2: #b84bff;
+  --mood-c3: #ff4b8b;
+  --mood-glow1: rgba(70,247,255,0.55);
+  --mood-glow2: rgba(184,75,255,0.35);
+  --mood-glow3: rgba(255,75,139,0.25);
+  --mood-border-opacity: 0.72;
+  --mood-wave-dur: 3s;
+  --mood-glow1-raw: 70,247,255;
+  --mood-glow2-raw: 184,75,255;
+  --mood-glow3-raw: 255,75,139;
+  --mood-pulse-scale: 1.0;
+  --mood-border-radius: 16px;
+  --mood-bg-tint: rgba(6,10,20,0.75);
+  --mood-transition: 2.5s;
 }
 
 *{ box-sizing:border-box; }
@@ -62,9 +78,7 @@ body{
   opacity: 0;
   transition: opacity 0.05s ease-out;
 }
-.thunder-flash.active{
-  opacity: 1;
-}
+.thunder-flash.active{ opacity: 1; }
 
 /* Glitch overlay */
 .glitch-overlay{
@@ -73,7 +87,7 @@ body{
   z-index: 100;
   pointer-events: none;
   opacity: 0;
-  background: 
+  background:
     repeating-linear-gradient(
       0deg,
       transparent,
@@ -84,9 +98,7 @@ body{
   mix-blend-mode: overlay;
   transition: opacity 0.04s;
 }
-.glitch-overlay.active{
-  opacity: 1;
-}
+.glitch-overlay.active{ opacity: 1; }
 .glitch-overlay::before{
   content: '';
   position: absolute;
@@ -130,11 +142,11 @@ body{
 }
 .edge-top,.edge-bottom{
   left:0; right:0; height:14px;
-  background: linear-gradient(90deg, 
-    rgba(70,247,255,.0), 
-    rgba(70,247,255,.28), 
+  background: linear-gradient(90deg,
+    rgba(70,247,255,.0),
+    rgba(70,247,255,.28),
     rgba(255,255,255,.45),
-    rgba(184,75,255,.28), 
+    rgba(184,75,255,.28),
     rgba(255,75,139,.18),
     rgba(70,247,255,.0)
   );
@@ -145,11 +157,11 @@ body{
 
 .edge-left,.edge-right{
   top:0; bottom:0; width:14px;
-  background: linear-gradient(180deg, 
-    rgba(70,247,255,.0), 
-    rgba(70,247,255,.28), 
+  background: linear-gradient(180deg,
+    rgba(70,247,255,.0),
+    rgba(70,247,255,.28),
     rgba(255,255,255,.45),
-    rgba(184,75,255,.28), 
+    rgba(184,75,255,.28),
     rgba(255,75,139,.18),
     rgba(70,247,255,.0)
   );
@@ -190,7 +202,7 @@ body{
 }
 
 /* ============================================
-   NAME SVG - ULTRA WIDE for MAXIMUM size
+   NAME SVG
    ============================================ */
 #nameSvg{
   width: 100%;
@@ -198,11 +210,9 @@ body{
   height: auto;
   display: block;
   margin: 0 auto 8px;
-  /* Push to edges */
   padding: 0 5px;
 }
 
-/* Spark/effect canvases - match wider size */
 #nameSparks,
 #diamondSparks,
 #arcLightning,
@@ -222,21 +232,17 @@ body{
 #diamondSparks{ z-index: 12; }
 #arcLightning{ z-index: 11; }
 
-/* Thunder bolt - FIXED, fullscreen, behind everything except bg */
 #thunderBolt{
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   z-index: 1;
   pointer-events: none;
 }
 
 /* ============================================
-   NAME TEXT - AUDIOWIDE FONT (clean gaming)
+   NAME TEXT
    ============================================ */
-
 .name{
   font-family: "Audiowide", 'Rajdhani', system-ui, sans-serif;
   font-weight: 400;
@@ -246,31 +252,17 @@ body{
   text-anchor: middle;
 }
 
-/* Tablets - reduce to fit without clipping */
 @media (min-width: 481px) and (max-width: 850px){
-  .name{
-    letter-spacing: 5px;
-    font-size: clamp(44px, 9vw, 58px);
-  }
+  .name{ letter-spacing: 5px; font-size: clamp(44px, 9vw, 58px); }
 }
-
-/* Phones - KEEP AS IS (already fits perfectly) */
 @media (max-width: 480px){
-  .name{
-    letter-spacing: 4px;
-    font-size: clamp(42px, 13vw, 60px);
-  }
+  .name{ letter-spacing: 4px; font-size: clamp(42px, 13vw, 60px); }
   #nameSparks, #diamondSparks, #arcLightning, #thunderBolt{ height: 200px; }
 }
-
 @media (max-width: 380px){
-  .name{
-    letter-spacing: 3px;
-    font-size: clamp(38px, 14vw, 55px);
-  }
+  .name{ letter-spacing: 3px; font-size: clamp(38px, 14vw, 55px); }
 }
 
-/* RGB GLITCH - Red */
 .name.glitch-r{
   fill: rgba(0,0,0,0);
   stroke: url(#redShift);
@@ -286,7 +278,6 @@ body{
   99%{ opacity: 0; transform: translate(0, 0); }
 }
 
-/* RGB GLITCH - Cyan */
 .name.glitch-c{
   fill: rgba(0,0,0,0);
   stroke: url(#cyanShift);
@@ -303,7 +294,6 @@ body{
   98%{ opacity: 0; transform: translate(0, 0); }
 }
 
-/* Chrome metallic base */
 .name.chrome-base{
   fill: url(#chromeGrad);
   fill-opacity: 0.12;
@@ -312,7 +302,6 @@ body{
   filter: url(#chrome);
 }
 
-/* Main neon stroke (controlled glow) */
 .name.neon{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
@@ -322,7 +311,7 @@ body{
   paint-order: stroke;
   opacity: 0.9;
   animation: neonPulse var(--pulseSpeed) ease-in-out infinite;
-  filter: 
+  filter:
     drop-shadow(0 0 6px rgba(70,247,255,.30))
     drop-shadow(0 0 12px rgba(184,75,255,.20));
 }
@@ -331,7 +320,6 @@ body{
   50%{ opacity: .92; }
 }
 
-/* Electric pulse (controlled) */
 .name.pulse{
   fill: rgba(0,0,0,0);
   stroke: url(#strokeGrad);
@@ -340,7 +328,7 @@ body{
   stroke-linecap: round;
   opacity: .45;
   animation: electricPulse 1.6s ease-in-out infinite;
-  filter: 
+  filter:
     drop-shadow(0 0 8px rgba(70,247,255,.35))
     drop-shadow(0 0 14px rgba(184,75,255,.25));
 }
@@ -351,7 +339,6 @@ body{
   75%{ opacity: .50; stroke-width: 4; }
 }
 
-/* Chrome shine (subtle) */
 .name.chrome-shine{
   fill: rgba(0,0,0,0);
   stroke: url(#chromeGrad);
@@ -366,7 +353,6 @@ body{
   50%{ opacity: 0.30; }
 }
 
-/* Metallic wave sweep (controlled) */
 .name.wave{
   fill: rgba(0,0,0,0);
   stroke: url(#waveGlow);
@@ -380,7 +366,6 @@ body{
     drop-shadow(0 0 14px rgba(184,75,255,.15));
 }
 
-/* Glitch displacement */
 .name.glitch-main{
   fill: rgba(0,0,0,0);
   stroke: rgba(255,255,255,0.12);
@@ -398,30 +383,204 @@ body{
   font-weight: 500;
 }
 
-/* Cards */
-.card{
-  margin: 14px 0;
-  background: var(--glass);
-  border: 1px solid var(--stroke);
-  border-radius: var(--r);
-  box-shadow: var(--shadow);
-  padding: 14px;
-  backdrop-filter: blur(14px);
-  position: relative;
-  overflow: hidden;
+/* ============================================
+   ELECTRIC CARDS — MOOD CYCLING SYSTEM
+   ============================================ */
+
+:root {
+  --electric-border-color: #46f7ff;
+  --electric-glow-color: #b84bff;
+  --electric-accent-color: #ff4b8b;
 }
 
-.card::before{
-  content: '';
+/* Outer wrapper — carries mood animation classes */
+.ecard-wrap {
+  margin: 14px 0;
+  position: relative;
+  transition: all var(--mood-transition) ease;
+}
+
+/* The card-container equivalent */
+.ecard-container {
+  padding: 2px;
+  border-radius: 20px;
+  position: relative;
+  background:
+    linear-gradient(-30deg,
+      rgba(var(--mood-glow1-raw), 0.22),
+      transparent,
+      rgba(var(--mood-glow2-raw), 0.18)
+    ),
+    linear-gradient(to bottom,
+      rgba(6,10,20,0.92),
+      rgba(6,10,20,0.92)
+    );
+  transition: background var(--mood-transition) ease;
+}
+
+/* Inner border stack */
+.ecard-inner {
+  position: relative;
+}
+
+.ecard-border-outer {
+  border: 2px solid rgba(var(--mood-glow1-raw), 0.45);
+  border-radius: 20px;
+  padding-right: 4px;
+  padding-bottom: 4px;
+  transition: border-color var(--mood-transition) ease;
+}
+
+/* Main card surface — turbulent displacement applied here */
+.ecard-main {
+  width: 100%;
+  min-height: 8px;
+  border-radius: 20px;
+  border: 2px solid var(--electric-border-color);
+  margin-top: -4px;
+  margin-left: -4px;
+  filter: url(#turbulent-displace);
+  transition: border-color var(--mood-transition) ease;
+}
+
+/* Glow layer 1 — soft blur */
+.ecard-glow-1 {
+  border: 2px solid rgba(var(--mood-glow1-raw), 0.55);
+  border-radius: 20px;
+  width: 100%; height: 100%;
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(ellipse at 15% 0%, rgba(70,247,255,0.06), transparent 45%),
-    radial-gradient(ellipse at 85% 100%, rgba(184,75,255,0.05), transparent 45%);
+  filter: blur(1px);
+  pointer-events: none;
+  transition: border-color var(--mood-transition) ease;
+}
+
+/* Glow layer 2 — wider blur */
+.ecard-glow-2 {
+  border: 2px solid var(--electric-border-color);
+  border-radius: 20px;
+  width: 100%; height: 100%;
+  position: absolute;
+  inset: 0;
+  filter: blur(4px);
+  pointer-events: none;
+  transition: border-color var(--mood-transition) ease;
+}
+
+/* Overlay sheen 1 */
+.ecard-overlay-1 {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 1;
+  mix-blend-mode: overlay;
+  transform: scale(1.08);
+  filter: blur(14px);
+  background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
   pointer-events: none;
 }
 
-.sectionTitle{
+/* Overlay sheen 2 — lighter */
+.ecard-overlay-2 {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 0.45;
+  mix-blend-mode: overlay;
+  transform: scale(1.08);
+  filter: blur(14px);
+  background: linear-gradient(-30deg, white, transparent 30%, transparent 70%, white);
+  pointer-events: none;
+}
+
+/* Background bloom glow */
+.ecard-bg-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  filter: blur(32px);
+  transform: scale(1.12);
+  opacity: 0.32;
+  z-index: -1;
+  background: linear-gradient(-30deg,
+    var(--electric-border-color),
+    transparent,
+    var(--electric-glow-color)
+  );
+  pointer-events: none;
+  transition: background var(--mood-transition) ease;
+}
+
+/* Content sits above all layers */
+.ecard-content {
+  position: relative;
+  z-index: 2;
+  padding: 16px 14px;
+}
+
+/* Mood animation classes on ecard-wrap */
+@keyframes ecardWavy {
+  0%  { border-radius: 20px 20px 20px 20px; }
+  20% { border-radius: 26px 14px 22px 16px; }
+  40% { border-radius: 14px 24px 16px 24px; }
+  60% { border-radius: 22px 16px 26px 14px; }
+  80% { border-radius: 16px 22px 14px 22px; }
+  100%{ border-radius: 20px 20px 20px 20px; }
+}
+@keyframes ecardRhythmic {
+  0%,100%{ transform: scale(1); }
+  50%{ transform: scale(1.004); }
+}
+@keyframes ecardStorm {
+  0%  { border-radius: 16px 22px 18px 24px; }
+  15% { border-radius: 24px 16px 22px 14px; }
+  30% { border-radius: 14px 24px 16px 22px; }
+  45% { border-radius: 22px 14px 24px 16px; }
+  60% { border-radius: 20px 18px 14px 24px; }
+  75% { border-radius: 14px 24px 20px 18px; }
+  100%{ border-radius: 16px 22px 18px 24px; }
+}
+
+@keyframes ecardGlowA {
+  0%,100%{ box-shadow: 0 0 14px rgba(var(--mood-glow1-raw),0.45), 0 0 36px rgba(var(--mood-glow2-raw),0.28); }
+  50%    { box-shadow: 0 0 28px rgba(var(--mood-glow1-raw),0.65), 0 0 60px rgba(var(--mood-glow2-raw),0.40), 0 0 16px rgba(var(--mood-glow3-raw),0.30); }
+}
+@keyframes ecardGlowB {
+  0%  { box-shadow: 0 0 10px rgba(var(--mood-glow1-raw),0.35); }
+  33% { box-shadow: 0 0 24px rgba(var(--mood-glow2-raw),0.55), 0 0 45px rgba(var(--mood-glow3-raw),0.30); }
+  66% { box-shadow: 0 0 18px rgba(var(--mood-glow3-raw),0.45), 0 0 32px rgba(var(--mood-glow1-raw),0.35); }
+  100%{ box-shadow: 0 0 10px rgba(var(--mood-glow1-raw),0.35); }
+}
+@keyframes ecardGlowC {
+  0%,100%{ box-shadow: 0 0 6px rgba(var(--mood-glow2-raw),0.30); }
+  25%{ box-shadow: 0 0 40px rgba(var(--mood-glow1-raw),0.55), 0 0 18px rgba(var(--mood-glow3-raw),0.35); }
+  50%{ box-shadow: 0 0 12px rgba(var(--mood-glow2-raw),0.40); }
+  75%{ box-shadow: 0 0 32px rgba(var(--mood-glow3-raw),0.50), 0 0 48px rgba(var(--mood-glow2-raw),0.38); }
+}
+
+.ecard-wrap.mood-wavy .ecard-container {
+  animation: ecardWavy var(--mood-wave-dur) ease-in-out infinite, ecardGlowA calc(var(--mood-wave-dur)*1.3) ease-in-out infinite;
+}
+.ecard-wrap.mood-rhythmic .ecard-container {
+  animation: ecardRhythmic var(--mood-wave-dur) ease-in-out infinite, ecardGlowB calc(var(--mood-wave-dur)*0.9) ease-in-out infinite;
+}
+.ecard-wrap.mood-storm .ecard-container {
+  animation: ecardStorm calc(var(--mood-wave-dur)*0.6) ease-in-out infinite, ecardGlowC calc(var(--mood-wave-dur)*1.1) ease-in-out infinite;
+}
+.ecard-wrap.mood-pulse .ecard-container {
+  animation: ecardRhythmic calc(var(--mood-wave-dur)*2) ease-in-out infinite, ecardGlowA calc(var(--mood-wave-dur)*1.5) ease-in-out infinite;
+}
+
+/* sectionTitle + list + skeleton always above layers */
+.sectionTitle,
+.list,
+.skeleton,
+.btn {
+  position: relative;
+  z-index: 1;
+}
+
+.sectionTitle {
   margin: 0 0 10px;
   letter-spacing: 4px;
   color: rgba(234,246,255,.82);
@@ -438,9 +597,8 @@ body{
 .list{ display:flex; flex-direction:column; gap: 10px; }
 
 /* ============================================
-   BUTTONS - SMALLER TEXT + NO TAP HIGHLIGHT
+   BUTTONS
    ============================================ */
-
 .btn{
   display:flex;
   align-items:center;
@@ -452,47 +610,32 @@ body{
   border-radius: 14px;
   border: 1px solid rgba(140, 210, 255, .22);
   background: rgba(6,10,20,.50);
-  box-shadow: 
+  box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.03),
     0 4px 22px rgba(0,0,0,0.35);
   transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
   position: relative;
   overflow: hidden;
-  
-  /* ✅ SMALLER FONT SIZE */
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.5px;
-
-  /* ✅ COMPLETE TAP HIGHLIGHT REMOVAL */
   -webkit-tap-highlight-color: transparent !important;
   -webkit-touch-callout: none !important;
   -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
   user-select: none !important;
   outline: none !important;
-  outline-style: none !important;
-  outline-width: 0 !important;
 }
 
 @media (max-width: 480px){
-  .btn{
-    padding: 12px 12px;
-    font-size: 13px;
-    gap: 8px;
-  }
+  .btn{ padding: 12px 12px; font-size: 13px; gap: 8px; }
 }
 
-/* Remove ALL focus states */
 .btn:focus,
 .btn:focus-visible,
 .btn:focus-within,
 .btn:-moz-focusring{
   outline: none !important;
-  outline-style: none !important;
-  outline-width: 0 !important;
-  box-shadow: 
+  box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.03),
     0 4px 22px rgba(0,0,0,0.35) !important;
 }
@@ -501,12 +644,11 @@ body{
   border-color: rgba(70, 247, 255, 0.45) !important;
 }
 
-/* Hover glow */
 .btn::before{
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, 
+  background: linear-gradient(90deg,
     transparent,
     rgba(70,247,255,0.06),
     rgba(184,75,255,0.06),
@@ -516,23 +658,21 @@ body{
   transition: opacity 0.25s ease;
 }
 
-.btn:hover::before{
-  opacity: 1;
-}
+.btn:hover::before{ opacity: 1; }
 
 .btn:hover{
   transform: translateY(-2px);
   border-color: rgba(70, 247, 255, 0.38);
-  box-shadow: 
+  box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.05),
     0 8px 32px rgba(0,0,0,0.42),
     0 0 22px rgba(70,247,255,0.12);
 }
 
-.btn:active{ 
-  transform: translateY(0px) scale(.97); 
+.btn:active{
+  transform: translateY(0px) scale(.97);
   border-color: rgba(184, 75, 255, 0.42);
-  box-shadow: 
+  box-shadow:
     inset 0 0 0 1px rgba(184,75,255,.12),
     0 2px 12px rgba(0,0,0,0.32);
 }
@@ -587,18 +727,15 @@ body{
   .name.chrome-shine{ animation: none !important; }
   .glitch-overlay{ display: none !important; }
   .thunder-flash{ display: none !important; }
+  .ecard-wrap .ecard-container{ animation: none !important; }
 }
 
 /* Global tap highlight fix */
-*{
-  -webkit-tap-highlight-color: transparent;
-}
-
+*{ -webkit-tap-highlight-color: transparent; }
 a, button, input, select, textarea{
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
-
 a:focus, button:focus, input:focus, select:focus, textarea:focus{
   outline: none;
 }
