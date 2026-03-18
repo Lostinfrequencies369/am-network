@@ -5,349 +5,548 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AM-369-Network</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-
 @property --angle-1 {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: -75deg;
+  syntax: "<angle>"; inherits: false; initial-value: -75deg;
 }
 @property --angle-2 {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: -45deg;
+  syntax: "<angle>"; inherits: false; initial-value: -45deg;
 }
 
-*, *::before, *::after {
-  margin: 0; padding: 0; box-sizing: border-box;
-}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; background:#000; font-family:"Montserrat",sans-serif; -webkit-font-smoothing:antialiased; }
 
-body, html, #app {
+/* Fire canvas */
+#fireCanvas {
+  position: fixed; inset: 0; z-index: 0;
   width: 100%; height: 100%;
 }
 
-body {
-  touch-action: none;
-  background: #0a0805;
-  overflow: hidden;
-  font-family: "Montserrat", sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-#app {
-  height: 100%;
-  position: relative;
-}
-
-#canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
-
-/* ── HERO ─────────────────────────────────────── */
-.hero {
-  position: relative;
-  z-index: 10;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+/* Heat distortion canvas — filtered on top of fire */
+#heatCanvas {
+  position: fixed; inset: 0; z-index: 1;
+  width: 100%; height: 100%;
   pointer-events: none;
-  padding: 24px;
+  filter: blur(4px) contrast(8);
+  mix-blend-mode: screen;
+  opacity: 0.06;
 }
 
-.welcome-text {
-  font-size: clamp(11px, 2.8vw, 15px);
+/* Dark vignette overlay */
+#vignette {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse 90% 80% at 50% 110%,
+    transparent 0%,
+    rgba(0,0,0,0.2) 45%,
+    rgba(0,0,0,0.72) 100%
+  );
+}
+
+/* Hero */
+.hero {
+  position: relative; z-index: 10;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0; padding: 24px; text-align: center;
+  pointer-events: none;
+}
+
+.welcome-line {
+  font-size: clamp(12px, 3.5vw, 16px);
   font-weight: 500;
   letter-spacing: 6px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-  text-shadow: 0 0 20px rgba(0,0,0,1);
-  margin-bottom: 2px;
-}
-
-.hero-name {
-  font-size: clamp(34px, 9vw, 68px);
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #fff;
-  text-shadow: 0 0 40px rgba(0,0,0,1), 0 0 80px rgba(0,0,0,0.5);
-  line-height: 1.05;
+  white-space: nowrap;
+  color: rgba(255,200,100,0.8);
+  text-shadow: 0 0 24px rgba(255,100,0,0.7), 0 0 60px rgba(255,50,0,0.3);
+  margin-bottom: 8px;
+  width: 100%;
   text-align: center;
-  letter-spacing: 3px;
 }
 
-.hero-sub {
-  font-size: clamp(16px, 4.5vw, 26px);
-  font-weight: 600;
-  letter-spacing: 5px;
+.main-title {
+  font-size: clamp(24px, 7vw, 68px);
+  font-weight: 800;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.48);
-  text-shadow: 0 0 20px rgba(0,0,0,1);
-  margin-top: 4px;
-  margin-bottom: 28px;
+  letter-spacing: clamp(1px, 1.5vw, 4px);
+  line-height: 1.05;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow:
+    0 0 18px rgba(255,140,0,1),
+    0 0 40px rgba(255,60,0,0.7),
+    0 0 90px rgba(255,20,0,0.35);
+  margin-bottom: 10px;
+  width: 100%;
+  text-align: center;
 }
 
-/* ── BUTTON ───────────────────────────────────── */
+.subtitle {
+  font-size: clamp(9px, 2.8vw, 14px);
+  font-weight: 400;
+  letter-spacing: clamp(1px, 1vw, 3px);
+  text-transform: uppercase;
+  font-style: italic;
+  white-space: nowrap;
+  color: rgba(255,175,70,0.65);
+  text-shadow: 0 0 18px rgba(255,80,0,0.5);
+  margin-bottom: 44px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Button */
 :root {
-  --global--size: clamp(1rem, 2.5vw, 1.4rem);
+  --global--size: clamp(0.88rem,2.1vw,1.18rem);
   --anim--hover-time: 400ms;
-  --anim--hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --anim--hover-ease: cubic-bezier(0.25,1,0.5,1);
 }
-
 .button-wrap {
-  position: relative;
-  z-index: 2;
-  border-radius: 999vw;
-  background: transparent;
-  pointer-events: auto;
+  position:relative; border-radius:999vw;
+  pointer-events:auto;
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
   font-size: var(--global--size);
 }
-
 .button-shadow {
   --shadow-cuttoff-fix: 2em;
-  position: absolute;
+  position:absolute;
   width: calc(100% + var(--shadow-cuttoff-fix));
   height: calc(100% + var(--shadow-cuttoff-fix));
-  top: calc(0% - var(--shadow-cuttoff-fix) / 2);
-  left: calc(0% - var(--shadow-cuttoff-fix) / 2);
-  filter: blur(clamp(2px, 0.125em, 12px));
-  overflow: visible;
-  pointer-events: none;
+  top: calc(0% - var(--shadow-cuttoff-fix)/2);
+  left: calc(0% - var(--shadow-cuttoff-fix)/2);
+  filter: blur(clamp(2px,0.125em,12px));
+  overflow:visible; pointer-events:none;
 }
-
 .button-shadow::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  border-radius: 999vw;
-  background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.18));
+  content:""; position:absolute; border-radius:999vw;
+  background: linear-gradient(180deg, rgba(255,80,0,0.3), rgba(200,30,0,0.15));
   width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
   height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
   top: calc(var(--shadow-cuttoff-fix) - 0.5em);
   left: calc(var(--shadow-cuttoff-fix) - 0.875em);
-  padding: 0.125em;
-  box-sizing: border-box;
+  padding:0.125em;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  opacity: 1;
 }
-
 .enter-btn {
-  --border-width: clamp(1px, 0.0625em, 4px);
-  all: unset;
-  cursor: pointer;
-  position: relative;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  pointer-events: auto;
-  z-index: 3;
-  background: linear-gradient(
-    -75deg,
-    rgba(255,255,255,0.08),
-    rgba(255,255,255,0.25),
-    rgba(255,255,255,0.08)
-  );
-  border-radius: 999vw;
+  --border-width: clamp(1px,0.0625em,4px);
+  all:unset; cursor:pointer; position:relative;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  pointer-events:auto; z-index:3;
+  background: linear-gradient(-75deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+  border-radius:999vw;
   box-shadow:
-    inset 0 0.125em 0.125em rgba(0,0,0,0.08),
-    inset 0 -0.125em 0.125em rgba(255,255,255,0.5),
-    0 0.25em 0.125em -0.125em rgba(0,0,0,0.3),
-    0 0 0.1em 0.25em inset rgba(255,255,255,0.2),
-    0 0 0 0 rgba(255,255,255,1);
-  backdrop-filter: blur(clamp(1px, 0.125em, 4px));
-  -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+    inset 0 0.125em 0.125em rgba(0,0,0,0.1),
+    inset 0 -0.125em 0.125em rgba(255,255,255,0.4),
+    0 0.25em 0.125em -0.125em rgba(0,0,0,0.4),
+    0 0 0.1em 0.25em inset rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
 }
-
 .enter-btn:hover {
-  transform: scale(0.975);
-  box-shadow:
-    inset 0 0.125em 0.125em rgba(0,0,0,0.05),
-    inset 0 -0.125em 0.125em rgba(255,255,255,0.5),
-    0 0.15em 0.05em -0.1em rgba(0,0,0,0.3),
-    0 0 0.05em 0.1em inset rgba(255,255,255,0.5),
-    0 0 0 0 rgba(255,255,255,1);
-}
-
-.enter-btn span {
-  position: relative;
-  display: block;
-  user-select: none;
-  font-family: "Montserrat", sans-serif;
-  letter-spacing: 0.08em;
-  font-weight: 600;
-  font-size: 1em;
-  color: rgba(255,255,255,0.92);
-  text-shadow: 0em 0.1em 0.2em rgba(0,0,0,0.5);
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  padding-inline: 2em;
-  padding-block: 0.9em;
-}
-
-.enter-btn:hover span {
-  text-shadow: 0.025em 0.025em 0.025em rgba(0,0,0,0.3);
-}
-
-.enter-btn span::after {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: 3;
-  width: calc(100% - var(--border-width));
-  height: calc(100% - var(--border-width));
-  top: calc(0% + var(--border-width) / 2);
-  left: calc(0% + var(--border-width) / 2);
-  box-sizing: border-box;
-  border-radius: 999vw;
-  overflow: clip;
-  background: linear-gradient(
-    var(--angle-2),
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.5) 40% 50%,
-    rgba(255,255,255,0) 55%
-  );
-  mix-blend-mode: screen;
-  pointer-events: none;
-  background-size: 200% 200%;
-  background-position: 0% 50%;
-  transition:
-    background-position calc(var(--anim--hover-time) * 1.25) var(--anim--hover-ease),
-    --angle-2 calc(var(--anim--hover-time) * 1.25) var(--anim--hover-ease);
-}
-
-.enter-btn:hover span::after { background-position: 25% 50%; }
-.enter-btn:active span::after { background-position: 50% 15%; --angle-2: -15deg; }
-
-.enter-btn::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  border-radius: 999vw;
-  width: calc(100% + var(--border-width));
-  height: calc(100% + var(--border-width));
-  top: calc(0% - var(--border-width) / 2);
-  left: calc(0% - var(--border-width) / 2);
-  padding: var(--border-width);
-  box-sizing: border-box;
-  background: conic-gradient(
-    from var(--angle-1) at 50% 50%,
-    rgba(255,255,255,0.6),
-    rgba(255,255,255,0) 5% 40%,
-    rgba(255,255,255,0.6) 50%,
-    rgba(255,255,255,0) 60% 95%,
-    rgba(255,255,255,0.6)
-  ),
-  linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0.4));
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease), --angle-1 500ms ease;
-  box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255,255,255,0.4);
-}
-
-.enter-btn:hover::after { --angle-1: -125deg; }
-.enter-btn:active::after { --angle-1: -75deg; }
-
-.button-wrap:has(.enter-btn:hover) .button-shadow {
-  filter: blur(clamp(2px, 0.0625em, 6px));
-}
-
-.button-wrap:has(.enter-btn:hover) .button-shadow::after {
-  top: calc(var(--shadow-cuttoff-fix) - 0.875em);
-}
-
-.button-wrap:has(.enter-btn:active) {
-  transform: rotate3d(1, 0, 0, 25deg);
-}
-
-.button-wrap:has(.enter-btn:active) .enter-btn {
+  transform:scale(0.975);
   box-shadow:
     inset 0 0.125em 0.125em rgba(0,0,0,0.08),
     inset 0 -0.125em 0.125em rgba(255,255,255,0.5),
-    0 0.125em 0.125em -0.125em rgba(0,0,0,0.2),
-    0 0 0.1em 0.25em inset rgba(255,255,255,0.2),
-    0 0.225em 0.05em 0 rgba(0,0,0,0.08),
-    0 0.25em 0 0 rgba(255,255,255,0.5),
-    inset 0 0.25em 0.05em 0 rgba(0,0,0,0.2);
+    0 0.15em 0.05em -0.1em rgba(0,0,0,0.35),
+    0 0 0.05em 0.1em inset rgba(255,255,255,0.4);
 }
+.enter-btn span {
+  position:relative; display:block; user-select:none;
+  font-family:"Montserrat",sans-serif;
+  letter-spacing:0.12em; font-weight:600; font-size:1em;
+  color:rgba(255,255,255,0.95);
+  text-shadow: 0 0 14px rgba(255,100,0,0.6), 0 0.1em 0.2em rgba(0,0,0,0.5);
+  transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  padding-inline:2.2em; padding-block:0.9em;
+}
+.enter-btn span::after {
+  content:""; display:block; position:absolute; z-index:3;
+  width:calc(100% - var(--border-width));
+  height:calc(100% - var(--border-width));
+  top:calc(0% + var(--border-width)/2);
+  left:calc(0% + var(--border-width)/2);
+  box-sizing:border-box; border-radius:999vw; overflow:clip;
+  background: linear-gradient(var(--angle-2),
+    rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 40% 50%, rgba(255,255,255,0) 55%);
+  mix-blend-mode:screen; pointer-events:none;
+  background-size:200% 200%; background-position:0% 50%;
+  transition:
+    background-position calc(var(--anim--hover-time)*1.25) var(--anim--hover-ease),
+    --angle-2 calc(var(--anim--hover-time)*1.25) var(--anim--hover-ease);
+}
+.enter-btn:hover span::after { background-position:25% 50%; }
+.enter-btn:active span::after { background-position:50% 15%; --angle-2:-15deg; }
+.enter-btn::after {
+  content:""; position:absolute; z-index:1; inset:0; border-radius:999vw;
+  width:calc(100% + var(--border-width));
+  height:calc(100% + var(--border-width));
+  top:calc(0% - var(--border-width)/2);
+  left:calc(0% - var(--border-width)/2);
+  padding:var(--border-width); box-sizing:border-box;
+  background: conic-gradient(from var(--angle-1) at 50% 50%,
+    rgba(255,150,50,0.85), rgba(255,150,50,0) 5% 40%,
+    rgba(255,150,50,0.85) 50%, rgba(255,150,50,0) 60% 95%, rgba(255,150,50,0.85)),
+  linear-gradient(180deg, rgba(255,120,30,0.4), rgba(255,80,0,0.4));
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite:exclude;
+  transition: all var(--anim--hover-time) var(--anim--hover-ease), --angle-1 500ms ease;
+}
+.enter-btn:hover::after { --angle-1:-125deg; }
+.enter-btn:active::after { --angle-1:-75deg; }
+.button-wrap:has(.enter-btn:active) { transform:rotate3d(1,0,0,25deg); }
+.button-wrap:has(.enter-btn:hover) .button-shadow { filter:blur(clamp(2px,0.0625em,6px)); }
 
-/* ── FADE OUT ─────────────────────────────────── */
-@keyframes fadeOut {
-  to { opacity: 0; }
-}
-.fading {
-  animation: fadeOut 0.55s ease forwards;
-}
-
+@keyframes pageFadeOut { to { opacity:0; } }
+.fading { animation: pageFadeOut 0.55s ease forwards; }
 </style>
 </head>
 <body>
-<div id="app">
-  <canvas id="canvas"></canvas>
 
-  <div class="hero">
-    <p class="welcome-text">Welcome to</p>
-    <h1 class="hero-name">Dr. Ankit Malik</h1>
-    <p class="hero-sub">AM · 369 · Network</p>
+<canvas id="fireCanvas"></canvas>
+<canvas id="heatCanvas"></canvas>
+<div id="vignette"></div>
 
-    <!-- Premium glass button -->
-    <div class="button-wrap">
-      <button class="enter-btn" id="enterBtn">
-        <span>Press here to enter</span>
-      </button>
-      <div class="button-shadow"></div>
-    </div>
+<div class="hero" id="heroContent">
+  <p class="welcome-line">Welcome to</p>
+  <h1 class="main-title">AM-369-Network</h1>
+  <p class="subtitle">Designed by Dr. Ankit Malik</p>
+  <div class="button-wrap">
+    <button class="enter-btn" id="enterBtn">
+      <span>Press here to enter</span>
+    </button>
+    <div class="button-shadow"></div>
   </div>
 </div>
 
-<script type="module">
-import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js"
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  PERLIN NOISE — classic implementation
+// ═══════════════════════════════════════════════════════════════
+const Perlin = (() => {
+  const perm = new Uint8Array(512)
+  const p = new Uint8Array(256)
+  for (let i = 0; i < 256; i++) p[i] = i
+  for (let i = 255; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [p[i], p[j]] = [p[j], p[i]]
+  }
+  for (let i = 0; i < 512; i++) perm[i] = p[i & 255]
 
-const app = TubesCursor(document.getElementById('canvas'), {
-  tubes: {
-    colors: ["#f967fb", "#53bc28", "#6958d5"],
-    lights: {
-      intensity: 200,
-      colors: ["#83f36e", "#fe8a2e", "#ff008a", "#60aed5"]
+  const fade = t => t * t * t * (t * (t * 6 - 15) + 10)
+  const lerp  = (a, b, t) => a + t * (b - a)
+  const grad  = (hash, x, y) => {
+    const h = hash & 3
+    const u = h < 2 ? x : y
+    const v = h < 2 ? y : x
+    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v)
+  }
+
+  return {
+    noise(x, y) {
+      const X = Math.floor(x) & 255
+      const Y = Math.floor(y) & 255
+      x -= Math.floor(x); y -= Math.floor(y)
+      const u = fade(x), v = fade(y)
+      const a  = perm[X] + Y,   b  = perm[X+1] + Y
+      return lerp(
+        lerp(grad(perm[a],   x,   y), grad(perm[b],   x-1, y),   u),
+        lerp(grad(perm[a+1], x,   y-1), grad(perm[b+1], x-1, y-1), u),
+        v
+      )
     }
   }
-})
+})()
 
-function randomColors(n) {
-  return Array.from({length: n}, () =>
-    "#" + Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0')
-  )
+// ═══════════════════════════════════════════════════════════════
+//  CANVAS SETUP
+// ═══════════════════════════════════════════════════════════════
+const fireCanvas = document.getElementById('fireCanvas')
+const heatCanvas = document.getElementById('heatCanvas')
+const fctx = fireCanvas.getContext('2d')
+const hctx = heatCanvas.getContext('2d')
+
+let W, H
+function resize() {
+  W = fireCanvas.width  = heatCanvas.width  = window.innerWidth
+  H = fireCanvas.height = heatCanvas.height = window.innerHeight
+}
+resize()
+window.addEventListener('resize', resize)
+
+// ═══════════════════════════════════════════════════════════════
+//  FUEL SOURCES — multiple hotspots across bottom
+// ═══════════════════════════════════════════════════════════════
+function getFuelPoints() {
+  const count   = 7
+  const points  = []
+  for (let i = 0; i < count; i++) {
+    const t = i / (count - 1)
+    points.push({
+      x: W * (0.12 + t * 0.76),
+      y: H,
+      intensity: 0.5 + Math.sin(t * Math.PI) * 0.5   // center brighter
+    })
+  }
+  return points
 }
 
-// Button click → randomize colors + redirect
-const enterBtn = document.getElementById('enterBtn')
-const appEl    = document.getElementById('app')
+// ═══════════════════════════════════════════════════════════════
+//  PARTICLE CLASS
+// ═══════════════════════════════════════════════════════════════
+const FIRE_COUNT  = 1800
+const SMOKE_COUNT = 220
+const EMBER_COUNT = 120
+const allParticles = []
 
-enterBtn.addEventListener('click', (e) => {
-  e.stopPropagation()
-  // Randomize tubes on click
-  app.tubes.setColors(randomColors(3))
-  app.tubes.setLightsColors(randomColors(4))
-  // Fade out and redirect
-  appEl.classList.add('fading')
-  setTimeout(() => {
-    window.location.href = 'links.html'
-  }, 560)
-})
+let noiseTime = 0   // advances each frame for animated turbulence
 
-// Background click → only randomize colors, no redirect
-document.body.addEventListener('click', (e) => {
-  if (e.target !== enterBtn && !enterBtn.contains(e.target)) {
-    app.tubes.setColors(randomColors(3))
-    app.tubes.setLightsColors(randomColors(4))
+class Particle {
+  constructor(type, init) {
+    this.type = type   // 'fire' | 'smoke' | 'ember'
+    this.reset(init)
   }
+
+  reset(init = false) {
+    const fuels = getFuelPoints()
+    const fuel  = fuels[Math.floor(Math.random() * fuels.length)]
+
+    if (this.type === 'fire') {
+      // Spawn near a fuel point, slightly spread
+      this.x  = fuel.x + (Math.random() - 0.5) * W * 0.12
+      this.y  = init ? H * (0.6 + Math.random() * 0.4) : H + Math.random() * 20
+      this.vx = (Math.random() - 0.5) * 0.8
+      this.vy = -(1.8 + Math.random() * 3.2) * (0.7 + fuel.intensity * 0.3)
+      this.size    = 6 + Math.random() * 22
+      this.maxSize = this.size
+      this.life    = init ? Math.random() * 80 : 0
+      this.maxLife = 55 + Math.random() * 75
+
+    } else if (this.type === 'smoke') {
+      this.x  = fuel.x + (Math.random() - 0.5) * W * 0.20
+      this.y  = init ? H * (0.1 + Math.random() * 0.5) : H * 0.45 + Math.random() * 60
+      this.vx = (Math.random() - 0.5) * 0.6
+      this.vy = -(0.4 + Math.random() * 0.8)
+      this.size    = 18 + Math.random() * 40
+      this.maxSize = this.size
+      this.life    = init ? Math.random() * 100 : 0
+      this.maxLife = 90 + Math.random() * 80
+      this.rotation      = Math.random() * Math.PI * 2
+      this.rotationSpeed = (Math.random() - 0.5) * 0.012
+
+    } else {  // ember
+      this.x  = fuel.x + (Math.random() - 0.5) * W * 0.08
+      this.y  = init ? H * (0.3 + Math.random() * 0.5) : H * 0.55
+      this.vx = (Math.random() - 0.5) * 3.5
+      this.vy = -(2.5 + Math.random() * 4.5)
+      this.size    = 1.2 + Math.random() * 2.8
+      this.maxSize = this.size
+      this.life    = init ? Math.random() * 50 : 0
+      this.maxLife = 35 + Math.random() * 55
+      this.gravity = 0.04 + Math.random() * 0.04
+    }
+
+    this.noiseOffX = Math.random() * 100
+    this.noiseOffY = Math.random() * 100
+  }
+
+  update() {
+    this.life++
+
+    // ── Perlin noise turbulence ─────────────────────────────
+    const nx = Perlin.noise(
+      this.x * 0.004 + this.noiseOffX,
+      noiseTime * 0.6 + this.noiseOffY
+    )
+    const ny = Perlin.noise(
+      this.x * 0.004 + this.noiseOffX + 50,
+      noiseTime * 0.5 + this.noiseOffY
+    )
+
+    // ── Wind — slow horizontal sine drift ───────────────────
+    const wind = Math.sin(noiseTime * 0.4 + this.x * 0.003) * 0.18
+
+    if (this.type === 'fire') {
+      this.vx += nx * 0.55 + wind
+      this.vy += ny * 0.18
+      this.vx *= 0.96
+      this.vy *= 0.985
+      this.x  += this.vx
+      this.y  += this.vy
+      const p  = this.life / this.maxLife
+      this.size = this.maxSize * Math.max(0, 1 - p * 0.65)
+
+    } else if (this.type === 'smoke') {
+      this.vx += nx * 0.3 + wind * 1.4
+      this.vy += ny * 0.08
+      this.vx *= 0.98
+      this.vy *= 0.992
+      this.x  += this.vx
+      this.y  += this.vy
+      this.rotation += this.rotationSpeed
+      const p  = this.life / this.maxLife
+      this.size = this.maxSize * (1 + p * 0.5)   // smoke expands
+
+    } else {  // ember
+      this.vx += nx * 0.25 + wind * 0.8
+      this.vy += this.gravity
+      this.vx *= 0.994
+      this.x  += this.vx
+      this.y  += this.vy
+    }
+
+    if (this.life >= this.maxLife) this.reset()
+  }
+
+  draw() {
+    const p = this.life / this.maxLife
+
+    if (this.type === 'fire') {
+      const alpha = p < 0.12
+        ? p / 0.12
+        : Math.max(0, 1 - (p - 0.12) / 0.88)
+      if (alpha < 0.01) return
+
+      // Color temperature
+      let r, g, b
+      if (p < 0.20) {
+        r = 180 + Math.floor(75 * (p/0.20)); g = 0;   b = 0
+      } else if (p < 0.45) {
+        const t = (p-0.20)/0.25; r = 255; g = Math.floor(25+130*t); b = 0
+      } else if (p < 0.72) {
+        const t = (p-0.45)/0.27; r = 255; g = Math.floor(155+95*t); b = Math.floor(15*t)
+      } else {
+        const t = (p-0.72)/0.28; r = 255; g = 255; b = Math.floor(80*t)
+      }
+
+      fctx.save()
+      fctx.globalCompositeOperation = 'screen'
+      const g2 = fctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size)
+      g2.addColorStop(0,   `rgba(${r},${g},${b},${(alpha * 0.88).toFixed(3)})`)
+      g2.addColorStop(0.35,`rgba(${r},${Math.max(0,g-60)},0,${(alpha*0.55).toFixed(3)})`)
+      g2.addColorStop(0.7, `rgba(${Math.max(0,r-60)},0,0,${(alpha*0.22).toFixed(3)})`)
+      g2.addColorStop(1,   'rgba(0,0,0,0)')
+      fctx.beginPath()
+      fctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
+      fctx.fillStyle = g2
+      fctx.fill()
+      fctx.restore()
+
+    } else if (this.type === 'smoke') {
+      const alpha = p < 0.18
+        ? p / 0.18 * 0.22
+        : Math.max(0, (1 - p) * 0.22)
+      if (alpha < 0.005) return
+
+      fctx.save()
+      fctx.globalCompositeOperation = 'source-over'
+      fctx.translate(this.x, this.y)
+      fctx.rotate(this.rotation)
+      const g2 = fctx.createRadialGradient(0, 0, 0, 0, 0, this.size)
+      const dark = Math.floor(18 + p * 28)
+      g2.addColorStop(0,   `rgba(${dark},${dark},${dark},${alpha.toFixed(3)})`)
+      g2.addColorStop(0.6, `rgba(${dark},${dark},${dark},${(alpha*0.4).toFixed(3)})`)
+      g2.addColorStop(1,   'rgba(0,0,0,0)')
+      fctx.beginPath()
+      fctx.arc(0, 0, this.size, 0, Math.PI*2)
+      fctx.fillStyle = g2
+      fctx.fill()
+      fctx.restore()
+
+    } else {  // ember
+      const alpha = Math.max(0, 1 - p * 1.15)
+      if (alpha < 0.01) return
+      const flicker = 0.7 + Math.sin(this.life * 0.8 + this.noiseOffX) * 0.3
+
+      fctx.save()
+      fctx.globalCompositeOperation = 'screen'
+      fctx.globalAlpha = alpha * flicker
+      fctx.beginPath()
+      fctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
+      fctx.fillStyle = `rgb(255,${Math.floor(150 + 105*(1-p))},${Math.floor(30*(1-p))})`
+      fctx.shadowBlur  = 10
+      fctx.shadowColor = 'rgba(255,140,20,0.9)'
+      fctx.fill()
+      fctx.restore()
+    }
+  }
+}
+
+// Init all particles
+for (let i = 0; i < FIRE_COUNT;  i++) allParticles.push(new Particle('fire',  true))
+for (let i = 0; i < SMOKE_COUNT; i++) allParticles.push(new Particle('smoke', true))
+for (let i = 0; i < EMBER_COUNT; i++) allParticles.push(new Particle('ember', true))
+
+// ═══════════════════════════════════════════════════════════════
+//  FLICKERING FLOOR LIGHT
+// ═══════════════════════════════════════════════════════════════
+function drawFloorLight() {
+  const flicker = 0.12 + Math.abs(Perlin.noise(noiseTime * 2.5, 0)) * 0.14
+  const grad = fctx.createRadialGradient(W/2, H, 0, W/2, H, W * 0.58)
+  grad.addColorStop(0,   `rgba(220,55,0,${flicker.toFixed(3)})`)
+  grad.addColorStop(0.45,`rgba(140,20,0,${(flicker*0.4).toFixed(3)})`)
+  grad.addColorStop(1,   'rgba(0,0,0,0)')
+  fctx.fillStyle = grad
+  fctx.fillRect(0, 0, W, H)
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HEAT DISTORTION — shimmer layer
+// ═══════════════════════════════════════════════════════════════
+function drawHeatDistortion() {
+  hctx.clearRect(0, 0, W, H)
+  const cols = 14, rows = 18
+  const cw = W / cols, ch = H * 0.65 / rows
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const nx = Perlin.noise(col*0.6 + noiseTime*1.2, row*0.5)
+      const a  = Math.max(0, nx) * 0.45 * (1 - row/rows)
+      if (a < 0.01) continue
+      hctx.fillStyle = `rgba(255,90,0,${a.toFixed(3)})`
+      hctx.fillRect(
+        col * cw + nx * cw * 0.4,
+        H - (rows - row) * ch,
+        cw * 0.9, ch * 0.9
+      )
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════════════════════════
+function loop() {
+  noiseTime += 0.012
+
+  // Fade trail — not full clear, so fire blends
+  fctx.fillStyle = 'rgba(0,0,0,0.14)'
+  fctx.fillRect(0, 0, W, H)
+
+  drawFloorLight()
+
+  // Sort: smoke first (behind), then fire, then embers
+  for (const p of allParticles) { p.update(); if (p.type==='smoke') p.draw() }
+  for (const p of allParticles) { if (p.type==='fire')  p.draw() }
+  for (const p of allParticles) { if (p.type==='ember') p.draw() }
+
+  drawHeatDistortion()
+
+  requestAnimationFrame(loop)
+}
+loop()
+
+// ═══════════════════════════════════════════════════════════════
+//  BUTTON
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('enterBtn').addEventListener('click', e => {
+  e.stopPropagation()
+  document.body.style.transition = 'opacity 0.55s ease'
+  document.body.style.opacity    = '0'
+  setTimeout(() => { window.location.href = 'links.html' }, 560)
 })
 </script>
 </body>
