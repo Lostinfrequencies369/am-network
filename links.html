@@ -51,7 +51,7 @@
 
 <script src="script.js"></script>
 
-<!-- MOOD + WOOD TEXTURE CYCLING -->
+<!-- MOOD CYCLING + STATIC RANDOM WOOD TEXTURE -->
 <script>
 (() => {
   const MOODS = [
@@ -64,50 +64,30 @@
     'wood-tex-teak','wood-tex-cherry','wood-tex-cedar','wood-tex-ash',
     'wood-tex-rosewood','wood-tex-birch','wood-tex-burnt','wood-tex-pine'
   ];
-  const ALL_MOODS = MOODS.join(' ');
-  const ALL_TEX   = WOOD_TEXTURES.join(' ');
 
   const cards = document.querySelectorAll('.wood-card');
-  let curMood = 0, curTex = 0;
 
-  function applyMood(mIdx) {
+  // ── WOOD TEXTURE: random on every page load, then static ──
+  const texIdx = Math.floor(Math.random() * WOOD_TEXTURES.length);
+  cards.forEach(card => card.classList.add(WOOD_TEXTURES[texIdx]));
+
+  // ── MOOD (border glow): cycles slowly ──
+  let curMood = Math.floor(Math.random() * MOODS.length);
+  function applyMood(idx) {
     cards.forEach(card => {
       card.classList.remove(...MOODS);
-      card.classList.add(MOODS[mIdx]);
+      card.classList.add(MOODS[idx]);
     });
   }
-
-  function applyTex(tIdx) {
-    cards.forEach(card => {
-      card.classList.remove(...WOOD_TEXTURES);
-      card.classList.add(WOOD_TEXTURES[tIdx]);
-    });
-  }
-
   function nextMood() {
     let n;
     do { n = Math.floor(Math.random() * MOODS.length); } while (n === curMood);
     curMood = n;
-    requestAnimationFrame(() => applyMood(curMood));
-    setTimeout(nextMood, 12000 + Math.random() * 18000);
+    applyMood(curMood);
+    setTimeout(nextMood, 10000 + Math.random() * 14000);
   }
-
-  function nextTex() {
-    let n;
-    do { n = Math.floor(Math.random() * WOOD_TEXTURES.length); } while (n === curTex);
-    curTex = n;
-    requestAnimationFrame(() => applyTex(curTex));
-    setTimeout(nextTex, 10000 + Math.random() * 14000);
-  }
-
-  // Random start
-  curMood = Math.floor(Math.random() * MOODS.length);
-  curTex  = Math.floor(Math.random() * WOOD_TEXTURES.length);
   applyMood(curMood);
-  applyTex(curTex);
-
-  setTimeout(nextMood, 10000 + Math.random() * 8000);
-  setTimeout(nextTex,  8000 + Math.random() * 12000);
+  setTimeout(nextMood, 8000 + Math.random() * 8000);
 })();
 </script>
 
@@ -115,7 +95,7 @@
 <script>
 (() => {
   const canvas = document.getElementById('emberCanvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: true });
+  const ctx = canvas.getContext('2d');
   let W, H;
   function resize() {
     W = canvas.width = window.innerWidth;
@@ -125,7 +105,7 @@
   window.addEventListener('resize', resize);
 
   const embers = [];
-  const EMBER_COUNT = 80;
+  const EMBER_COUNT = 180;
 
   class Ember {
     constructor() { this.reset(true); }
