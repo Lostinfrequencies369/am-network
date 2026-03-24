@@ -174,7 +174,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:"Mo
 </div>
 
 <script>
-// ═══════════ PERLIN NOISE ═══════════
+// ═══════════════════════════════════════
+// PERLIN NOISE
+// ═══════════════════════════════════════
 const Perlin=(()=>{
   const perm=new Uint8Array(512),p=new Uint8Array(256);
   for(let i=0;i<256;i++)p[i]=i;
@@ -192,289 +194,367 @@ const Perlin=(()=>{
   }};
 })();
 
-// ═══════════ FAST NOISE (single lookup curl approx) ═══════════
-function curl(x,y,t){
-  const n1=Perlin.noise(x+t*0.4, y*0.8);
-  const n2=Perlin.noise(x*0.8+50, y+t*0.35);
-  return{x:n1, y:n2*0.6};
-}
-
-// ═══════════ CANVAS ═══════════
-const fc=document.getElementById('fireCanvas'),ctx=fc.getContext('2d',{willReadFrequently:false,desynchronized:true});
+// ═══════════════════════════════════════
+// CANVAS
+// ═══════════════════════════════════════
+const fc=document.getElementById('fireCanvas');
+const ctx=fc.getContext('2d',{alpha:false,desynchronized:true});
 let W,H;
-function resize(){W=fc.width=window.innerWidth;H=fc.height=window.innerHeight;}
-resize();
-let _cachedFuels=fuels();
-window.addEventListener('resize',()=>{resize();_cachedFuels=fuels();});
+function resize(){W=fc.width=window.innerWidth;H=fc.height=window.innerHeight;buildSprites();}
 
-// ═══════════ 22 PALETTES [core,inner,mid,outer,tip,_smoke] ═══════════
+// ═══════════════════════════════════════
+// 22 PALETTES
+// ═══════════════════════════════════════
 const PALS=[
-  [[255,255,220],[255,240,80],[255,140,0],[220,40,0],[120,10,0],[30,15,8]],   // 0 Classic
-  [[220,240,255],[80,180,255],[0,100,255],[0,30,180],[0,0,80],[8,12,28]],     // 1 Electric Blue
-  [[220,255,180],[160,255,20],[40,200,0],[0,120,0],[0,50,0],[8,22,8]],        // 2 Toxic Green
-  [[255,220,255],[255,100,240],[200,0,220],[120,0,160],[50,0,70],[18,8,22]],  // 3 Purple Inferno
-  [[255,255,200],[255,230,60],[230,150,0],[180,80,0],[90,30,0],[25,16,4]],    // 4 Gold Rush
-  [[255,220,220],[255,140,140],[255,0,60],[180,0,30],[80,0,15],[22,6,10]],    // 5 Crimson Storm
-  [[200,255,255],[0,240,230],[0,180,200],[0,100,150],[0,40,70],[4,16,22]],    // 6 Ocean Fire
-  [[255,255,180],[255,220,0],[255,100,0],[200,30,0],[90,10,0],[25,12,4]],     // 7 Neon Orange
-  [[240,220,255],[180,80,255],[100,0,255],[50,0,180],[20,0,80],[12,6,28]],    // 8 Violet Storm
-  [[255,255,255],[255,220,80],[255,120,0],[220,40,0],[120,10,0],[30,12,4]],   // 9 Solar Flare
-  [[255,255,255],[180,240,255],[80,200,255],[20,100,220],[0,30,120],[6,12,25]],// 10 Ice Fire
-  [[255,220,160],[255,100,30],[200,20,0],[120,0,0],[50,0,0],[18,6,6]],        // 11 Blood Moon
-  [[255,255,200],[220,255,0],[150,240,0],[60,180,0],[10,80,0],[12,20,6]],     // 12 Acid
-  [[255,200,255],[255,60,220],[180,0,200],[100,0,160],[40,0,80],[16,6,20]],   // 13 Plasma
-  [[255,240,180],[255,160,20],[200,60,0],[140,20,0],[60,5,0],[20,8,4]],       // 14 Lava
-  [[200,255,240],[60,255,180],[0,200,150],[0,120,100],[0,50,60],[6,18,20]],   // 15 Arctic Aurora
-  [[220,255,200],[80,255,80],[0,200,40],[0,130,20],[0,60,10],[6,18,10]],      // 16 Emerald
-  [[255,200,220],[255,80,160],[220,0,100],[150,0,60],[70,0,25],[20,6,12]],    // 17 Ruby
-  [[255,230,180],[220,150,40],[180,90,10],[120,50,0],[60,20,0],[20,12,4]],    // 18 Copper Forge
-  [[220,180,255],[140,60,255],[80,0,200],[40,0,120],[15,0,60],[10,6,20]],     // 19 Obsidian
-  [[200,255,220],[40,240,160],[0,180,120],[0,100,80],[0,40,50],[6,16,18]],    // 20 Aurora Borealis
-  [[255,255,255],[220,220,255],[160,160,220],[100,100,180],[40,40,100],[12,12,22]], // 21 Molten Silver
+  [[255,255,220],[255,240,80],[255,140,0],[220,40,0],[120,10,0]],
+  [[220,240,255],[80,180,255],[0,100,255],[0,30,180],[0,0,80]],
+  [[220,255,180],[160,255,20],[40,200,0],[0,120,0],[0,50,0]],
+  [[255,220,255],[255,100,240],[200,0,220],[120,0,160],[50,0,70]],
+  [[255,255,200],[255,230,60],[230,150,0],[180,80,0],[90,30,0]],
+  [[255,220,220],[255,140,140],[255,0,60],[180,0,30],[80,0,15]],
+  [[200,255,255],[0,240,230],[0,180,200],[0,100,150],[0,40,70]],
+  [[255,255,180],[255,220,0],[255,100,0],[200,30,0],[90,10,0]],
+  [[240,220,255],[180,80,255],[100,0,255],[50,0,180],[20,0,80]],
+  [[255,255,255],[255,220,80],[255,120,0],[220,40,0],[120,10,0]],
+  [[255,255,255],[180,240,255],[80,200,255],[20,100,220],[0,30,120]],
+  [[255,220,160],[255,100,30],[200,20,0],[120,0,0],[50,0,0]],
+  [[255,255,200],[220,255,0],[150,240,0],[60,180,0],[10,80,0]],
+  [[255,200,255],[255,60,220],[180,0,200],[100,0,160],[40,0,80]],
+  [[255,240,180],[255,160,20],[200,60,0],[140,20,0],[60,5,0]],
+  [[200,255,240],[60,255,180],[0,200,150],[0,120,100],[0,50,60]],
+  [[220,255,200],[80,255,80],[0,200,40],[0,130,20],[0,60,10]],
+  [[255,200,220],[255,80,160],[220,0,100],[150,0,60],[70,0,25]],
+  [[255,230,180],[220,150,40],[180,90,10],[120,50,0],[60,20,0]],
+  [[220,180,255],[140,60,255],[80,0,200],[40,0,120],[15,0,60]],
+  [[200,255,220],[40,240,160],[0,180,120],[0,100,80],[0,40,50]],
+  [[255,255,255],[220,220,255],[160,160,220],[100,100,180],[40,40,100]],
 ];
 
-let curPI=Math.floor(Math.random()*PALS.length);
-let nxtPI=curPI,blend=1.0;
+let curPI=Math.floor(Math.random()*PALS.length),nxtPI=curPI,blend=1.0;
 let wPal=PALS[curPI].map(c=>[...c]);
 
 function schedPal(){
   setTimeout(()=>{
     let n;do{n=Math.floor(Math.random()*PALS.length);}while(n===curPI);
     nxtPI=n;blend=0;schedPal();
-  },2000+Math.random()*1600);
+  },2200+Math.random()*1600);
 }
 schedPal();
 
 function tickPal(){
   if(blend>=1)return;
-  blend=Math.min(1,blend+0.02);
+  blend=Math.min(1,blend+0.025);
   const a=PALS[curPI],b=PALS[nxtPI];
-  for(let i=0;i<6;i++){
+  for(let i=0;i<5;i++){
     wPal[i][0]=Math.round(a[i][0]+(b[i][0]-a[i][0])*blend);
     wPal[i][1]=Math.round(a[i][1]+(b[i][1]-a[i][1])*blend);
     wPal[i][2]=Math.round(a[i][2]+(b[i][2]-a[i][2])*blend);
   }
-  if(blend>=1)curPI=nxtPI;
+  if(blend>=1){curPI=nxtPI;buildSprites();_groundGrad=null;}
 }
 
-// ═══════════ GLOBAL FLICKER ═══════════
+// ═══════════════════════════════════════
+// PRE-BAKED GRADIENT SPRITES
+// One offscreen canvas per layer — draw once, reuse every frame
+// ═══════════════════════════════════════
+const SPRITE_SIZE = 128; // px — all gradients normalised to this
+const sprites = {}; // layer -> OffscreenCanvas or HTMLCanvasElement
+
+function makeSprite(colors){
+  const sz = SPRITE_SIZE;
+  const oc = (typeof OffscreenCanvas!=='undefined')
+    ? new OffscreenCanvas(sz,sz)
+    : (() => { const c=document.createElement('canvas'); c.width=c.height=sz; return c; })();
+  const c = oc.getContext('2d');
+  const cx=sz/2, cy=sz/2, r=sz/2;
+  const g = c.createRadialGradient(cx,cy,0,cx,cy,r);
+  g.addColorStop(0,   `rgba(${colors[0][0]},${colors[0][1]},${colors[0][2]},1)`);
+  g.addColorStop(0.35,`rgba(${colors[1][0]},${colors[1][1]},${colors[1][2]},0.75)`);
+  g.addColorStop(0.65,`rgba(${colors[2][0]},${colors[2][1]},${colors[2][2]},0.35)`);
+  g.addColorStop(0.85,`rgba(${colors[3][0]},${colors[3][1]},${colors[3][2]},0.12)`);
+  g.addColorStop(1,   'rgba(0,0,0,0)');
+  c.fillStyle=g;
+  c.fillRect(0,0,sz,sz);
+  return oc;
+}
+
+function buildSprites(){
+  sprites.core  = makeSprite([wPal[0],wPal[1],wPal[2],wPal[3]]);
+  sprites.inner = makeSprite([wPal[1],wPal[2],wPal[3],wPal[4]]);
+  sprites.mid   = makeSprite([wPal[2],wPal[3],wPal[4],wPal[4]]);
+  sprites.outer = makeSprite([wPal[3],wPal[4],wPal[4],[0,0,0]]);
+  sprites.smoke = null; // smoke built separately — greyscale
+  sprites.smokeImg = makeSmokeSprite();
+}
+
+function makeSmokeSprite(){
+  const sz=SPRITE_SIZE;
+  const oc=(typeof OffscreenCanvas!=='undefined')
+    ? new OffscreenCanvas(sz,sz)
+    : (() => { const c=document.createElement('canvas'); c.width=c.height=sz; return c; })();
+  const c=oc.getContext('2d');
+  const g=c.createRadialGradient(sz/2,sz/2,0,sz/2,sz/2,sz/2);
+  g.addColorStop(0,'rgba(30,20,12,1)');
+  g.addColorStop(0.5,'rgba(20,12,6,0.4)');
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  c.fillStyle=g;c.fillRect(0,0,sz,sz);
+  return oc;
+}
+
+// ═══════════════════════════════════════
+// GLOBAL FLICKER
+// ═══════════════════════════════════════
 let gFlick=1,fTgt=1,fTmr=0;
 function tickFlick(){
-  fTmr++;
-  if(fTmr%7===0)fTgt=0.76+Math.random()*0.3;
-  gFlick+=(fTgt-gFlick)*0.13;
+  if(++fTmr%8===0) fTgt=0.78+Math.random()*0.28;
+  gFlick+=(fTgt-gFlick)*0.12;
 }
 
-// ═══════════ FUELS ═══════════
-function fuels(){
-  const pts=[],N=10;
+// ═══════════════════════════════════════
+// FUEL POINTS — cached
+// ═══════════════════════════════════════
+let _fuels=[];
+function buildFuels(){
+  _fuels=[];const N=8;
   for(let i=0;i<N;i++){
     const t=i/(N-1);
-    pts.push({x:W*(0.06+t*0.88),y:H,iv:0.5+Math.sin(t*Math.PI)*0.5});
+    _fuels.push({x:W*(0.08+t*0.84),y:H,iv:0.55+Math.sin(t*Math.PI)*0.45});
   }
-  return pts;
 }
 
-// ═══════════ PARTICLES ═══════════
-const COUNTS={core:120,inner:200,mid:220,outer:160,ember:55,smoke:60};
+// ═══════════════════════════════════════
+// PARTICLES — flat arrays (no class, no closure overhead)
+// ═══════════════════════════════════════
+// Layers: 0=core 1=inner 2=mid 3=outer 4=ember 5=smoke
+const LAYER_COUNTS=[90,160,180,130,50,55]; // total=665
+const TOTAL=LAYER_COUNTS.reduce((a,b)=>a+b,0);
+
+// Typed arrays for max performance
+const px   = new Float32Array(TOTAL);
+const py   = new Float32Array(TOTAL);
+const pvx  = new Float32Array(TOTAL);
+const pvy  = new Float32Array(TOTAL);
+const psz  = new Float32Array(TOTAL);
+const plife= new Float32Array(TOTAL);
+const pml  = new Float32Array(TOTAL);
+const pox  = new Float32Array(TOTAL);
+const poy  = new Float32Array(TOTAL);
+const play = new Uint8Array(TOTAL);  // layer index
+const pgrav= new Float32Array(TOTAL);
+const prot = new Float32Array(TOTAL);
+const prs  = new Float32Array(TOTAL);
+
 let noiseT=0;
-const parts=[];
 
-class P{
-  constructor(ly,init){this.ly=ly;this.reset(init);}
-  reset(init=false){
-    const fs=_cachedFuels,f=fs[Math.floor(Math.random()*fs.length)],iv=f.iv;
-    if(this.ly==='core'){
-      this.x=f.x+(Math.random()-.5)*W*.035;
-      this.y=init?H*(.72+Math.random()*.28):H+4;
-      this.vx=(Math.random()-.5)*.35;this.vy=-(3.8+Math.random()*3.2)*iv;
-      this.sz=2.5+Math.random()*7;
-      this.life=init?Math.random()*45:0;this.ml=38+Math.random()*32;
-    }else if(this.ly==='inner'){
-      this.x=f.x+(Math.random()-.5)*W*.065;
-      this.y=init?H*(.62+Math.random()*.38):H+6;
-      this.vx=(Math.random()-.5)*.65;this.vy=-(2.9+Math.random()*2.7)*iv;
-      this.sz=6+Math.random()*13;
-      this.life=init?Math.random()*55:0;this.ml=52+Math.random()*48;
-    }else if(this.ly==='mid'){
-      this.x=f.x+(Math.random()-.5)*W*.12;
-      this.y=init?H*(.52+Math.random()*.48):H+8;
-      this.vx=(Math.random()-.5)*1.1;this.vy=-(2.1+Math.random()*2.3)*iv;
-      this.sz=11+Math.random()*21;
-      this.life=init?Math.random()*65:0;this.ml=62+Math.random()*62;
-    }else if(this.ly==='outer'){
-      this.x=f.x+(Math.random()-.5)*W*.21;
-      this.y=init?H*(.44+Math.random()*.56):H+10;
-      this.vx=(Math.random()-.5)*1.7;this.vy=-(1.5+Math.random()*1.9)*iv;
-      this.sz=16+Math.random()*30;
-      this.life=init?Math.random()*78:0;this.ml=78+Math.random()*78;
-    }else if(this.ly==='ember'){
-      this.x=f.x+(Math.random()-.5)*W*.08;
-      this.y=init?H*(.35+Math.random()*.55):H*.58;
-      this.vx=(Math.random()-.5)*4.8;this.vy=-(3.2+Math.random()*5.8);
-      this.sz=.9+Math.random()*2.4;
-      this.life=init?Math.random()*42:0;this.ml=28+Math.random()*58;
-      this.grav=.032+Math.random()*.042;
-    }else{
-      this.x=f.x+(Math.random()-.5)*W*.26;
-      this.y=init?H*(.06+Math.random()*.42):H*.4+Math.random()*55;
-      this.vx=(Math.random()-.5)*.65;this.vy=-(0.32+Math.random()*.72);
-      this.sz=24+Math.random()*52;
-      this.life=init?Math.random()*105:0;this.ml=95+Math.random()*95;
-      this.rot=Math.random()*Math.PI*2;this.rs=(Math.random()-.5)*.009;
-    }
-    this.ox=Math.random()*200;this.oy=Math.random()*200;
+function resetParticle(i, init){
+  const ly=play[i];
+  const f=_fuels[Math.floor(Math.random()*_fuels.length)];
+  const iv=f.iv;
+  if(ly===0){
+    px[i]=f.x+(Math.random()-.5)*W*.04;
+    py[i]=init?H*(.72+Math.random()*.28):H+4;
+    pvx[i]=(Math.random()-.5)*.35; pvy[i]=-(3.5+Math.random()*3.0)*iv;
+    psz[i]=3+Math.random()*8;
+    plife[i]=init?Math.random()*45:0; pml[i]=38+Math.random()*32;
+  }else if(ly===1){
+    px[i]=f.x+(Math.random()-.5)*W*.07;
+    py[i]=init?H*(.62+Math.random()*.38):H+6;
+    pvx[i]=(Math.random()-.5)*.65; pvy[i]=-(2.8+Math.random()*2.6)*iv;
+    psz[i]=7+Math.random()*14;
+    plife[i]=init?Math.random()*55:0; pml[i]=52+Math.random()*48;
+  }else if(ly===2){
+    px[i]=f.x+(Math.random()-.5)*W*.12;
+    py[i]=init?H*(.52+Math.random()*.48):H+8;
+    pvx[i]=(Math.random()-.5)*1.1; pvy[i]=-(2.0+Math.random()*2.2)*iv;
+    psz[i]=11+Math.random()*20;
+    plife[i]=init?Math.random()*65:0; pml[i]=62+Math.random()*60;
+  }else if(ly===3){
+    px[i]=f.x+(Math.random()-.5)*W*.2;
+    py[i]=init?H*(.44+Math.random()*.56):H+10;
+    pvx[i]=(Math.random()-.5)*1.7; pvy[i]=-(1.4+Math.random()*1.8)*iv;
+    psz[i]=16+Math.random()*28;
+    plife[i]=init?Math.random()*78:0; pml[i]=78+Math.random()*75;
+  }else if(ly===4){
+    px[i]=f.x+(Math.random()-.5)*W*.08;
+    py[i]=init?H*(.35+Math.random()*.55):H*.58;
+    pvx[i]=(Math.random()-.5)*4.5; pvy[i]=-(3.0+Math.random()*5.5);
+    psz[i]=1.0+Math.random()*2.2;
+    plife[i]=init?Math.random()*42:0; pml[i]=28+Math.random()*55;
+    pgrav[i]=.032+Math.random()*.042;
+  }else{
+    px[i]=f.x+(Math.random()-.5)*W*.24;
+    py[i]=init?H*(.08+Math.random()*.42):H*.4+Math.random()*50;
+    pvx[i]=(Math.random()-.5)*.65; pvy[i]=-(0.32+Math.random()*.7);
+    psz[i]=20+Math.random()*45;
+    plife[i]=init?Math.random()*100:0; pml[i]=90+Math.random()*90;
+    prot[i]=Math.random()*Math.PI*2;
+    prs[i]=(Math.random()-.5)*.008;
   }
+  pox[i]=Math.random()*200; poy[i]=Math.random()*200;
+}
 
-  upd(){
-    this.life++;
-    const cx=this.x*.0028+this.ox,cy=this.y*.0028+noiseT*.48+this.oy;
-    const cv=curl(cx,cy,noiseT*.28);
-    const wind=Math.sin(noiseT*.33+this.x*.0022)*.24+Math.sin(noiseT*.17)*.08;
-
-    if(this.ly==='core'){
-      this.vx+=cv.x*.28+wind*.38;this.vy+=cv.y*.07-.018;
-      this.vx*=.935;this.vy*=.981;this.x+=this.vx;this.y+=this.vy*gFlick;
-    }else if(this.ly==='inner'){
-      this.vx+=cv.x*.48+wind*.52;this.vy+=cv.y*.11;
-      this.vx*=.952;this.vy*=.983;this.x+=this.vx;this.y+=this.vy*gFlick;
-    }else if(this.ly==='mid'){
-      this.vx+=cv.x*.68+wind*.72;this.vy+=cv.y*.15;
-      this.vx*=.960;this.vy*=.985;this.x+=this.vx;this.y+=this.vy*gFlick;
-    }else if(this.ly==='outer'){
-      this.vx+=cv.x*.88+wind*.96;this.vy+=cv.y*.19;
-      this.vx*=.968;this.vy*=.987;this.x+=this.vx;this.y+=this.vy*gFlick;
-    }else if(this.ly==='ember'){
-      this.vx+=cv.x*.2+wind*.65;this.vy+=this.grav;
-      this.vx*=.991;this.x+=this.vx;this.y+=this.vy;
-    }else{
-      this.vx+=cv.x*.22+wind*1.4;this.vy+=cv.y*.055;
-      this.vx*=.981;this.vy*=.992;this.x+=this.vx;this.y+=this.vy;
-      this.rot+=this.rs;const pp=this.life/this.ml;this.sz*=(1+pp*.0025);
-    }
-    if(this.life>=this.ml)this.reset();
+// Init layer assignments
+let idx2=0;
+for(let ly=0;ly<6;ly++){
+  for(let k=0;k<LAYER_COUNTS[ly];k++){
+    play[idx2]=ly;
+    resetParticle(idx2,true);
+    idx2++;
   }
+}
 
-  get offscreen(){ return this.x<-80||this.x>W+80||this.y<-80; }
+// ═══════════════════════════════════════
+// UPDATE ALL — tight loop, no method calls
+// ═══════════════════════════════════════
+function updateAll(){
+  for(let i=0;i<TOTAL;i++){
+    plife[i]++;
+    if(plife[i]>=pml[i]){resetParticle(i,false);continue;}
 
-  draw(){
-    if(this.offscreen) return;
-    const p=this.life/this.ml;
-    if(this.ly==='core'){
-      const a=p<.1?p/.1:Math.max(0,1-(p-.1)/.9);if(a<.015)return;
-      const[r,g,b]=wPal[0];
-      ctx.save();ctx.globalCompositeOperation='screen';
-      ctx.translate(this.x,this.y);ctx.scale(1,1.28);
-      const gr=ctx.createRadialGradient(0,0,0,0,0,this.sz*gFlick);
-      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.96).toFixed(3)})`);
-      gr.addColorStop(.38,`rgba(${wPal[1][0]},${wPal[1][1]},${wPal[1][2]},${(a*.62).toFixed(3)})`);
-      gr.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
-      ctx.restore();
-    }else if(this.ly==='inner'){
-      const a=p<.12?p/.12:Math.max(0,1-(p-.12)/.88);if(a<.012)return;
-      const[r,g,b]=wPal[1];
-      ctx.save();ctx.globalCompositeOperation='screen';
-      ctx.translate(this.x,this.y);ctx.scale(1,1.45);
-      const gr=ctx.createRadialGradient(0,-this.sz*.1,0,0,0,this.sz*gFlick);
-      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.86).toFixed(3)})`);
-      gr.addColorStop(.4,`rgba(${wPal[2][0]},${wPal[2][1]},${wPal[2][2]},${(a*.5).toFixed(3)})`);
-      gr.addColorStop(.75,`rgba(${wPal[3][0]},${wPal[3][1]},${wPal[3][2]},${(a*.2).toFixed(3)})`);
-      gr.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
-      ctx.restore();
-    }else if(this.ly==='mid'){
-      const a=p<.14?p/.14:Math.max(0,1-(p-.14)/.86);if(a<.01)return;
-      const[r,g,b]=wPal[2];
-      ctx.save();ctx.globalCompositeOperation='screen';
-      ctx.translate(this.x,this.y);ctx.scale(1,1.62);
-      const gr=ctx.createRadialGradient(0,-this.sz*.18,0,0,0,this.sz*gFlick);
-      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.72).toFixed(3)})`);
-      gr.addColorStop(.46,`rgba(${wPal[3][0]},${wPal[3][1]},${wPal[3][2]},${(a*.36).toFixed(3)})`);
-      gr.addColorStop(.80,`rgba(${wPal[4][0]},${wPal[4][1]},${wPal[4][2]},${(a*.14).toFixed(3)})`);
-      gr.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
-      ctx.restore();
-    }else if(this.ly==='outer'){
-      const a=p<.18?p/.18:Math.max(0,1-(p-.18)/.82);if(a<.008)return;
-      const[r,g,b]=wPal[3];
-      ctx.save();ctx.globalCompositeOperation='screen';
-      ctx.translate(this.x,this.y);ctx.scale(1,1.75);
-      const gr=ctx.createRadialGradient(0,-this.sz*.22,0,0,0,this.sz*gFlick);
-      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.54).toFixed(3)})`);
-      gr.addColorStop(.52,`rgba(${wPal[4][0]},${wPal[4][1]},${wPal[4][2]},${(a*.2).toFixed(3)})`);
-      gr.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
-      ctx.restore();
-    }else if(this.ly==='ember'){
-      const a=Math.max(0,1-p*1.12);if(a<.01)return;
-      const flk=.62+Math.sin(this.life*.88+this.ox)*.38;
-      const[r,g,b]=wPal[1];
-      ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=a*flk*gFlick;
-      ctx.beginPath();ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);
-      ctx.fillStyle=`rgb(${r},${Math.min(255,g+55)},${Math.max(0,b-15)})`;
-      ctx.fill();
-      ctx.restore();
+    const ly=play[i];
+    // Fast noise: two lookups, divergence-approx
+    const nx=Perlin.noise(px[i]*.003+pox[i], noiseT*.45+poy[i]);
+    const ny=Perlin.noise(px[i]*.003+pox[i]+50, noiseT*.38+poy[i]);
+    const wind=Math.sin(noiseT*.32+px[i]*.002)*.2;
+
+    if(ly===0){
+      pvx[i]+=nx*.28+wind*.35; pvy[i]+=ny*.07-.018;
+      pvx[i]*=.935; pvy[i]*=.981;
+      px[i]+=pvx[i]; py[i]+=pvy[i]*gFlick;
+    }else if(ly===1){
+      pvx[i]+=nx*.45+wind*.50; pvy[i]+=ny*.10;
+      pvx[i]*=.952; pvy[i]*=.983;
+      px[i]+=pvx[i]; py[i]+=pvy[i]*gFlick;
+    }else if(ly===2){
+      pvx[i]+=nx*.65+wind*.70; pvy[i]+=ny*.14;
+      pvx[i]*=.960; pvy[i]*=.985;
+      px[i]+=pvx[i]; py[i]+=pvy[i]*gFlick;
+    }else if(ly===3){
+      pvx[i]+=nx*.85+wind*.92; pvy[i]+=ny*.18;
+      pvx[i]*=.968; pvy[i]*=.987;
+      px[i]+=pvx[i]; py[i]+=pvy[i]*gFlick;
+    }else if(ly===4){
+      pvx[i]+=nx*.18+wind*.6; pvy[i]+=pgrav[i];
+      pvx[i]*=.991;
+      px[i]+=pvx[i]; py[i]+=pvy[i];
     }else{
-      const a=p<.2?p/.2*.14:Math.max(0,(1-p)*.14);if(a<.004)return;
-      const dk=Math.floor(14+p*30);
-      const gr=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.sz);
-      gr.addColorStop(0,`rgba(${dk},${dk},${dk},${a.toFixed(3)})`);
-      gr.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.globalCompositeOperation='source-over';
-      ctx.beginPath();ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);
-      ctx.fillStyle=gr;ctx.fill();
+      pvx[i]+=nx*.2+wind*1.3; pvy[i]+=ny*.05;
+      pvx[i]*=.981; pvy[i]*=.992;
+      px[i]+=pvx[i]; py[i]+=pvy[i];
+      prot[i]+=prs[i];
     }
   }
 }
 
-// Init
-for(const[ly,n]of Object.entries(COUNTS))for(let i=0;i<n;i++)parts.push(new P(ly,true));
+// ═══════════════════════════════════════
+// DRAW ALL — sprite-based, minimal state changes
+// Batch by layer to minimise compositeOperation switches
+// ═══════════════════════════════════════
+const SS=SPRITE_SIZE;
+const SS2=SS/2;
 
-// ═══════════ GROUND GLOW ═══════════
-function groundGlow(){
+function drawLayer(ly, sprite, scaleY){
+  const op=ly<=3?'screen':'source-over';
+  ctx.globalCompositeOperation=op;
+  for(let i=0;i<TOTAL;i++){
+    if(play[i]!==ly) continue;
+    if(px[i]<-100||px[i]>W+100||py[i]<-100) continue;
+    const p=plife[i]/pml[i];
+    let a;
+    if(ly===0) a=p<.1?p/.1:Math.max(0,1-(p-.1)/.9);
+    else if(ly<=3){const fade=ly*.02+.12; a=p<fade?p/fade:Math.max(0,1-(p-fade)/(1-fade));}
+    else if(ly===4) a=Math.max(0,1-p*1.1);
+    else a=p<.2?p/.2*.15:Math.max(0,(1-p)*.15);
+    if(a<.008) continue;
+
+    const sz=psz[i]*gFlick;
+    const draw=sz*(SS/sz)*2; // actual draw size = sz*2 px on canvas
+    ctx.globalAlpha=a;
+
+    if(ly<=3){
+      // Teardrop: scale Y
+      ctx.save();
+      ctx.translate(px[i],py[i]);
+      ctx.scale(1,scaleY);
+      ctx.drawImage(sprite,-sz,-sz,sz*2,sz*2);
+      ctx.restore();
+    }else if(ly===4){
+      // Ember — tiny dot, no transform needed
+      const flk=.65+Math.sin(plife[i]*.85+pox[i])*.35;
+      ctx.globalAlpha=a*flk;
+      ctx.drawImage(sprite,px[i]-sz,py[i]-sz,sz*2,sz*2);
+    }else{
+      // Smoke — no rotation (perf), just scale with life
+      ctx.drawImage(sprites.smokeImg,px[i]-sz,py[i]-sz,sz*2,sz*2);
+    }
+  }
+}
+
+// ═══════════════════════════════════════
+// GROUND GLOW — single gradient, cached
+// ═══════════════════════════════════════
+let _groundGrad=null, _groundW=0;
+function drawGround(){
   const[r,g,b]=wPal[2];
-  const f=.09+Math.abs(Perlin.noise(noiseT*2.1,77))*.13;
-  const gr=ctx.createRadialGradient(W/2,H,0,W/2,H,W*.68);
-  gr.addColorStop(0,`rgba(${r},${g},${b},${(f*gFlick).toFixed(3)})`);
-  gr.addColorStop(.42,`rgba(${Math.floor(r*.48)},${Math.floor(g*.28)},${Math.floor(b*.28)},${(f*.32*gFlick).toFixed(3)})`);
-  gr.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  const f=.08+Math.abs(Perlin.noise(noiseT*2.0,77))*.11;
+  // Rebuild gradient only when palette changes or size changes
+  if(!_groundGrad||_groundW!==W){
+    _groundGrad=ctx.createRadialGradient(W/2,H,0,W/2,H,W*.65);
+    _groundGrad.addColorStop(0,`rgba(${r},${g},${b},1)`);
+    _groundGrad.addColorStop(.4,`rgba(${Math.floor(r*.45)},${Math.floor(g*.26)},0,0.5)`);
+    _groundGrad.addColorStop(1,'rgba(0,0,0,0)');
+    _groundW=W;
+  }
+  ctx.globalCompositeOperation='source-over';
+  ctx.globalAlpha=f*gFlick;
+  ctx.fillStyle=_groundGrad;ctx.fillRect(0,0,W,H);
+  ctx.globalAlpha=1;
 }
 
-// ═══════════ MAIN LOOP ═══════════
+// ═══════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════
+window.addEventListener('resize',()=>{resize();buildFuels();});
+buildFuels();
+buildSprites();
+resize();
+
 let running=true;
 function loop(){
   if(!running)return;
-  noiseT+=.013;tickFlick();tickPal();
-  ctx.fillStyle='rgba(0,0,0,0.16)';ctx.fillRect(0,0,W,H);
-  groundGlow();
-  for(const p of parts){p.upd();if(p.ly==='smoke')p.draw();}
-  for(const p of parts){if(p.ly==='outer')p.draw();}
-  for(const p of parts){if(p.ly==='mid')p.draw();}
-  for(const p of parts){if(p.ly==='inner')p.draw();}
-  for(const p of parts){if(p.ly==='core')p.draw();}
-  for(const p of parts){if(p.ly==='ember')p.draw();}
+  noiseT+=.012; tickFlick(); tickPal();
+
+  // Fade trail
+  ctx.globalCompositeOperation='source-over';
+  ctx.globalAlpha=1;
+  ctx.fillStyle='rgba(0,0,0,0.15)';
+  ctx.fillRect(0,0,W,H);
+
+  drawGround();
+  updateAll();
+
+  // Draw order: smoke → outer → mid → inner → core → ember
+  drawLayer(5,sprites.smokeImg,1);
+  drawLayer(3,sprites.outer,1.7);
+  drawLayer(2,sprites.mid,1.55);
+  drawLayer(1,sprites.inner,1.42);
+  drawLayer(0,sprites.core,1.28);
+  drawLayer(4,sprites.core,1); // ember reuses core sprite tinted
+
   requestAnimationFrame(loop);
 }
 loop();
 
-// ═══════════ EXIT TRANSITION ═══════════
+// ═══════════════════════════════════════
+// EXIT TRANSITION
+// ═══════════════════════════════════════
 document.getElementById('enterBtn').addEventListener('click',e=>{
   e.stopPropagation();
-  running=false; // stop updating but canvas stays visible
-
-  // Surge: boost all fire upward
-  for(const p of parts){
-    if(p.ly==='core'||p.ly==='inner'||p.ly==='mid'){p.vy*=2.5;p.sz*=1.5;}
-    if(p.ly==='ember'){p.vy*=3.0;p.vx*=1.8;}
-    if(p.ly==='outer'){p.vy*=1.8;p.sz*=1.3;}
+  // Surge
+  for(let i=0;i<TOTAL;i++){
+    if(play[i]<=2){pvy[i]*=2.4;psz[i]*=1.4;}
+    if(play[i]===4){pvy[i]*=2.8;pvx[i]*=1.6;}
   }
-
-  // Resume loop for surge visual
-  running=true;
-
-  // Bright flash element
   const flash=document.createElement('div');
   flash.style.cssText=`position:fixed;inset:0;z-index:300;pointer-events:none;
     background:radial-gradient(ellipse 75% 55% at 50% 100%,
@@ -482,10 +562,10 @@ document.getElementById('enterBtn').addEventListener('click',e=>{
       rgba(160,15,0,.82) 58%,rgba(0,0,0,0) 100%);
     opacity:0;transition:opacity .18s ease;`;
   document.body.appendChild(flash);
-
   requestAnimationFrame(()=>{
     flash.style.opacity='1';
     setTimeout(()=>{
+      running=false;
       flash.style.transition='opacity .5s ease';
       flash.style.background='#000';
       flash.style.opacity='1';
