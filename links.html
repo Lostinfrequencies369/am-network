@@ -1,87 +1,231 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
   <title>AM-369-Network</title>
-  <meta name="description" content="AM-369-Network — Unified Access Point" />
+  <meta name="description" content="AM-369-Network — Unified Access Point"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
-
 <body>
-  <main class="wrap">
 
-    <!-- HERO -->
-    <header class="hero">
-      <h1 class="hero-name">Dr. ANKIT MALIK</h1>
-      <p class="tagline">AM-369-Network — Unified Access Point</p>
-    </header>
+<!-- EMBER ENTRY CANVAS -->
+<canvas id="emberCanvas"></canvas>
 
-    <!-- FEATURED -->
-    <section class="wood-card mood-amber" id="featuredCard">
-      <div class="card-content">
-        <h3 class="section-label">Featured</h3>
-        <div class="link-list">
-          <a class="link-btn featured-btn" id="featuredBtn" href="#" target="_blank" rel="noopener">
-            <span class="link-ico">★</span>
-            <span class="link-txt">Loading…</span>
-          </a>
-        </div>
+<main class="wrap">
+  <!-- HERO -->
+  <header class="hero">
+    <h1 class="hero-name">AM-369-Network</h1>
+    <p class="hero-subtitle">Dr. Ankit Malik</p>
+    <p class="tagline">Unified Access Point</p>
+  </header>
+
+  <!-- FEATURED -->
+  <section class="wood-card mood-amber" id="featuredCard">
+    <div class="card-content">
+      <h3 class="section-label">Featured</h3>
+      <div class="link-list">
+        <a class="link-btn featured-btn" id="featuredBtn" href="#" target="_blank" rel="noopener">
+          <span class="link-ico">★</span>
+          <span class="link-txt">Loading…</span>
+        </a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- LINKS -->
-    <section class="wood-card mood-amber" id="linksCard">
-      <div class="card-content">
-        <h3 class="section-label">Links</h3>
-        <div class="link-list" id="linksList">
-          <div class="skeleton">Loading links…</div>
-        </div>
+  <!-- LINKS -->
+  <section class="wood-card mood-amber" id="linksCard">
+    <div class="card-content">
+      <h3 class="section-label">Links</h3>
+      <div class="link-list" id="linksList">
+        <div class="skeleton">Loading links…</div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <div class="foot">© <span id="yr"></span> AM-369-Network</div>
+  <div class="foot">© <span id="yr"></span> AM-369-Network</div>
+</main>
 
-  </main>
+<script src="script.js"></script>
 
-  <script src="script.js"></script>
+<!-- MOOD + WOOD TEXTURE CYCLING -->
+<script>
+(() => {
+  const MOODS = [
+    'mood-amber','mood-copper','mood-bronze','mood-antique',
+    'mood-mahogany','mood-teak','mood-rosewood','mood-ebony',
+    'mood-walnut','mood-cedar','mood-oak','mood-pine'
+  ];
+  const WOOD_TEXTURES = [
+    'wood-tex-ebony','wood-tex-oak','wood-tex-walnut','wood-tex-mahogany',
+    'wood-tex-teak','wood-tex-cherry','wood-tex-cedar','wood-tex-ash',
+    'wood-tex-rosewood','wood-tex-birch','wood-tex-burnt','wood-tex-pine'
+  ];
+  const ALL_MOODS = MOODS.join(' ');
+  const ALL_TEX   = WOOD_TEXTURES.join(' ');
 
-  <!-- MOOD CYCLING ENGINE — warm wood tones -->
-  <script>
-    (() => {
-      const MOODS = [
-        'mood-amber','mood-copper','mood-bronze','mood-antique',
-        'mood-mahogany','mood-teak','mood-rosewood','mood-ebony',
-        'mood-walnut','mood-cedar','mood-oak','mood-pine'
-      ];
+  const cards = document.querySelectorAll('.wood-card');
+  let curMood = 0, curTex = 0;
 
-      const ALL_MOODS = MOODS.join(' ');
-      const cards = document.querySelectorAll('.wood-card');
-      let current = 0;
+  function applyMood(mIdx) {
+    cards.forEach(card => {
+      card.classList.remove(...MOODS);
+      card.classList.add(MOODS[mIdx]);
+    });
+  }
 
-      function applyMood(idx) {
-        cards.forEach(card => {
-          card.classList.remove(...MOODS);
-          card.classList.add(MOODS[idx]);
-        });
+  function applyTex(tIdx) {
+    cards.forEach(card => {
+      card.classList.remove(...WOOD_TEXTURES);
+      card.classList.add(WOOD_TEXTURES[tIdx]);
+    });
+  }
+
+  // Smooth background transition via CSS transition on .wood-card
+  const style = document.createElement('style');
+  style.textContent = '.wood-card { transition: background 1.6s ease, border-color 1.8s ease, box-shadow 1.8s ease; }';
+  document.head.appendChild(style);
+
+  function nextMood() {
+    let n;
+    do { n = Math.floor(Math.random() * MOODS.length); } while (n === curMood);
+    curMood = n;
+    applyMood(curMood);
+    setTimeout(nextMood, 5000 + Math.random() * 11000);
+  }
+
+  function nextTex() {
+    let n;
+    do { n = Math.floor(Math.random() * WOOD_TEXTURES.length); } while (n === curTex);
+    curTex = n;
+    applyTex(curTex);
+    setTimeout(nextTex, 4000 + Math.random() * 9000);
+  }
+
+  // Random start
+  curMood = Math.floor(Math.random() * MOODS.length);
+  curTex  = Math.floor(Math.random() * WOOD_TEXTURES.length);
+  applyMood(curMood);
+  applyTex(curTex);
+
+  setTimeout(nextMood, 3500 + Math.random() * 3000);
+  setTimeout(nextTex,  2500 + Math.random() * 2500);
+})();
+</script>
+
+<!-- EMBER ENTRY ANIMATION -->
+<script>
+(() => {
+  const canvas = document.getElementById('emberCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const embers = [];
+  const EMBER_COUNT = 180;
+
+  class Ember {
+    constructor() { this.reset(true); }
+    reset(init = false) {
+      this.x = W * (.1 + Math.random() * .8);
+      this.y = init ? H + Math.random() * H * .5 : H + 20;
+      this.vx = (Math.random() - .5) * 3.5;
+      this.vy = -(2.5 + Math.random() * 5.5);
+      this.size = .8 + Math.random() * 2.6;
+      this.life = init ? Math.random() * 60 : 0;
+      this.maxLife = 45 + Math.random() * 75;
+      this.grav = .025 + Math.random() * .035;
+      this.hue = Math.floor(Math.random() * 40); // 0–40 orange/red range
+    }
+    update() {
+      this.life++;
+      this.vx += (Math.random() - .5) * .18;
+      this.vy += this.grav;
+      this.vx *= .993;
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.life >= this.maxLife || this.y < -20) this.reset();
+    }
+    draw() {
+      const p = this.life / this.maxLife;
+      const a = Math.max(0, 1 - p * 1.1);
+      if (a < .01) return;
+      const flk = .6 + Math.sin(this.life * .85) * .4;
+      ctx.save();
+      ctx.globalAlpha = a * flk;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `hsl(${25 + this.hue}, 100%, ${70 + p * 20}%)`;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = `rgba(255,${140 + this.hue * 2},0,.9)`;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  for (let i = 0; i < EMBER_COUNT; i++) embers.push(new Ember());
+
+  let elapsed = 0;
+  const DURATION = 2200; // ms — fade out after this
+  const start = performance.now();
+
+  function loop(now) {
+    elapsed = now - start;
+    const progress = Math.min(1, elapsed / DURATION);
+    const canvasAlpha = Math.max(0, 1 - ((elapsed - 800) / 1400));
+
+    ctx.clearRect(0, 0, W, H);
+
+    if (canvasAlpha > 0) {
+      canvas.style.opacity = canvasAlpha;
+      for (const e of embers) { e.update(); e.draw(); }
+      requestAnimationFrame(loop);
+    } else {
+      canvas.style.display = 'none';
+    }
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+
+<!-- FIT TITLE TO SCREEN -->
+<script>
+(function fitTitle() {
+  const el = document.querySelector('.hero-name');
+  if (!el) return;
+  const parent = el.closest('.hero') || el.parentElement;
+
+  function scale() {
+    // Reset first
+    el.style.transform = 'none';
+    requestAnimationFrame(() => {
+      const available = parent.clientWidth - 24;
+      const natural = el.scrollWidth;
+      if (natural > 0 && natural > available) {
+        const ratio = available / natural;
+        el.style.transform = `scaleX(${ratio.toFixed(4)})`;
+        el.style.transformOrigin = 'center top';
       }
+    });
+  }
 
-      function next() {
-        let n;
-        do { n = Math.floor(Math.random() * MOODS.length); } while (n === current);
-        current = n;
-        applyMood(current);
-        // Random hold 5s–16s
-        setTimeout(next, 5000 + Math.random() * 11000);
-      }
-
-      applyMood(0);
-      setTimeout(next, 4000);
-    })();
-  </script>
+  // Run after fonts loaded
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(scale);
+  } else {
+    setTimeout(scale, 300);
+  }
+  window.addEventListener('resize', scale);
+})();
+</script>
 
 </body>
 </html>
