@@ -113,7 +113,6 @@ body::after {
 
 .wrap {
   position: relative; z-index: 1;
-  contain: layout;
   width: min(560px, calc(100vw - max(32px, env(safe-area-inset-left) + env(safe-area-inset-right))));
   margin: 0 auto;
   padding: calc(var(--safe) + 28px) 0 56px;
@@ -256,8 +255,6 @@ body::after {
   position: relative;
   border-radius: 14px;
   overflow: hidden;
-  will-change: box-shadow;
-  contain: layout style;
 
   background:
     /* Fine grain overlay */
@@ -291,9 +288,8 @@ body::after {
     inset -1px 0 0 rgba(245,217,138,0.04);
 
   transition:
-    border-color 1.4s ease,
-    box-shadow 1.4s ease;
-  /* NOTE: no 'background' in transition — gradient interpolation kills FPS */
+    border-color 1.8s ease,
+    box-shadow 1.8s ease;
 
   animation: cardBreathe var(--mood-duration) ease-in-out infinite;
 }
@@ -482,7 +478,7 @@ body::after {
   box-shadow:
     inset 0 1px 0 rgba(245,217,138,0.14),
     inset 0 -1px 0 rgba(0,0,0,0.25);
-  transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+  transition: border-color 0.22s ease, background 0.22s ease, color 0.22s ease;
 }
 .link-btn:hover .link-ico {
   background:
@@ -576,18 +572,18 @@ body::after {
    MOOD CLASSES — 12 wood tones
    Each sets --mood-gold + RGB breakdown for box-shadow rgba()
    ============================================ */
-.mood-amber    { --mood-gold: #c8973a; --mood-gold-r:200; --mood-gold-g:151; --mood-gold-b:58;  --mood-duration:10.0s;   }
-.mood-copper   { --mood-gold: #b8722a; --mood-gold-r:184; --mood-gold-g:114; --mood-gold-b:42;  --mood-duration:7.5s;   }
-.mood-bronze   { --mood-gold: #d4964a; --mood-gold-r:212; --mood-gold-g:150; --mood-gold-b:74;  --mood-duration:12.5s;   }
-.mood-antique  { --mood-gold: #e8bc5a; --mood-gold-r:232; --mood-gold-g:188; --mood-gold-b:90;  --mood-duration:15.0s;   }
-.mood-mahogany { --mood-gold: #a0522d; --mood-gold-r:160; --mood-gold-g:82;  --mood-gold-b:45;  --mood-duration:8.8s; }
-.mood-teak     { --mood-gold: #c8832a; --mood-gold-r:200; --mood-gold-g:131; --mood-gold-b:42;  --mood-duration:11.2s; }
-.mood-rosewood { --mood-gold: #c0503c; --mood-gold-r:192; --mood-gold-g:80;  --mood-gold-b:60;  --mood-duration:7.0s; }
-.mood-ebony    { --mood-gold: #d4a840; --mood-gold-r:212; --mood-gold-g:168; --mood-gold-b:64;  --mood-duration:17.5s;   }
-.mood-walnut   { --mood-gold: #9a6820; --mood-gold-r:154; --mood-gold-g:104; --mood-gold-b:32;  --mood-duration:13.8s; }
-.mood-cedar    { --mood-gold: #c06030; --mood-gold-r:192; --mood-gold-g:96;  --mood-gold-b:48;  --mood-duration:8.0s; }
-.mood-oak      { --mood-gold: #d4b060; --mood-gold-r:212; --mood-gold-g:176; --mood-gold-b:96;  --mood-duration:16.2s; }
-.mood-pine     { --mood-gold: #b89040; --mood-gold-r:184; --mood-gold-g:144; --mood-gold-b:64;  --mood-duration:10.5s; }
+.mood-amber    { --mood-gold: #c8973a; --mood-gold-r:200; --mood-gold-g:151; --mood-gold-b:58;  --mood-duration:4s;   }
+.mood-copper   { --mood-gold: #b8722a; --mood-gold-r:184; --mood-gold-g:114; --mood-gold-b:42;  --mood-duration:3s;   }
+.mood-bronze   { --mood-gold: #d4964a; --mood-gold-r:212; --mood-gold-g:150; --mood-gold-b:74;  --mood-duration:5s;   }
+.mood-antique  { --mood-gold: #e8bc5a; --mood-gold-r:232; --mood-gold-g:188; --mood-gold-b:90;  --mood-duration:6s;   }
+.mood-mahogany { --mood-gold: #a0522d; --mood-gold-r:160; --mood-gold-g:82;  --mood-gold-b:45;  --mood-duration:3.5s; }
+.mood-teak     { --mood-gold: #c8832a; --mood-gold-r:200; --mood-gold-g:131; --mood-gold-b:42;  --mood-duration:4.5s; }
+.mood-rosewood { --mood-gold: #c0503c; --mood-gold-r:192; --mood-gold-g:80;  --mood-gold-b:60;  --mood-duration:2.8s; }
+.mood-ebony    { --mood-gold: #d4a840; --mood-gold-r:212; --mood-gold-g:168; --mood-gold-b:64;  --mood-duration:7s;   }
+.mood-walnut   { --mood-gold: #9a6820; --mood-gold-r:154; --mood-gold-g:104; --mood-gold-b:32;  --mood-duration:5.5s; }
+.mood-cedar    { --mood-gold: #c06030; --mood-gold-r:192; --mood-gold-g:96;  --mood-gold-b:48;  --mood-duration:3.2s; }
+.mood-oak      { --mood-gold: #d4b060; --mood-gold-r:212; --mood-gold-g:176; --mood-gold-b:96;  --mood-duration:6.5s; }
+.mood-pine     { --mood-gold: #b89040; --mood-gold-r:184; --mood-gold-g:144; --mood-gold-b:64;  --mood-duration:4.2s; }
 
 /* ============================================
    WOOD TEXTURE GRADIENT THEMES — 12 variants
@@ -628,8 +624,18 @@ body::after {
 * { -webkit-tap-highlight-color: transparent; }
 a, button { outline: none; }
 
-/* Prevent any text-shadow inheritance from hero into link buttons */
-.link-btn, .link-txt, .link-ico {
+/* ── Strict scope: tube light ONLY on hero-subtitle ── */
+.link-btn,
+.link-txt,
+.link-ico,
+.section-label,
+.skeleton,
+.foot {
   text-shadow: none !important;
   animation: none !important;
+}
+
+/* ── Wood card: NO background transition (kills FPS) ── */
+.wood-card {
+  transition: border-color 1.4s ease, box-shadow 1.4s ease !important;
 }
