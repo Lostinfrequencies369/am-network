@@ -68,8 +68,8 @@ body{
 }
 
 @keyframes electricShimmer{
-  0%{background-position:0% center;}
-  100%{background-position:240% center;}
+  0%  {background-position:0% center;}
+  100%{background-position:600% center;}
 }
 @keyframes titleGlitch{
   0%,88%,100%{text-shadow:0 0 10px var(--nc-a),0 0 30px var(--nc-glow-a),0 0 60px var(--nc-glow-b);}
@@ -89,16 +89,46 @@ body{
   white-space:nowrap;
   transform-origin:center top;
   background:linear-gradient(110deg,
-    #0050aa 0%,#0090ff 12%,#00e5ff 24%,
-    #ffffff 34%,#a0f0ff 44%,#00e5ff 54%,
-    #7b2fff 66%,#00c4ff 78%,#ffffff 88%,
-    #0090ff 100%
+    #003380  0%,
+    #0066cc  3%,
+    #00aaff  6%,
+    #00e5ff  9%,
+    #40ffee  12%,
+    #ffffff  15%,
+    #ffe000  18%,
+    #ff8800  21%,
+    #ff2266  24%,
+    #cc00ff  27%,
+    #7700ff  30%,
+    #0033ff  33%,
+    #00aaff  36%,
+    #00ffcc  39%,
+    #39ff14  42%,
+    #ffffff  45%,
+    #ffff00  48%,
+    #ff6600  51%,
+    #ff0066  54%,
+    #aa00ff  57%,
+    #4400ff  60%,
+    #0077ff  63%,
+    #00ddff  66%,
+    #80ffee  69%,
+    #ffffff  72%,
+    #ffd700  75%,
+    #ff3300  78%,
+    #ff00aa  81%,
+    #8800ff  84%,
+    #0055ff  87%,
+    #00ccff  90%,
+    #00ffdd  93%,
+    #ffffff  96%,
+    #003380  100%
   );
-  background-size:240% auto;
+  background-size:600% auto;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
-  animation:electricShimmer 3.5s linear infinite,titleGlitch 7s ease-in-out infinite;
+  animation:electricShimmer 8s linear infinite, titleGlitch 7s ease-in-out infinite;
   filter:drop-shadow(0 0 8px rgba(0,200,255,.6));
 }
 
