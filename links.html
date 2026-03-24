@@ -89,7 +89,7 @@
     do { n = Math.floor(Math.random() * MOODS.length); } while (n === curMood);
     curMood = n;
     requestAnimationFrame(() => applyMood(curMood));
-    setTimeout(nextMood, 6000 + Math.random() * 12000);
+    setTimeout(nextMood, 12000 + Math.random() * 18000);
   }
 
   function nextTex() {
@@ -97,7 +97,7 @@
     do { n = Math.floor(Math.random() * WOOD_TEXTURES.length); } while (n === curTex);
     curTex = n;
     requestAnimationFrame(() => applyTex(curTex));
-    setTimeout(nextTex, 5000 + Math.random() * 10000);
+    setTimeout(nextTex, 10000 + Math.random() * 14000);
   }
 
   // Random start
@@ -106,8 +106,8 @@
   applyMood(curMood);
   applyTex(curTex);
 
-  setTimeout(nextMood, 3500 + Math.random() * 3000);
-  setTimeout(nextTex,  2500 + Math.random() * 2500);
+  setTimeout(nextMood, 10000 + Math.random() * 8000);
+  setTimeout(nextTex,  8000 + Math.random() * 12000);
 })();
 </script>
 
