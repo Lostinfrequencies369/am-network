@@ -84,25 +84,20 @@
     });
   }
 
-  // Smooth background transition via CSS transition on .wood-card
-  const style = document.createElement('style');
-  style.textContent = '.wood-card { transition: background 1.6s ease, border-color 1.8s ease, box-shadow 1.8s ease; }';
-  document.head.appendChild(style);
-
   function nextMood() {
     let n;
     do { n = Math.floor(Math.random() * MOODS.length); } while (n === curMood);
     curMood = n;
-    applyMood(curMood);
-    setTimeout(nextMood, 5000 + Math.random() * 11000);
+    requestAnimationFrame(() => applyMood(curMood));
+    setTimeout(nextMood, 6000 + Math.random() * 12000);
   }
 
   function nextTex() {
     let n;
     do { n = Math.floor(Math.random() * WOOD_TEXTURES.length); } while (n === curTex);
     curTex = n;
-    applyTex(curTex);
-    setTimeout(nextTex, 4000 + Math.random() * 9000);
+    requestAnimationFrame(() => applyTex(curTex));
+    setTimeout(nextTex, 5000 + Math.random() * 10000);
   }
 
   // Random start
@@ -120,7 +115,7 @@
 <script>
 (() => {
   const canvas = document.getElementById('emberCanvas');
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: true });
   let W, H;
   function resize() {
     W = canvas.width = window.innerWidth;
@@ -130,7 +125,7 @@
   window.addEventListener('resize', resize);
 
   const embers = [];
-  const EMBER_COUNT = 180;
+  const EMBER_COUNT = 80;
 
   class Ember {
     constructor() { this.reset(true); }
