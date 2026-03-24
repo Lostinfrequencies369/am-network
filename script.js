@@ -1,7 +1,6 @@
 // ===========================================
 // AM-369-Network — script.js
-// PREMIUM WOOD EDITION
-// API fetch + render, no canvas effects
+// API fetch + render
 // ===========================================
 
 const API_BASE = "https://script.google.com/macros/s/AKfycbyfSA8AeVKv-rxOQce4HyDTLI-JEyZVeSwydV9DMGflr-IfAGYJ1ugW0YE5x86FLwnO/exec";
@@ -9,19 +8,17 @@ const API_BASE = "https://script.google.com/macros/s/AKfycbyfSA8AeVKv-rxOQce4HyD
 const $ = id => document.getElementById(id);
 
 (() => {
-  // Year
   const yr = $("yr");
   if (yr) yr.textContent = new Date().getFullYear();
 
-  // API helpers
   function safeText(v) {
     return (v === null || v === undefined) ? "" : String(v);
   }
 
   function sortLinks(list) {
-    return list.slice().sort((a, b) => {
-      return Number(a.Order || 9999) - Number(b.Order || 9999);
-    });
+    return list.slice().sort((a, b) =>
+      Number(a.Order || 9999) - Number(b.Order || 9999)
+    );
   }
 
   function pickFeatured(list) {
@@ -48,7 +45,10 @@ const $ = id => document.getElementById(id);
     if (!clean || !API_BASE || API_BASE.includes("PASTE_YOUR_WEBAPP_URL_HERE")) return;
     const url = `${API_BASE}?action=click&id=${encodeURIComponent(clean)}`;
     try {
-      if (navigator.sendBeacon) { navigator.sendBeacon(url, new Blob([], { type: "text/plain" })); return; }
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(url, new Blob([], { type: "text/plain" }));
+        return;
+      }
     } catch (_) {}
     try { fetch(url, { method: "POST", mode: "no-cors" }).catch(() => {}); } catch (_) {}
   }
