@@ -7,620 +7,489 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@property --angle-1 {
-  syntax: "<angle>"; inherits: false; initial-value: -75deg;
-}
-@property --angle-2 {
-  syntax: "<angle>"; inherits: false; initial-value: -45deg;
+@property --angle-1{syntax:"<angle>";inherits:false;initial-value:-75deg;}
+@property --angle-2{syntax:"<angle>";inherits:false;initial-value:-45deg;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:"Montserrat",sans-serif;-webkit-font-smoothing:antialiased;}
+
+#fireCanvas{position:fixed;inset:0;z-index:0;width:100%;height:100%;}
+
+#vignette{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 90% 80% at 50% 110%,
+    transparent 0%,rgba(0,0,0,0.22) 45%,rgba(0,0,0,0.75) 100%);
 }
 
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; background:#000; font-family:"Montserrat",sans-serif; -webkit-font-smoothing:antialiased; }
-
-/* Fire canvas */
-#fireCanvas {
-  position: fixed; inset: 0; z-index: 0;
-  width: 100%; height: 100%;
+.hero{
+  position:relative;z-index:10;
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:0;padding:24px;text-align:center;
+  pointer-events:none;
 }
 
-/* Heat distortion canvas — filtered on top of fire */
-#heatCanvas {
-  position: fixed; inset: 0; z-index: 1;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  filter: blur(4px) contrast(8);
-  mix-blend-mode: screen;
-  opacity: 0.06;
+@keyframes flameRise{
+  0%{opacity:0;transform:translateY(80px) scaleX(1.15) scaleY(0.6);filter:blur(24px) brightness(4) saturate(2);}
+  28%{opacity:0.65;transform:translateY(18px) scaleX(1.05) scaleY(1.1);filter:blur(9px) brightness(2.2);}
+  58%{opacity:0.93;transform:translateY(-5px) scaleX(0.99) scaleY(1.04);filter:blur(2px) brightness(1.3);}
+  78%{opacity:1;transform:translateY(3px) scaleX(1) scaleY(1);filter:blur(0) brightness(1.1);}
+  100%{opacity:1;transform:translateY(0) scaleX(1) scaleY(1);filter:blur(0) brightness(1);}
+}
+@keyframes welcomeGlow{
+  0%,100%{text-shadow:0 0 24px rgba(255,100,0,0.7),0 0 60px rgba(255,50,0,0.3);}
+  50%{text-shadow:0 0 44px rgba(255,165,0,1),0 0 95px rgba(255,80,0,0.55),0 0 150px rgba(255,30,0,0.2);}
+}
+@keyframes titleGlow{
+  0%,100%{text-shadow:0 0 20px rgba(255,140,0,1),0 0 45px rgba(255,60,0,0.7),0 0 100px rgba(255,20,0,0.35);}
+  50%{text-shadow:0 0 38px rgba(255,210,0,1),0 0 75px rgba(255,110,0,0.9),0 0 150px rgba(255,50,0,0.5);}
+}
+@keyframes subtleGlow{
+  0%,100%{opacity:0.65;}
+  50%{opacity:0.92;text-shadow:0 0 22px rgba(255,100,0,0.55);}
+}
+@keyframes btnAppear{
+  0%{opacity:0;transform:translateY(30px) scale(0.88);filter:blur(14px);}
+  62%{opacity:0.85;transform:translateY(-5px) scale(1.03);filter:blur(1px);}
+  100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
 }
 
-/* Dark vignette overlay */
-#vignette {
-  position: fixed; inset: 0; z-index: 2; pointer-events: none;
-  background: radial-gradient(ellipse 90% 80% at 50% 110%,
-    transparent 0%,
-    rgba(0,0,0,0.2) 45%,
-    rgba(0,0,0,0.72) 100%
-  );
+.welcome-line{
+  font-size:clamp(14px,5.5vw,38px);font-weight:700;
+  letter-spacing:clamp(2px,1.2vw,6px);text-transform:uppercase;
+  white-space:nowrap;color:rgba(255,200,100,0.85);
+  margin-bottom:6px;display:block;opacity:0;
+  animation:flameRise 1.1s cubic-bezier(0.22,1,0.36,1) 0.2s forwards,
+            welcomeGlow 3.2s ease-in-out 1.3s infinite;
+}
+.main-title{
+  font-size:clamp(14px,5.5vw,38px);font-weight:800;
+  text-transform:uppercase;letter-spacing:clamp(2px,1.2vw,6px);
+  line-height:1.1;white-space:nowrap;color:#fff;
+  margin-bottom:8px;display:block;opacity:0;
+  animation:flameRise 1.2s cubic-bezier(0.22,1,0.36,1) 0.65s forwards,
+            titleGlow 2.8s ease-in-out 1.85s infinite;
+}
+.subtitle{
+  font-size:clamp(9px,2.6vw,13px);font-weight:400;
+  letter-spacing:clamp(1px,0.8vw,2.5px);text-transform:uppercase;
+  font-style:italic;white-space:nowrap;color:rgba(255,175,70,0.65);
+  text-shadow:0 0 18px rgba(255,80,0,0.5);
+  margin-bottom:40px;display:block;opacity:0;
+  animation:flameRise 1.0s cubic-bezier(0.22,1,0.36,1) 1.1s forwards,
+            subtleGlow 3.5s ease-in-out 2.1s infinite;
 }
 
-/* Hero */
-.hero {
-  position: relative; z-index: 10;
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 0; padding: 24px; text-align: center;
-  pointer-events: none;
-}
-
-.welcome-line {
-  font-size: clamp(14px, 5.5vw, 38px);
-  font-weight: 700;
-  letter-spacing: clamp(2px, 1.2vw, 6px);
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: rgba(255,200,100,0.85);
-  text-shadow: 0 0 24px rgba(255,100,0,0.7), 0 0 60px rgba(255,50,0,0.3);
-  margin-bottom: 6px;
-  /* scale down on small screens — no box clip */
-  display: block;
-  transform-origin: center;
-  max-width: 100%;
-}
-
-.main-title {
-  font-size: clamp(14px, 5.5vw, 38px);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: clamp(2px, 1.2vw, 6px);
-  line-height: 1.1;
-  white-space: nowrap;
-  color: #fff;
-  text-shadow:
-    0 0 18px rgba(255,140,0,1),
-    0 0 40px rgba(255,60,0,0.7),
-    0 0 90px rgba(255,20,0,0.35);
-  margin-bottom: 8px;
-  display: block;
-  max-width: 100%;
-}
-
-.subtitle {
-  font-size: clamp(9px, 2.6vw, 13px);
-  font-weight: 400;
-  letter-spacing: clamp(1px, 0.8vw, 2.5px);
-  text-transform: uppercase;
-  font-style: italic;
-  white-space: nowrap;
-  color: rgba(255,175,70,0.65);
-  text-shadow: 0 0 18px rgba(255,80,0,0.5);
-  margin-bottom: 40px;
-  display: block;
-  max-width: 100%;
-}
-
-/* Button */
-:root {
-  --global--size: clamp(0.88rem,2.1vw,1.18rem);
-  --anim--hover-time: 400ms;
-  --anim--hover-ease: cubic-bezier(0.25,1,0.5,1);
-}
-.button-wrap {
-  position:relative; border-radius:999vw;
+:root{--global--size:clamp(0.88rem,2.1vw,1.18rem);--anim--hover-time:400ms;--anim--hover-ease:cubic-bezier(0.25,1,0.5,1);}
+.button-wrap{
+  position:relative;border-radius:999vw;
   pointer-events:auto;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  font-size: var(--global--size);
+  transition:all var(--anim--hover-time) var(--anim--hover-ease);
+  font-size:var(--global--size);opacity:0;
+  animation:btnAppear 1.0s cubic-bezier(0.22,1,0.36,1) 1.55s forwards;
 }
-.button-shadow {
-  --shadow-cuttoff-fix: 2em;
+.button-shadow{
+  --shadow-cuttoff-fix:2em;
   position:absolute;
-  width: calc(100% + var(--shadow-cuttoff-fix));
-  height: calc(100% + var(--shadow-cuttoff-fix));
-  top: calc(0% - var(--shadow-cuttoff-fix)/2);
-  left: calc(0% - var(--shadow-cuttoff-fix)/2);
-  filter: blur(clamp(2px,0.125em,12px));
-  overflow:visible; pointer-events:none;
+  width:calc(100% + var(--shadow-cuttoff-fix));height:calc(100% + var(--shadow-cuttoff-fix));
+  top:calc(0% - var(--shadow-cuttoff-fix)/2);left:calc(0% - var(--shadow-cuttoff-fix)/2);
+  filter:blur(clamp(2px,0.125em,12px));overflow:visible;pointer-events:none;
 }
-.button-shadow::after {
-  content:""; position:absolute; border-radius:999vw;
-  background: linear-gradient(180deg, rgba(255,80,0,0.3), rgba(200,30,0,0.15));
-  width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
-  height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
-  top: calc(var(--shadow-cuttoff-fix) - 0.5em);
-  left: calc(var(--shadow-cuttoff-fix) - 0.875em);
-  padding:0.125em;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
+.button-shadow::after{
+  content:"";position:absolute;border-radius:999vw;
+  background:linear-gradient(180deg,rgba(255,80,0,0.3),rgba(200,30,0,0.15));
+  width:calc(100% - var(--shadow-cuttoff-fix) - 0.25em);height:calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+  top:calc(var(--shadow-cuttoff-fix) - 0.5em);left:calc(var(--shadow-cuttoff-fix) - 0.875em);
+  padding:0.125em;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;transition:all var(--anim--hover-time) var(--anim--hover-ease);
 }
-.enter-btn {
-  --border-width: clamp(1px,0.0625em,4px);
-  all:unset; cursor:pointer; position:relative;
-  -webkit-tap-highlight-color:rgba(0,0,0,0);
-  pointer-events:auto; z-index:3;
-  background: linear-gradient(-75deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+.enter-btn{
+  --border-width:clamp(1px,0.0625em,4px);
+  all:unset;cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);pointer-events:auto;z-index:3;
+  background:linear-gradient(-75deg,rgba(255,255,255,0.06),rgba(255,255,255,0.18),rgba(255,255,255,0.06));
   border-radius:999vw;
-  box-shadow:
-    inset 0 0.125em 0.125em rgba(0,0,0,0.1),
-    inset 0 -0.125em 0.125em rgba(255,255,255,0.4),
-    0 0.25em 0.125em -0.125em rgba(0,0,0,0.4),
-    0 0 0.1em 0.25em inset rgba(255,255,255,0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  box-shadow:inset 0 0.125em 0.125em rgba(0,0,0,0.1),inset 0 -0.125em 0.125em rgba(255,255,255,0.4),
+    0 0.25em 0.125em -0.125em rgba(0,0,0,0.4),0 0 0.1em 0.25em inset rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:all var(--anim--hover-time) var(--anim--hover-ease);
 }
-.enter-btn:hover {
+.enter-btn:hover{
   transform:scale(0.975);
-  box-shadow:
-    inset 0 0.125em 0.125em rgba(0,0,0,0.08),
-    inset 0 -0.125em 0.125em rgba(255,255,255,0.5),
-    0 0.15em 0.05em -0.1em rgba(0,0,0,0.35),
-    0 0 0.05em 0.1em inset rgba(255,255,255,0.4);
+  box-shadow:inset 0 0.125em 0.125em rgba(0,0,0,0.08),inset 0 -0.125em 0.125em rgba(255,255,255,0.5),
+    0 0.15em 0.05em -0.1em rgba(0,0,0,0.35),0 0 0.05em 0.1em inset rgba(255,255,255,0.4);
 }
-.enter-btn span {
-  position:relative; display:block; user-select:none;
-  font-family:"Montserrat",sans-serif;
-  letter-spacing:0.12em; font-weight:600; font-size:1em;
+.enter-btn span{
+  position:relative;display:block;user-select:none;
+  font-family:"Montserrat",sans-serif;letter-spacing:0.12em;font-weight:600;font-size:1em;
   color:rgba(255,255,255,0.95);
-  text-shadow: 0 0 14px rgba(255,100,0,0.6), 0 0.1em 0.2em rgba(0,0,0,0.5);
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  padding-inline:2.2em; padding-block:0.9em;
+  text-shadow:0 0 14px rgba(255,100,0,0.6),0 0.1em 0.2em rgba(0,0,0,0.5);
+  transition:all var(--anim--hover-time) var(--anim--hover-ease);
+  padding-inline:2.2em;padding-block:0.9em;
 }
-.enter-btn span::after {
-  content:""; display:block; position:absolute; z-index:3;
-  width:calc(100% - var(--border-width));
-  height:calc(100% - var(--border-width));
-  top:calc(0% + var(--border-width)/2);
-  left:calc(0% + var(--border-width)/2);
-  box-sizing:border-box; border-radius:999vw; overflow:clip;
-  background: linear-gradient(var(--angle-2),
-    rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 40% 50%, rgba(255,255,255,0) 55%);
-  mix-blend-mode:screen; pointer-events:none;
-  background-size:200% 200%; background-position:0% 50%;
-  transition:
-    background-position calc(var(--anim--hover-time)*1.25) var(--anim--hover-ease),
+.enter-btn span::after{
+  content:"";display:block;position:absolute;z-index:3;
+  width:calc(100% - var(--border-width));height:calc(100% - var(--border-width));
+  top:calc(0% + var(--border-width)/2);left:calc(0% + var(--border-width)/2);
+  box-sizing:border-box;border-radius:999vw;overflow:clip;
+  background:linear-gradient(var(--angle-2),rgba(255,255,255,0) 0%,rgba(255,255,255,0.45) 40% 50%,rgba(255,255,255,0) 55%);
+  mix-blend-mode:screen;pointer-events:none;
+  background-size:200% 200%;background-position:0% 50%;
+  transition:background-position calc(var(--anim--hover-time)*1.25) var(--anim--hover-ease),
     --angle-2 calc(var(--anim--hover-time)*1.25) var(--anim--hover-ease);
 }
-.enter-btn:hover span::after { background-position:25% 50%; }
-.enter-btn:active span::after { background-position:50% 15%; --angle-2:-15deg; }
-.enter-btn::after {
-  content:""; position:absolute; z-index:1; inset:0; border-radius:999vw;
-  width:calc(100% + var(--border-width));
-  height:calc(100% + var(--border-width));
-  top:calc(0% - var(--border-width)/2);
-  left:calc(0% - var(--border-width)/2);
-  padding:var(--border-width); box-sizing:border-box;
-  background: conic-gradient(from var(--angle-1) at 50% 50%,
-    rgba(255,150,50,0.85), rgba(255,150,50,0) 5% 40%,
-    rgba(255,150,50,0.85) 50%, rgba(255,150,50,0) 60% 95%, rgba(255,150,50,0.85)),
-  linear-gradient(180deg, rgba(255,120,30,0.4), rgba(255,80,0,0.4));
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+.enter-btn:hover span::after{background-position:25% 50%;}
+.enter-btn:active span::after{background-position:50% 15%;--angle-2:-15deg;}
+.enter-btn::after{
+  content:"";position:absolute;z-index:1;inset:0;border-radius:999vw;
+  width:calc(100% + var(--border-width));height:calc(100% + var(--border-width));
+  top:calc(0% - var(--border-width)/2);left:calc(0% - var(--border-width)/2);
+  padding:var(--border-width);box-sizing:border-box;
+  background:conic-gradient(from var(--angle-1) at 50% 50%,
+    rgba(255,150,50,0.85),rgba(255,150,50,0) 5% 40%,
+    rgba(255,150,50,0.85) 50%,rgba(255,150,50,0) 60% 95%,rgba(255,150,50,0.85)),
+  linear-gradient(180deg,rgba(255,120,30,0.4),rgba(255,80,0,0.4));
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   mask-composite:exclude;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease), --angle-1 500ms ease;
+  transition:all var(--anim--hover-time) var(--anim--hover-ease),--angle-1 500ms ease;
 }
-.enter-btn:hover::after { --angle-1:-125deg; }
-.enter-btn:active::after { --angle-1:-75deg; }
-.button-wrap:has(.enter-btn:active) { transform:rotate3d(1,0,0,25deg); }
-.button-wrap:has(.enter-btn:hover) .button-shadow { filter:blur(clamp(2px,0.0625em,6px)); }
-
-@keyframes pageFadeOut { to { opacity:0; } }
-.fading { animation: pageFadeOut 0.55s ease forwards; }
+.enter-btn:hover::after{--angle-1:-125deg;}
+.enter-btn:active::after{--angle-1:-75deg;}
+.button-wrap:has(.enter-btn:active){transform:rotate3d(1,0,0,25deg);}
+.button-wrap:has(.enter-btn:hover) .button-shadow{filter:blur(clamp(2px,0.0625em,6px));}
 </style>
 </head>
 <body>
-
 <canvas id="fireCanvas"></canvas>
-<canvas id="heatCanvas"></canvas>
 <div id="vignette"></div>
 
-<div class="hero" id="heroContent">
+<div class="hero">
   <p class="welcome-line">Welcome to</p>
   <h1 class="main-title">AM-369-Network</h1>
   <p class="subtitle">Designed by Dr. Ankit Malik</p>
   <div class="button-wrap">
-    <button class="enter-btn" id="enterBtn">
-      <span>Press here to enter</span>
-    </button>
+    <button class="enter-btn" id="enterBtn"><span>Press here to enter</span></button>
     <div class="button-shadow"></div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  PERLIN NOISE — classic implementation
-// ═══════════════════════════════════════════════════════════════
-const Perlin = (() => {
-  const perm = new Uint8Array(512)
-  const p = new Uint8Array(256)
-  for (let i = 0; i < 256; i++) p[i] = i
-  for (let i = 255; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [p[i], p[j]] = [p[j], p[i]]
-  }
-  for (let i = 0; i < 512; i++) perm[i] = p[i & 255]
+// ═══════════ PERLIN NOISE ═══════════
+const Perlin=(()=>{
+  const perm=new Uint8Array(512),p=new Uint8Array(256);
+  for(let i=0;i<256;i++)p[i]=i;
+  for(let i=255;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+  for(let i=0;i<512;i++)perm[i]=p[i&255];
+  const fade=t=>t*t*t*(t*(t*6-15)+10);
+  const lerp=(a,b,t)=>a+t*(b-a);
+  const grad=(h,x,y)=>{const u=h<2?x:y,v=h<2?y:x;return((h&1)?-u:u)+((h&2)?-v:v);};
+  return{noise(x,y){
+    const X=Math.floor(x)&255,Y=Math.floor(y)&255;
+    x-=Math.floor(x);y-=Math.floor(y);
+    const u=fade(x),v=fade(y),a=perm[X]+Y,b=perm[X+1]+Y;
+    return lerp(lerp(grad(perm[a],x,y),grad(perm[b],x-1,y),u),
+                lerp(grad(perm[a+1],x,y-1),grad(perm[b+1],x-1,y-1),u),v);
+  }};
+})();
 
-  const fade = t => t * t * t * (t * (t * 6 - 15) + 10)
-  const lerp  = (a, b, t) => a + t * (b - a)
-  const grad  = (hash, x, y) => {
-    const h = hash & 3
-    const u = h < 2 ? x : y
-    const v = h < 2 ? y : x
-    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v)
-  }
-
-  return {
-    noise(x, y) {
-      const X = Math.floor(x) & 255
-      const Y = Math.floor(y) & 255
-      x -= Math.floor(x); y -= Math.floor(y)
-      const u = fade(x), v = fade(y)
-      const a  = perm[X] + Y,   b  = perm[X+1] + Y
-      return lerp(
-        lerp(grad(perm[a],   x,   y), grad(perm[b],   x-1, y),   u),
-        lerp(grad(perm[a+1], x,   y-1), grad(perm[b+1], x-1, y-1), u),
-        v
-      )
-    }
-  }
-})()
-
-// ═══════════════════════════════════════════════════════════════
-//  CANVAS SETUP
-// ═══════════════════════════════════════════════════════════════
-const fireCanvas = document.getElementById('fireCanvas')
-const heatCanvas = document.getElementById('heatCanvas')
-const fctx = fireCanvas.getContext('2d')
-const hctx = heatCanvas.getContext('2d')
-
-let W, H
-function resize() {
-  W = fireCanvas.width  = heatCanvas.width  = window.innerWidth
-  H = fireCanvas.height = heatCanvas.height = window.innerHeight
-}
-resize()
-window.addEventListener('resize', resize)
-
-// ═══════════════════════════════════════════════════════════════
-//  FUEL SOURCES — multiple hotspots across bottom
-// ═══════════════════════════════════════════════════════════════
-function getFuelPoints() {
-  const count   = 7
-  const points  = []
-  for (let i = 0; i < count; i++) {
-    const t = i / (count - 1)
-    points.push({
-      x: W * (0.12 + t * 0.76),
-      y: H,
-      intensity: 0.5 + Math.sin(t * Math.PI) * 0.5   // center brighter
-    })
-  }
-  return points
+// ═══════════ CURL NOISE ═══════════
+function curl(x,y,t,e=0.008){
+  const n1=Perlin.noise(x,y+e+t),n2=Perlin.noise(x,y-e+t);
+  const n3=Perlin.noise(x+e,y+t),n4=Perlin.noise(x-e,y+t);
+  return{x:(n1-n2)/(2*e),y:-(n3-n4)/(2*e)};
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  FIRE COLOR PALETTES — 10 vibrant themes
-//  Each palette: [core, low, mid, high, tip]
-// ═══════════════════════════════════════════════════════════════
-const FIRE_PALETTES = [
-  // 0. Classic Fire — red → orange → yellow → white
-  [[160,0,0],[255,30,0],[255,140,0],[255,230,50],[255,255,200]],
-  // 1. Electric Blue — deep blue → cyan → white
-  [[0,0,160],[0,60,255],[0,180,255],[80,240,255],[220,255,255]],
-  // 2. Toxic Green — dark green → acid green → yellow-white
-  [[0,80,0],[20,200,0],[100,255,20],[200,255,80],[240,255,200]],
-  // 3. Purple Inferno — deep purple → magenta → pink → white
-  [[80,0,120],[180,0,220],[255,40,200],[255,140,240],[255,220,255]],
-  // 4. Gold Rush — dark amber → gold → bright yellow → white
-  [[120,50,0],[220,120,0],[255,200,0],[255,240,80],[255,255,200]],
-  // 5. Crimson Storm — dark red → hot pink → rose → white
-  [[120,0,30],[255,0,60],[255,80,120],[255,180,180],[255,240,240]],
-  // 6. Ocean Fire — deep teal → cyan → aqua → white
-  [[0,60,80],[0,160,180],[0,220,220],[80,255,240],[220,255,255]],
-  // 7. Neon Orange — burnt → vivid orange → lime → white
-  [[100,30,0],[255,80,0],[255,180,0],[200,255,0],[240,255,180]],
-  // 8. Violet Storm — indigo → violet → lavender → white
-  [[30,0,100],[120,0,255],[200,80,255],[230,180,255],[250,240,255]],
-  // 9. Solar Flare — deep red → solar orange → bright white core
-  [[180,10,0],[255,60,0],[255,160,20],[255,240,100],[255,255,255]],
-]
+// ═══════════ CANVAS ═══════════
+const fc=document.getElementById('fireCanvas'),ctx=fc.getContext('2d');
+let W,H;
+function resize(){W=fc.width=window.innerWidth;H=fc.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
 
-let currentPalette  = 0
-let targetPalette   = 0
-let paletteProgress = 1  // 1 = fully on currentPalette
+// ═══════════ 22 PALETTES [core,inner,mid,outer,tip,_smoke] ═══════════
+const PALS=[
+  [[255,255,220],[255,240,80],[255,140,0],[220,40,0],[120,10,0],[30,15,8]],   // 0 Classic
+  [[220,240,255],[80,180,255],[0,100,255],[0,30,180],[0,0,80],[8,12,28]],     // 1 Electric Blue
+  [[220,255,180],[160,255,20],[40,200,0],[0,120,0],[0,50,0],[8,22,8]],        // 2 Toxic Green
+  [[255,220,255],[255,100,240],[200,0,220],[120,0,160],[50,0,70],[18,8,22]],  // 3 Purple Inferno
+  [[255,255,200],[255,230,60],[230,150,0],[180,80,0],[90,30,0],[25,16,4]],    // 4 Gold Rush
+  [[255,220,220],[255,140,140],[255,0,60],[180,0,30],[80,0,15],[22,6,10]],    // 5 Crimson Storm
+  [[200,255,255],[0,240,230],[0,180,200],[0,100,150],[0,40,70],[4,16,22]],    // 6 Ocean Fire
+  [[255,255,180],[255,220,0],[255,100,0],[200,30,0],[90,10,0],[25,12,4]],     // 7 Neon Orange
+  [[240,220,255],[180,80,255],[100,0,255],[50,0,180],[20,0,80],[12,6,28]],    // 8 Violet Storm
+  [[255,255,255],[255,220,80],[255,120,0],[220,40,0],[120,10,0],[30,12,4]],   // 9 Solar Flare
+  [[255,255,255],[180,240,255],[80,200,255],[20,100,220],[0,30,120],[6,12,25]],// 10 Ice Fire
+  [[255,220,160],[255,100,30],[200,20,0],[120,0,0],[50,0,0],[18,6,6]],        // 11 Blood Moon
+  [[255,255,200],[220,255,0],[150,240,0],[60,180,0],[10,80,0],[12,20,6]],     // 12 Acid
+  [[255,200,255],[255,60,220],[180,0,200],[100,0,160],[40,0,80],[16,6,20]],   // 13 Plasma
+  [[255,240,180],[255,160,20],[200,60,0],[140,20,0],[60,5,0],[20,8,4]],       // 14 Lava
+  [[200,255,240],[60,255,180],[0,200,150],[0,120,100],[0,50,60],[6,18,20]],   // 15 Arctic Aurora
+  [[220,255,200],[80,255,80],[0,200,40],[0,130,20],[0,60,10],[6,18,10]],      // 16 Emerald
+  [[255,200,220],[255,80,160],[220,0,100],[150,0,60],[70,0,25],[20,6,12]],    // 17 Ruby
+  [[255,230,180],[220,150,40],[180,90,10],[120,50,0],[60,20,0],[20,12,4]],    // 18 Copper Forge
+  [[220,180,255],[140,60,255],[80,0,200],[40,0,120],[15,0,60],[10,6,20]],     // 19 Obsidian
+  [[200,255,220],[40,240,160],[0,180,120],[0,100,80],[0,40,50],[6,16,18]],    // 20 Aurora Borealis
+  [[255,255,255],[220,220,255],[160,160,220],[100,100,180],[40,40,100],[12,12,22]], // 21 Molten Silver
+];
 
-// Lerp between two palettes smoothly
-function getLerpedPalette() {
-  if (paletteProgress >= 1) return FIRE_PALETTES[currentPalette]
-  const a = FIRE_PALETTES[currentPalette]
-  const b = FIRE_PALETTES[targetPalette]
-  const t = paletteProgress
-  return a.map((ca, i) => [
-    Math.floor(ca[0] + (b[i][0]-ca[0])*t),
-    Math.floor(ca[1] + (b[i][1]-ca[1])*t),
-    Math.floor(ca[2] + (b[i][2]-ca[2])*t),
-  ])
+let curPI=Math.floor(Math.random()*PALS.length);
+let nxtPI=curPI,blend=1.0;
+let wPal=PALS[curPI].map(c=>[...c]);
+
+function schedPal(){
+  setTimeout(()=>{
+    let n;do{n=Math.floor(Math.random()*PALS.length);}while(n===curPI);
+    nxtPI=n;blend=0;schedPal();
+  },2000+Math.random()*1600);
+}
+schedPal();
+
+function tickPal(){
+  if(blend>=1)return;
+  blend=Math.min(1,blend+0.02);
+  const a=PALS[curPI],b=PALS[nxtPI];
+  for(let i=0;i<6;i++){
+    wPal[i][0]=Math.round(a[i][0]+(b[i][0]-a[i][0])*blend);
+    wPal[i][1]=Math.round(a[i][1]+(b[i][1]-a[i][1])*blend);
+    wPal[i][2]=Math.round(a[i][2]+(b[i][2]-a[i][2])*blend);
+  }
+  if(blend>=1)curPI=nxtPI;
 }
 
-// Cycle every 2.5 seconds
-setInterval(() => {
-  currentPalette = targetPalette
-  do { targetPalette = Math.floor(Math.random() * FIRE_PALETTES.length) }
-  while (targetPalette === currentPalette)
-  paletteProgress = 0
-}, 2500)
+// ═══════════ GLOBAL FLICKER ═══════════
+let gFlick=1,fTgt=1,fTmr=0;
+function tickFlick(){
+  fTmr++;
+  if(fTmr%7===0)fTgt=0.76+Math.random()*0.3;
+  gFlick+=(fTgt-gFlick)*0.13;
+}
 
-// ═══════════════════════════════════════════════════════════════
-//  PARTICLE CLASS
-// ═══════════════════════════════════════════════════════════════
-const FIRE_COUNT  = 900
-const SMOKE_COUNT = 110
-const EMBER_COUNT = 60
-const allParticles = []
-
-let noiseTime = 0   // advances each frame for animated turbulence
-
-class Particle {
-  constructor(type, init) {
-    this.type = type   // 'fire' | 'smoke' | 'ember'
-    this.reset(init)
+// ═══════════ FUELS ═══════════
+function fuels(){
+  const pts=[],N=10;
+  for(let i=0;i<N;i++){
+    const t=i/(N-1);
+    pts.push({x:W*(0.06+t*0.88),y:H,iv:0.5+Math.sin(t*Math.PI)*0.5});
   }
+  return pts;
+}
 
-  reset(init = false) {
-    const fuels = getFuelPoints()
-    const fuel  = fuels[Math.floor(Math.random() * fuels.length)]
+// ═══════════ PARTICLES ═══════════
+const COUNTS={core:280,inner:480,mid:560,outer:360,ember:130,smoke:150};
+let noiseT=0;
+const parts=[];
 
-    if (this.type === 'fire') {
-      // Spawn near a fuel point, slightly spread
-      this.x  = fuel.x + (Math.random() - 0.5) * W * 0.12
-      this.y  = init ? H * (0.6 + Math.random() * 0.4) : H + Math.random() * 20
-      this.vx = (Math.random() - 0.5) * 0.8
-      this.vy = -(1.8 + Math.random() * 3.2) * (0.7 + fuel.intensity * 0.3)
-      this.size    = 6 + Math.random() * 22
-      this.maxSize = this.size
-      this.life    = init ? Math.random() * 80 : 0
-      this.maxLife = 55 + Math.random() * 75
-
-    } else if (this.type === 'smoke') {
-      this.x  = fuel.x + (Math.random() - 0.5) * W * 0.20
-      this.y  = init ? H * (0.1 + Math.random() * 0.5) : H * 0.45 + Math.random() * 60
-      this.vx = (Math.random() - 0.5) * 0.6
-      this.vy = -(0.4 + Math.random() * 0.8)
-      this.size    = 18 + Math.random() * 40
-      this.maxSize = this.size
-      this.life    = init ? Math.random() * 100 : 0
-      this.maxLife = 90 + Math.random() * 80
-      this.rotation      = Math.random() * Math.PI * 2
-      this.rotationSpeed = (Math.random() - 0.5) * 0.012
-
-    } else {  // ember
-      this.x  = fuel.x + (Math.random() - 0.5) * W * 0.08
-      this.y  = init ? H * (0.3 + Math.random() * 0.5) : H * 0.55
-      this.vx = (Math.random() - 0.5) * 3.5
-      this.vy = -(2.5 + Math.random() * 4.5)
-      this.size    = 1.2 + Math.random() * 2.8
-      this.maxSize = this.size
-      this.life    = init ? Math.random() * 50 : 0
-      this.maxLife = 35 + Math.random() * 55
-      this.gravity = 0.04 + Math.random() * 0.04
+class P{
+  constructor(ly,init){this.ly=ly;this.reset(init);}
+  reset(init=false){
+    const fs=fuels(),f=fs[Math.floor(Math.random()*fs.length)],iv=f.iv;
+    if(this.ly==='core'){
+      this.x=f.x+(Math.random()-.5)*W*.035;
+      this.y=init?H*(.72+Math.random()*.28):H+4;
+      this.vx=(Math.random()-.5)*.35;this.vy=-(3.8+Math.random()*3.2)*iv;
+      this.sz=2.5+Math.random()*7;
+      this.life=init?Math.random()*45:0;this.ml=38+Math.random()*32;
+    }else if(this.ly==='inner'){
+      this.x=f.x+(Math.random()-.5)*W*.065;
+      this.y=init?H*(.62+Math.random()*.38):H+6;
+      this.vx=(Math.random()-.5)*.65;this.vy=-(2.9+Math.random()*2.7)*iv;
+      this.sz=6+Math.random()*13;
+      this.life=init?Math.random()*55:0;this.ml=52+Math.random()*48;
+    }else if(this.ly==='mid'){
+      this.x=f.x+(Math.random()-.5)*W*.12;
+      this.y=init?H*(.52+Math.random()*.48):H+8;
+      this.vx=(Math.random()-.5)*1.1;this.vy=-(2.1+Math.random()*2.3)*iv;
+      this.sz=11+Math.random()*21;
+      this.life=init?Math.random()*65:0;this.ml=62+Math.random()*62;
+    }else if(this.ly==='outer'){
+      this.x=f.x+(Math.random()-.5)*W*.21;
+      this.y=init?H*(.44+Math.random()*.56):H+10;
+      this.vx=(Math.random()-.5)*1.7;this.vy=-(1.5+Math.random()*1.9)*iv;
+      this.sz=16+Math.random()*30;
+      this.life=init?Math.random()*78:0;this.ml=78+Math.random()*78;
+    }else if(this.ly==='ember'){
+      this.x=f.x+(Math.random()-.5)*W*.08;
+      this.y=init?H*(.35+Math.random()*.55):H*.58;
+      this.vx=(Math.random()-.5)*4.8;this.vy=-(3.2+Math.random()*5.8);
+      this.sz=.9+Math.random()*2.4;
+      this.life=init?Math.random()*42:0;this.ml=28+Math.random()*58;
+      this.grav=.032+Math.random()*.042;
+    }else{
+      this.x=f.x+(Math.random()-.5)*W*.26;
+      this.y=init?H*(.06+Math.random()*.42):H*.4+Math.random()*55;
+      this.vx=(Math.random()-.5)*.65;this.vy=-(0.32+Math.random()*.72);
+      this.sz=24+Math.random()*52;
+      this.life=init?Math.random()*105:0;this.ml=95+Math.random()*95;
+      this.rot=Math.random()*Math.PI*2;this.rs=(Math.random()-.5)*.009;
     }
-
-    this.noiseOffX = Math.random() * 100
-    this.noiseOffY = Math.random() * 100
+    this.ox=Math.random()*200;this.oy=Math.random()*200;
   }
 
-  update() {
-    this.life++
+  upd(){
+    this.life++;
+    const cx=this.x*.0028+this.ox,cy=this.y*.0028+noiseT*.48+this.oy;
+    const cv=curl(cx,cy,noiseT*.28);
+    const wind=Math.sin(noiseT*.33+this.x*.0022)*.24+Math.sin(noiseT*.17)*.08;
 
-    // ── Perlin noise turbulence ─────────────────────────────
-    const nx = Perlin.noise(
-      this.x * 0.004 + this.noiseOffX,
-      noiseTime * 0.6 + this.noiseOffY
-    )
-    const ny = Perlin.noise(
-      this.x * 0.004 + this.noiseOffX + 50,
-      noiseTime * 0.5 + this.noiseOffY
-    )
-
-    // ── Wind — slow horizontal sine drift ───────────────────
-    const wind = Math.sin(noiseTime * 0.4 + this.x * 0.003) * 0.18
-
-    if (this.type === 'fire') {
-      this.vx += nx * 0.55 + wind
-      this.vy += ny * 0.18
-      this.vx *= 0.96
-      this.vy *= 0.985
-      this.x  += this.vx
-      this.y  += this.vy
-      const p  = this.life / this.maxLife
-      this.size = this.maxSize * Math.max(0, 1 - p * 0.65)
-
-    } else if (this.type === 'smoke') {
-      this.vx += nx * 0.3 + wind * 1.4
-      this.vy += ny * 0.08
-      this.vx *= 0.98
-      this.vy *= 0.992
-      this.x  += this.vx
-      this.y  += this.vy
-      this.rotation += this.rotationSpeed
-      const p  = this.life / this.maxLife
-      this.size = this.maxSize * (1 + p * 0.5)   // smoke expands
-
-    } else {  // ember
-      this.vx += nx * 0.25 + wind * 0.8
-      this.vy += this.gravity
-      this.vx *= 0.994
-      this.x  += this.vx
-      this.y  += this.vy
+    if(this.ly==='core'){
+      this.vx+=cv.x*.28+wind*.38;this.vy+=cv.y*.07-.018;
+      this.vx*=.935;this.vy*=.981;this.x+=this.vx;this.y+=this.vy*gFlick;
+    }else if(this.ly==='inner'){
+      this.vx+=cv.x*.48+wind*.52;this.vy+=cv.y*.11;
+      this.vx*=.952;this.vy*=.983;this.x+=this.vx;this.y+=this.vy*gFlick;
+    }else if(this.ly==='mid'){
+      this.vx+=cv.x*.68+wind*.72;this.vy+=cv.y*.15;
+      this.vx*=.960;this.vy*=.985;this.x+=this.vx;this.y+=this.vy*gFlick;
+    }else if(this.ly==='outer'){
+      this.vx+=cv.x*.88+wind*.96;this.vy+=cv.y*.19;
+      this.vx*=.968;this.vy*=.987;this.x+=this.vx;this.y+=this.vy*gFlick;
+    }else if(this.ly==='ember'){
+      this.vx+=cv.x*.2+wind*.65;this.vy+=this.grav;
+      this.vx*=.991;this.x+=this.vx;this.y+=this.vy;
+    }else{
+      this.vx+=cv.x*.22+wind*1.4;this.vy+=cv.y*.055;
+      this.vx*=.981;this.vy*=.992;this.x+=this.vx;this.y+=this.vy;
+      this.rot+=this.rs;const pp=this.life/this.ml;this.sz*=(1+pp*.0025);
     }
-
-    if (this.life >= this.maxLife) this.reset()
+    if(this.life>=this.ml)this.reset();
   }
 
-  draw() {
-    const p = this.life / this.maxLife
-
-    if (this.type === 'fire') {
-      const alpha = p < 0.12
-        ? p / 0.12
-        : Math.max(0, 1 - (p - 0.12) / 0.88)
-      if (alpha < 0.01) return
-
-      // Dynamic palette-driven color temperature
-      const pal = FIRE_PALETTES[currentPalette]
-      const lerp3 = (a, b, t) => [
-        Math.floor(a[0] + (b[0]-a[0])*t),
-        Math.floor(a[1] + (b[1]-a[1])*t),
-        Math.floor(a[2] + (b[2]-a[2])*t)
-      ]
-      let rgb
-      if (p < 0.25) {
-        rgb = lerp3(pal[0], pal[1], p/0.25)
-      } else if (p < 0.55) {
-        rgb = lerp3(pal[1], pal[2], (p-0.25)/0.30)
-      } else if (p < 0.80) {
-        rgb = lerp3(pal[2], pal[3], (p-0.55)/0.25)
-      } else {
-        rgb = lerp3(pal[3], pal[4], (p-0.80)/0.20)
-      }
-      const [r, g, b] = rgb
-
-      fctx.save()
-      fctx.globalCompositeOperation = 'screen'
-      const g2 = fctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size)
-      g2.addColorStop(0,   `rgba(${r},${g},${b},${(alpha * 0.88).toFixed(3)})`)
-      g2.addColorStop(0.35,`rgba(${Math.min(255,r)},${Math.max(0,g-50)},${Math.max(0,b-30)},${(alpha*0.55).toFixed(3)})`)
-      g2.addColorStop(0.7, `rgba(${Math.max(0,r-70)},${Math.max(0,g-80)},${Math.max(0,b-60)},${(alpha*0.22).toFixed(3)})`)
-      g2.addColorStop(1,   'rgba(0,0,0,0)')
-      fctx.beginPath()
-      fctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
-      fctx.fillStyle = g2
-      fctx.fill()
-      fctx.restore()
-
-    } else if (this.type === 'smoke') {
-      const alpha = p < 0.18
-        ? p / 0.18 * 0.22
-        : Math.max(0, (1 - p) * 0.22)
-      if (alpha < 0.005) return
-
-      fctx.save()
-      fctx.globalCompositeOperation = 'source-over'
-      fctx.translate(this.x, this.y)
-      fctx.rotate(this.rotation)
-      const g2 = fctx.createRadialGradient(0, 0, 0, 0, 0, this.size)
-      const dark = Math.floor(18 + p * 28)
-      g2.addColorStop(0,   `rgba(${dark},${dark},${dark},${alpha.toFixed(3)})`)
-      g2.addColorStop(0.6, `rgba(${dark},${dark},${dark},${(alpha*0.4).toFixed(3)})`)
-      g2.addColorStop(1,   'rgba(0,0,0,0)')
-      fctx.beginPath()
-      fctx.arc(0, 0, this.size, 0, Math.PI*2)
-      fctx.fillStyle = g2
-      fctx.fill()
-      fctx.restore()
-
-    } else {  // ember
-      const alpha = Math.max(0, 1 - p * 1.15)
-      if (alpha < 0.01) return
-      const flicker = 0.7 + Math.sin(this.life * 0.8 + this.noiseOffX) * 0.3
-
-      fctx.save()
-      fctx.globalCompositeOperation = 'screen'
-      fctx.globalAlpha = alpha * flicker
-      fctx.beginPath()
-      fctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
-      fctx.fillStyle = `rgb(255,${Math.floor(150 + 105*(1-p))},${Math.floor(30*(1-p))})`
-      fctx.shadowBlur  = 10
-      fctx.shadowColor = 'rgba(255,140,20,0.9)'
-      fctx.fill()
-      fctx.restore()
+  draw(){
+    const p=this.life/this.ml;
+    if(this.ly==='core'){
+      const a=p<.1?p/.1:Math.max(0,1-(p-.1)/.9);if(a<.015)return;
+      const[r,g,b]=wPal[0];
+      ctx.save();ctx.globalCompositeOperation='screen';
+      ctx.translate(this.x,this.y);ctx.scale(1,1.28);
+      const gr=ctx.createRadialGradient(0,0,0,0,0,this.sz*gFlick);
+      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.96).toFixed(3)})`);
+      gr.addColorStop(.38,`rgba(${wPal[1][0]},${wPal[1][1]},${wPal[1][2]},${(a*.62).toFixed(3)})`);
+      gr.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.restore();
+    }else if(this.ly==='inner'){
+      const a=p<.12?p/.12:Math.max(0,1-(p-.12)/.88);if(a<.012)return;
+      const[r,g,b]=wPal[1];
+      ctx.save();ctx.globalCompositeOperation='screen';
+      ctx.translate(this.x,this.y);ctx.scale(1,1.45);
+      const gr=ctx.createRadialGradient(0,-this.sz*.1,0,0,0,this.sz*gFlick);
+      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.86).toFixed(3)})`);
+      gr.addColorStop(.4,`rgba(${wPal[2][0]},${wPal[2][1]},${wPal[2][2]},${(a*.5).toFixed(3)})`);
+      gr.addColorStop(.75,`rgba(${wPal[3][0]},${wPal[3][1]},${wPal[3][2]},${(a*.2).toFixed(3)})`);
+      gr.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.restore();
+    }else if(this.ly==='mid'){
+      const a=p<.14?p/.14:Math.max(0,1-(p-.14)/.86);if(a<.01)return;
+      const[r,g,b]=wPal[2];
+      ctx.save();ctx.globalCompositeOperation='screen';
+      ctx.translate(this.x,this.y);ctx.scale(1,1.62);
+      const gr=ctx.createRadialGradient(0,-this.sz*.18,0,0,0,this.sz*gFlick);
+      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.72).toFixed(3)})`);
+      gr.addColorStop(.46,`rgba(${wPal[3][0]},${wPal[3][1]},${wPal[3][2]},${(a*.36).toFixed(3)})`);
+      gr.addColorStop(.80,`rgba(${wPal[4][0]},${wPal[4][1]},${wPal[4][2]},${(a*.14).toFixed(3)})`);
+      gr.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.restore();
+    }else if(this.ly==='outer'){
+      const a=p<.18?p/.18:Math.max(0,1-(p-.18)/.82);if(a<.008)return;
+      const[r,g,b]=wPal[3];
+      ctx.save();ctx.globalCompositeOperation='screen';
+      ctx.translate(this.x,this.y);ctx.scale(1,1.75);
+      const gr=ctx.createRadialGradient(0,-this.sz*.22,0,0,0,this.sz*gFlick);
+      gr.addColorStop(0,`rgba(${r},${g},${b},${(a*.54).toFixed(3)})`);
+      gr.addColorStop(.52,`rgba(${wPal[4][0]},${wPal[4][1]},${wPal[4][2]},${(a*.2).toFixed(3)})`);
+      gr.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath();ctx.arc(0,0,this.sz*gFlick,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.restore();
+    }else if(this.ly==='ember'){
+      const a=Math.max(0,1-p*1.12);if(a<.01)return;
+      const flk=.62+Math.sin(this.life*.88+this.ox)*.38;
+      const[r,g,b]=wPal[1];
+      ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=a*flk*gFlick;
+      ctx.beginPath();ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);
+      ctx.fillStyle=`rgb(${r},${Math.min(255,g+55)},${Math.max(0,b-15)})`;
+      ctx.shadowBlur=14;ctx.shadowColor=`rgba(${r},${g},0,.95)`;ctx.fill();
+      ctx.restore();
+    }else{
+      const a=p<.2?p/.2*.17:Math.max(0,(1-p)*.17);if(a<.004)return;
+      ctx.save();ctx.globalCompositeOperation='source-over';
+      ctx.translate(this.x,this.y);ctx.rotate(this.rot);
+      const dk=Math.floor(14+p*32);
+      const gr=ctx.createRadialGradient(0,0,0,0,0,this.sz);
+      gr.addColorStop(0,`rgba(${dk},${dk},${dk},${a.toFixed(3)})`);
+      gr.addColorStop(.58,`rgba(${dk},${dk},${dk},${(a*.32).toFixed(3)})`);
+      gr.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath();ctx.arc(0,0,this.sz,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.restore();
     }
   }
 }
 
-// Init all particles
-for (let i = 0; i < FIRE_COUNT;  i++) allParticles.push(new Particle('fire',  true))
-for (let i = 0; i < SMOKE_COUNT; i++) allParticles.push(new Particle('smoke', true))
-for (let i = 0; i < EMBER_COUNT; i++) allParticles.push(new Particle('ember', true))
+// Init
+for(const[ly,n]of Object.entries(COUNTS))for(let i=0;i<n;i++)parts.push(new P(ly,true));
 
-// ═══════════════════════════════════════════════════════════════
-//  FLICKERING FLOOR LIGHT
-// ═══════════════════════════════════════════════════════════════
-function drawFloorLight() {
-  const flicker = 0.12 + Math.abs(Perlin.noise(noiseTime * 2.5, 0)) * 0.14
-  const pal = FIRE_PALETTES[currentPalette]
-  const [cr, cg, cb] = pal[1]  // use low-flame color for floor glow
-  const grad = fctx.createRadialGradient(W/2, H, 0, W/2, H, W * 0.58)
-  grad.addColorStop(0,   `rgba(${cr},${cg},${cb},${flicker.toFixed(3)})`)
-  grad.addColorStop(0.45,`rgba(${Math.floor(cr*0.6)},${Math.floor(cg*0.35)},${Math.floor(cb*0.35)},${(flicker*0.4).toFixed(3)})`)
-  grad.addColorStop(1,   'rgba(0,0,0,0)')
-  fctx.fillStyle = grad
-  fctx.fillRect(0, 0, W, H)
+// ═══════════ GROUND GLOW ═══════════
+function groundGlow(){
+  const[r,g,b]=wPal[2];
+  const f=.09+Math.abs(Perlin.noise(noiseT*2.1,77))*.13;
+  const gr=ctx.createRadialGradient(W/2,H,0,W/2,H,W*.68);
+  gr.addColorStop(0,`rgba(${r},${g},${b},${(f*gFlick).toFixed(3)})`);
+  gr.addColorStop(.42,`rgba(${Math.floor(r*.48)},${Math.floor(g*.28)},${Math.floor(b*.28)},${(f*.32*gFlick).toFixed(3)})`);
+  gr.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  HEAT DISTORTION — shimmer layer
-// ═══════════════════════════════════════════════════════════════
-function drawHeatDistortion() {
-  hctx.clearRect(0, 0, W, H)
-  const cols = 14, rows = 18
-  const cw = W / cols, ch = H * 0.65 / rows
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const nx = Perlin.noise(col*0.6 + noiseTime*1.2, row*0.5)
-      const a  = Math.max(0, nx) * 0.45 * (1 - row/rows)
-      if (a < 0.01) continue
-      hctx.fillStyle = `rgba(255,90,0,${a.toFixed(3)})`
-      hctx.fillRect(
-        col * cw + nx * cw * 0.4,
-        H - (rows - row) * ch,
-        cw * 0.9, ch * 0.9
-      )
-    }
-  }
+// ═══════════ MAIN LOOP ═══════════
+let running=true;
+function loop(){
+  if(!running)return;
+  noiseT+=.011;tickFlick();tickPal();
+  ctx.fillStyle='rgba(0,0,0,0.128)';ctx.fillRect(0,0,W,H);
+  groundGlow();
+  for(const p of parts){p.upd();if(p.ly==='smoke')p.draw();}
+  for(const p of parts){if(p.ly==='outer')p.draw();}
+  for(const p of parts){if(p.ly==='mid')p.draw();}
+  for(const p of parts){if(p.ly==='inner')p.draw();}
+  for(const p of parts){if(p.ly==='core')p.draw();}
+  for(const p of parts){if(p.ly==='ember')p.draw();}
+  requestAnimationFrame(loop);
 }
+loop();
 
-// ═══════════════════════════════════════════════════════════════
-//  MAIN LOOP
-// ═══════════════════════════════════════════════════════════════
-function loop() {
-  noiseTime += 0.012
+// ═══════════ EXIT TRANSITION ═══════════
+document.getElementById('enterBtn').addEventListener('click',e=>{
+  e.stopPropagation();
+  running=false; // stop updating but canvas stays visible
 
-  // Advance palette transition (0 → 1 over ~40 frames = ~0.67s smooth)
-  if (paletteProgress < 1) {
-    paletteProgress = Math.min(1, paletteProgress + 0.025)
-    // Update currentPalette reference to lerped values for this frame
-    const lerped = getLerpedPalette()
-    for (let i = 0; i < FIRE_PALETTES[currentPalette].length; i++) {
-      FIRE_PALETTES[currentPalette][i] = lerped[i]
-    }
+  // Surge: boost all fire upward
+  for(const p of parts){
+    if(p.ly==='core'||p.ly==='inner'||p.ly==='mid'){p.vy*=2.5;p.sz*=1.5;}
+    if(p.ly==='ember'){p.vy*=3.0;p.vx*=1.8;}
+    if(p.ly==='outer'){p.vy*=1.8;p.sz*=1.3;}
   }
 
-  // Fade trail — not full clear, so fire blends
-  fctx.fillStyle = 'rgba(0,0,0,0.14)'
-  fctx.fillRect(0, 0, W, H)
+  // Resume loop for surge visual
+  running=true;
 
-  drawFloorLight()
+  // Bright flash element
+  const flash=document.createElement('div');
+  flash.style.cssText=`position:fixed;inset:0;z-index:300;pointer-events:none;
+    background:radial-gradient(ellipse 75% 55% at 50% 100%,
+      rgba(255,235,80,.92) 0%,rgba(255,100,0,.88) 28%,
+      rgba(160,15,0,.82) 58%,rgba(0,0,0,0) 100%);
+    opacity:0;transition:opacity .18s ease;`;
+  document.body.appendChild(flash);
 
-  // Sort: smoke first (behind), then fire, then embers
-  for (const p of allParticles) { p.update(); if (p.type==='smoke') p.draw() }
-  for (const p of allParticles) { if (p.type==='fire')  p.draw() }
-  for (const p of allParticles) { if (p.type==='ember') p.draw() }
-
-  drawHeatDistortion()
-
-  requestAnimationFrame(loop)
-}
-loop()
-
-// ═══════════════════════════════════════════════════════════════
-//  BUTTON
-// ═══════════════════════════════════════════════════════════════
-document.getElementById('enterBtn').addEventListener('click', e => {
-  e.stopPropagation()
-  document.body.style.transition = 'opacity 0.55s ease'
-  document.body.style.opacity    = '0'
-  setTimeout(() => { window.location.href = 'links.html' }, 560)
-})
+  requestAnimationFrame(()=>{
+    flash.style.opacity='1';
+    setTimeout(()=>{
+      flash.style.transition='opacity .5s ease';
+      flash.style.background='#000';
+      flash.style.opacity='1';
+      setTimeout(()=>{ window.location.href='links.html'; },520);
+    },180);
+  });
+});
 </script>
 </body>
 </html>
