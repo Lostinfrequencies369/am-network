@@ -113,6 +113,7 @@ body::after {
 
 .wrap {
   position: relative; z-index: 1;
+  contain: layout;
   width: min(560px, calc(100vw - max(32px, env(safe-area-inset-left) + env(safe-area-inset-right))));
   margin: 0 auto;
   padding: calc(var(--safe) + 28px) 0 56px;
@@ -255,6 +256,8 @@ body::after {
   position: relative;
   border-radius: 14px;
   overflow: hidden;
+  will-change: box-shadow, border-color;
+  contain: layout style;
 
   background:
     /* Fine grain overlay */
@@ -288,8 +291,9 @@ body::after {
     inset -1px 0 0 rgba(245,217,138,0.04);
 
   transition:
-    border-color 1.8s ease,
-    box-shadow 1.8s ease;
+    border-color 1.4s ease,
+    box-shadow 1.4s ease;
+  /* NOTE: no 'background' in transition — gradient interpolation kills FPS */
 
   animation: cardBreathe var(--mood-duration) ease-in-out infinite;
 }
