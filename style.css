@@ -1,53 +1,50 @@
 /* =========================================================
    AM-369-Network — style.css
-   PREMIUM WOOD & GOLD EDITION
-   Dark walnut texture, gold foil accents, luxury feel
+   PREMIUM WOOD · ILLUMINATED EDITION
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap');
 
 :root {
-  /* Wood palette */
-  --wood-dark:    #1a1008;
-  --wood-mid:     #2c1d0e;
-  --wood-warm:    #3d2912;
-  --wood-light:   #5c3d1e;
-  --wood-grain1:  #241508;
-  --wood-grain2:  #33200f;
+  --wood-dark:    #110a04;
+  --wood-mid:     #1e1008;
+  --wood-warm:    #2c1a0c;
+  --wood-light:   #4a2e14;
 
-  /* Gold palette */
-  --gold-deep:    #7a5c1e;
+  --gold-deep:    #6a4c18;
   --gold-mid:     #c8973a;
   --gold-bright:  #e8bc5a;
   --gold-shine:   #f5d98a;
   --gold-pale:    #faecc8;
 
-  /* Text */
   --text-primary:  #f5e6c8;
   --text-secondary:#c4a97a;
-  --text-muted:    #8a6d4a;
+  --text-muted:    #7a5d3a;
 
-  /* Leather/card */
-  --card-bg:       rgba(28, 17, 8, 0.92);
-  --card-border:   rgba(200, 151, 58, 0.45);
-  --card-shine:    rgba(245, 217, 138, 0.12);
+  --shadow-deep: 0 28px 90px rgba(0,0,0,0.9), 0 10px 36px rgba(0,0,0,0.65);
 
-  /* Shadows */
-  --shadow-deep: 0 24px 80px rgba(0,0,0,0.85), 0 8px 32px rgba(0,0,0,0.60);
-  --shadow-gold: 0 0 30px rgba(200,151,58,0.18), 0 0 60px rgba(200,151,58,0.08);
-
-  /* Safe area */
-  --safe: max(16px, env(safe-area-inset-top), env(safe-area-inset-right), env(safe-area-inset-bottom), env(safe-area-inset-left));
+  --safe: max(16px, env(safe-area-inset-top));
 
   /* Mood cycling vars */
   --mood-gold:     #c8973a;
-  --mood-glow:     rgba(200,151,58,0.35);
+  --mood-gold-r:   200;
+  --mood-gold-g:   151;
+  --mood-gold-b:   58;
   --mood-duration: 4s;
-  --mood-transition: 2s;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
+
+/* EMBER CANVAS */
+#emberCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
 
 body {
   font-family: 'Raleway', sans-serif;
@@ -56,88 +53,70 @@ body {
   min-height: 100vh;
   position: relative;
 
-  /* Layered wood grain background */
   background-color: var(--wood-dark);
   background-image:
-    /* Grain layer 1 — fine diagonal lines */
+    repeating-linear-gradient(
+      91.5deg,
+      transparent 0px, transparent 1px,
+      rgba(255,190,80,0.018) 1px, rgba(255,190,80,0.018) 2px
+    ),
+    repeating-linear-gradient(
+      89deg,
+      transparent 0px, transparent 7px,
+      rgba(160,100,30,0.022) 7px, rgba(160,100,30,0.022) 9px
+    ),
     repeating-linear-gradient(
       92deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(255,200,100,0.015) 2px,
-      rgba(255,200,100,0.015) 3px
+      transparent 0px, transparent 20px,
+      rgba(80,45,10,0.04) 20px, rgba(80,45,10,0.04) 24px
     ),
-    /* Grain layer 2 — medium waves */
-    repeating-linear-gradient(
-      88deg,
-      transparent 0px,
-      transparent 8px,
-      rgba(180,120,40,0.02) 8px,
-      rgba(180,120,40,0.02) 10px
-    ),
-    /* Grain layer 3 — wide bands */
-    repeating-linear-gradient(
-      91deg,
-      transparent 0px,
-      transparent 22px,
-      rgba(100,60,15,0.04) 22px,
-      rgba(100,60,15,0.04) 26px
-    ),
-    /* Base radial warmth */
-    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(80,45,10,0.6) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 60% at 20% 100%, rgba(60,30,5,0.5) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(40,20,5,0.3) 0%, transparent 50%),
-    linear-gradient(175deg, var(--wood-mid) 0%, var(--wood-dark) 40%, var(--wood-grain1) 100%);
+    radial-gradient(ellipse 130% 80% at 50% 0%, rgba(70,38,8,0.65) 0%, transparent 68%),
+    radial-gradient(ellipse 80% 60% at 15% 100%, rgba(50,24,4,0.5) 0%, transparent 58%),
+    radial-gradient(ellipse 60% 50% at 85% 55%, rgba(35,16,3,0.35) 0%, transparent 52%),
+    linear-gradient(172deg, var(--wood-mid) 0%, var(--wood-dark) 42%, #0d0702 100%);
 }
 
-/* Grain animation overlay */
+/* Grain overlay */
 body::before {
   content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.4;
-  background-image:
-    repeating-linear-gradient(
-      var(--grain-angle, 91deg),
-      transparent 0px,
-      transparent 1px,
-      rgba(200,140,50,0.03) 1px,
-      rgba(200,140,50,0.03) 2px
-    );
-  animation: grainShift 8s ease-in-out infinite alternate;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.45;
+  background-image: repeating-linear-gradient(
+    91deg,
+    transparent 0px, transparent 1px,
+    rgba(210,150,55,0.028) 1px, rgba(210,150,55,0.028) 2px
+  );
+  animation: grainDrift 9s ease-in-out infinite alternate;
 }
 
-@keyframes grainShift {
-  0%   { opacity: 0.3; background-position: 0 0; }
-  50%  { opacity: 0.5; background-position: 2px 4px; }
-  100% { opacity: 0.35; background-position: -1px 2px; }
+@keyframes grainDrift {
+  0%   { opacity: 0.32; background-position: 0 0; }
+  50%  { opacity: 0.52; background-position: 2px 5px; }
+  100% { opacity: 0.38; background-position: -1px 2px; }
 }
 
-/* Vignette */
+/* Deep vignette */
 body::after {
   content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse 100% 100% at 50% 50%,
-    transparent 40%,
-    rgba(10,5,2,0.5) 80%,
-    rgba(5,2,0,0.8) 100%
-  );
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 110% 110% at 50% 50%,
+    transparent 38%, rgba(8,4,1,0.55) 78%, rgba(3,1,0,0.85) 100%);
 }
 
 /* ============================================
-   LAYOUT
+   PAGE ENTRY ANIMATION
    ============================================ */
+@keyframes pageReveal {
+  0%  { opacity: 0; transform: translateY(18px); }
+  100%{ opacity: 1; transform: translateY(0); }
+}
+
 .wrap {
-  position: relative;
-  z-index: 1;
-  width: min(540px, calc(100vw - (var(--safe) * 2)));
+  position: relative; z-index: 1;
+  width: min(560px, calc(100vw - max(32px, env(safe-area-inset-left) + env(safe-area-inset-right))));
   margin: 0 auto;
-  padding: calc(var(--safe) + 24px) 0 48px;
+  padding: calc(var(--safe) + 28px) 0 56px;
+  animation: pageReveal .7s cubic-bezier(0.22,1,0.36,1) .15s both;
 }
 
 /* ============================================
@@ -145,225 +124,269 @@ body::after {
    ============================================ */
 .hero {
   text-align: center;
-  padding: 16px 12px 24px;
+  padding: 8px 12px 32px;
   position: relative;
+  /* Ensure hero never overflows horizontally */
+  overflow: hidden;
+  width: 100%;
 }
 
-/* Decorative rule above name */
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 4.5vw, 26px);
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  /* Neon white tube light */
+  color: #ffffff;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 10px #fff,
+    0 0 20px #fff,
+    0 0 40px rgba(200,220,255,0.9),
+    0 0 70px rgba(180,200,255,0.6),
+    0 0 100px rgba(160,190,255,0.3);
+  animation: tubeLightFlicker 6s ease-in-out infinite;
+}
+
+@keyframes tubeLightFlicker {
+  0%    { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 10px #fff, 0 0 22px #fff, 0 0 42px rgba(200,220,255,0.9), 0 0 75px rgba(180,200,255,0.6), 0 0 110px rgba(160,190,255,0.3); }
+  /* first buzz */
+  4%    { opacity:0.85; text-shadow: 0 0 2px #fff, 0 0 6px #fff, 0 0 12px #dde; }
+  4.5%  { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 12px #fff, 0 0 28px #fff, 0 0 55px rgba(200,220,255,1), 0 0 90px rgba(180,200,255,0.7); }
+  5%    { opacity:0.6; text-shadow: 0 0 1px #ccc; }
+  5.5%  { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 12px #fff, 0 0 30px #fff, 0 0 60px rgba(200,220,255,1), 0 0 100px rgba(180,200,255,0.8); }
+  /* stable glow */
+  40%   { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 10px #fff, 0 0 22px #fff, 0 0 42px rgba(200,220,255,0.9), 0 0 75px rgba(180,200,255,0.6); }
+  /* dim flicker */
+  55%   { opacity:0.92; text-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 16px #eef, 0 0 30px rgba(200,220,255,0.6); }
+  55.4% { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 12px #fff, 0 0 28px #fff, 0 0 50px rgba(200,220,255,0.95); }
+  /* near-off */
+  80%   { opacity:0.15; text-shadow: 0 0 1px #aaa; }
+  80.3% { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 14px #fff, 0 0 35px #fff, 0 0 65px rgba(200,220,255,1), 0 0 110px rgba(180,200,255,0.8); }
+  80.8% { opacity:0.7; text-shadow: 0 0 2px #fff, 0 0 8px #eee; }
+  81.2% { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 12px #fff, 0 0 26px #fff, 0 0 48px rgba(200,220,255,0.9); }
+  100%  { opacity:1;   text-shadow: 0 0 4px #fff, 0 0 10px #fff, 0 0 22px #fff, 0 0 42px rgba(200,220,255,0.9), 0 0 75px rgba(180,200,255,0.6), 0 0 110px rgba(160,190,255,0.3); }
+}
+
+/* Gold rule before name */
 .hero::before {
   content: '';
   display: block;
-  width: 60%;
+  width: 55%;
   height: 1px;
-  margin: 0 auto 20px;
+  margin: 0 auto 18px;
   background: linear-gradient(90deg,
     transparent,
-    var(--gold-mid) 20%,
-    var(--gold-shine) 50%,
-    var(--gold-mid) 80%,
-    transparent
-  );
-  opacity: 0.7;
+    var(--gold-mid) 22%, var(--gold-shine) 50%, var(--gold-mid) 78%,
+    transparent);
+  opacity: 0.65;
 }
 
-/* Decorative rule below tagline */
+/* Gold rule after tagline */
 .hero::after {
   content: '';
   display: block;
-  width: 40%;
+  width: 35%;
   height: 1px;
-  margin: 20px auto 0;
+  margin: 22px auto 0;
   background: linear-gradient(90deg,
-    transparent,
-    var(--gold-deep) 30%,
-    var(--gold-mid) 50%,
-    var(--gold-deep) 70%,
-    transparent
-  );
-  opacity: 0.5;
+    transparent, var(--gold-deep) 32%, var(--gold-mid) 50%, var(--gold-deep) 68%, transparent);
+  opacity: 0.45;
 }
 
 .hero-name {
   font-family: 'Cinzel', serif;
-  font-size: clamp(26px, 7vw, 42px);
-  font-weight: 600;
-  letter-spacing: 4px;
-  line-height: 1.15;
-  margin-bottom: 2px;
+  font-size: clamp(22px, 6.8vw, 56px);
+  font-weight: 700;
+  letter-spacing: clamp(1px, 0.8vw, 5px);
+  line-height: 1.12;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  /* Scale down to fit on small screens */
+  transform-origin: center top;
 
-  /* Gold foil effect */
   background: linear-gradient(
-    135deg,
-    var(--gold-deep)   0%,
-    var(--gold-mid)   20%,
-    var(--gold-shine) 40%,
-    var(--gold-pale)  50%,
-    var(--gold-shine) 60%,
-    var(--gold-mid)   80%,
-    var(--gold-deep)  100%
+    110deg,
+    #7a3500   0%,
+    #c85c10  10%,
+    #ff8c1a  20%,
+    #ffcc40  30%,
+    #fff0a0  40%,
+    #ffffff  48%,
+    #fff0a0  56%,
+    #ffcc40  65%,
+    #ff8c1a  75%,
+    #c85c10  86%,
+    #ff7010  94%,
+    #7a3500 100%
   );
-  background-size: 200% auto;
+  background-size: 240% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: goldShimmer 4s linear infinite;
-
-  filter: drop-shadow(0 2px 8px rgba(200,151,58,0.35));
+  animation: fireShimmer 3.6s linear infinite;
+  filter: drop-shadow(0 2px 16px rgba(255,110,0,0.5));
 }
 
-.hero-title {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(10px, 2.2vw, 13px);
-  font-weight: 400;
-  letter-spacing: 6px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-@keyframes goldShimmer {
+@keyframes fireShimmer {
   0%   { background-position: 0% center; }
-  100% { background-position: 200% center; }
+  100% { background-position: 240% center; }
 }
 
 .tagline {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(13px, 3.2vw, 16px);
+  font-size: clamp(13px, 3vw, 15px);
   font-style: italic;
   font-weight: 300;
   color: var(--text-secondary);
-  letter-spacing: 1px;
-  opacity: 0.9;
+  letter-spacing: 1.2px;
+  opacity: 0.85;
 }
 
 /* ============================================
-   WOOD PANEL CARDS
+   WOOD CARDS — ILLUMINATED BORDERS
    ============================================ */
 .wood-card {
-  margin: 16px 0;
+  margin: 14px 0;
   position: relative;
-  border-radius: 12px;
+  border-radius: 14px;
+  overflow: hidden;
 
-  /* Wood panel background */
   background:
+    /* Fine grain overlay */
     repeating-linear-gradient(
-      93deg,
-      transparent 0px,
-      transparent 3px,
-      rgba(255,180,60,0.012) 3px,
-      rgba(255,180,60,0.012) 5px
+      var(--wood-grain-angle, 92.5deg),
+      transparent 0px, transparent 2px,
+      rgba(255,175,55,0.012) 2px, rgba(255,175,55,0.012) 4px
     ),
     repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 18px,
-      rgba(100,55,10,0.03) 18px,
-      rgba(100,55,10,0.03) 22px
+      89.5deg,
+      transparent 0px, transparent 17px,
+      rgba(90,48,8,0.025) 17px, rgba(90,48,8,0.025) 21px
     ),
-    linear-gradient(175deg,
-      rgba(52,32,14,0.97) 0%,
-      rgba(32,18,6,0.98) 50%,
-      rgba(44,28,10,0.97) 100%
-    );
+    /* Main wood gradient — JS cycles via inline style */
+    var(--card-wood-bg, linear-gradient(172deg, rgba(42,25,10,0.97) 0%, rgba(22,12,4,0.98) 52%, rgba(36,20,8,0.97) 100%));
 
-  /* Gold inlay border */
-  border: 1px solid var(--mood-gold, #c8973a);
+  /* ILLUMINATED BORDER — main glow */
+  border: 1px solid rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.55);
+
   box-shadow:
     var(--shadow-deep),
-    var(--shadow-gold),
-    inset 0 1px 0 rgba(245,217,138,0.08),
-    inset 0 -1px 0 rgba(0,0,0,0.4);
+    /* Outer glow — illuminated candle effect */
+    0 0 0 1px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.12),
+    0 0 18px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.18),
+    0 0 45px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.08),
+    0 0 90px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.04),
+    /* Inner edge catch light */
+    inset 0 1px 0 rgba(245,217,138,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.45),
+    inset 1px 0 0 rgba(245,217,138,0.04),
+    inset -1px 0 0 rgba(245,217,138,0.04);
 
   transition:
-    border-color var(--mood-transition) ease,
-    box-shadow var(--mood-transition) ease;
+    border-color 1.8s ease,
+    box-shadow 1.8s ease;
 
-  animation: cardGlow var(--mood-duration) ease-in-out infinite;
-  overflow: hidden;
+  animation: cardBreathe var(--mood-duration) ease-in-out infinite;
 }
 
-/* Top edge gold highlight */
+/* TOP ILLUMINATION — brightest glow at top edge (like candle above) */
 .wood-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 10%; right: 10%;
-  height: 1px;
+  top: 0; left: 8%; right: 8%;
+  height: 2px;
   background: linear-gradient(90deg,
-    transparent,
-    var(--mood-gold, #c8973a) 30%,
-    var(--gold-shine) 50%,
-    var(--mood-gold, #c8973a) 70%,
-    transparent
+    transparent 0%,
+    rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.4) 15%,
+    rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.9) 38%,
+    rgba(255,240,160,1) 50%,
+    rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.9) 62%,
+    rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.4) 85%,
+    transparent 100%
   );
-  opacity: 0.6;
-  transition: background var(--mood-transition) ease;
+  filter: blur(0.5px);
+  opacity: 0.75;
+  animation: topGlow var(--mood-duration) ease-in-out infinite;
+  transition: background 1.8s ease;
+  z-index: 2;
 }
 
-/* Corner ornament — top right */
+/* BOTTOM SHADOW — less light reaches bottom */
 .wood-card::after {
   content: '';
   position: absolute;
-  top: -1px; right: -1px;
-  width: 28px; height: 28px;
-  background:
-    linear-gradient(225deg,
-      rgba(var(--mood-gold-raw, 200,151,58), 0.5) 0%,
-      transparent 60%
-    );
-  border-radius: 0 12px 0 0;
-  pointer-events: none;
+  bottom: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.15) 30%,
+    rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.3) 50%,
+    rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.15) 70%,
+    transparent
+  );
+  opacity: 0.4;
+  z-index: 2;
 }
 
-@keyframes cardGlow {
+@keyframes cardBreathe {
   0%,100% {
     box-shadow:
       var(--shadow-deep),
-      0 0 20px rgba(var(--mood-gold-raw, 200,151,58), 0.15),
-      0 0 50px rgba(var(--mood-gold-raw, 200,151,58), 0.06),
-      inset 0 1px 0 rgba(245,217,138,0.08),
-      inset 0 -1px 0 rgba(0,0,0,0.4);
+      0 0 0 1px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.10),
+      0 0 16px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.16),
+      0 0 40px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.07),
+      0 0 80px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.03),
+      inset 0 1px 0 rgba(245,217,138,0.09),
+      inset 0 -1px 0 rgba(0,0,0,0.45);
   }
   50% {
     box-shadow:
       var(--shadow-deep),
-      0 0 35px rgba(var(--mood-gold-raw, 200,151,58), 0.28),
-      0 0 80px rgba(var(--mood-gold-raw, 200,151,58), 0.12),
-      inset 0 1px 0 rgba(245,217,138,0.12),
-      inset 0 -1px 0 rgba(0,0,0,0.4);
+      0 0 0 1px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.20),
+      0 0 28px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.32),
+      0 0 65px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.14),
+      0 0 120px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.06),
+      inset 0 1px 0 rgba(245,217,138,0.16),
+      inset 0 -1px 0 rgba(0,0,0,0.45);
   }
 }
 
+@keyframes topGlow {
+  0%,100% { opacity: 0.65; filter: blur(0.5px); }
+  50%      { opacity: 1.0;  filter: blur(0px) drop-shadow(0 0 4px rgba(255,220,100,0.9)); }
+}
+
 .card-content {
-  padding: 18px 16px;
+  padding: 20px 18px;
   position: relative;
   z-index: 1;
 }
 
 /* ============================================
-   SECTION TITLE
+   SECTION LABEL
    ============================================ */
 .section-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 5px;
+  letter-spacing: 6px;
   text-transform: uppercase;
   color: var(--gold-mid);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  opacity: 0.85;
+  gap: 12px;
+  opacity: 0.8;
 }
-
 .section-label::after {
   content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg,
-    rgba(200,151,58,0.4),
-    transparent
-  );
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(200,151,58,0.45), transparent);
 }
 
 /* ============================================
@@ -372,158 +395,152 @@ body::after {
 .link-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .link-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
   text-decoration: none;
   color: var(--text-primary);
-  padding: 13px 14px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 9px;
   position: relative;
   overflow: hidden;
   transition: all 0.22s ease;
 
-  /* Leather-like button */
   background:
     linear-gradient(135deg,
-      rgba(255,200,100,0.04) 0%,
-      transparent 40%,
-      rgba(0,0,0,0.15) 100%
+      rgba(255,195,90,0.04) 0%,
+      transparent 38%,
+      rgba(0,0,0,0.18) 100%
     ),
-    rgba(20,12,4,0.65);
+    rgba(16,9,3,0.72);
 
-  border: 1px solid rgba(200,151,58,0.20);
+  border: 1px solid rgba(200,151,58,0.18);
   box-shadow:
     inset 0 1px 0 rgba(245,217,138,0.06),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    0 2px 8px rgba(0,0,0,0.4);
+    inset 0 -1px 0 rgba(0,0,0,0.32),
+    0 2px 10px rgba(0,0,0,0.42);
 
   -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
   user-select: none;
   outline: none;
 }
 
-/* Hover sheen sweep */
+/* Sheen sweep */
 .link-btn::before {
   content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg,
-    transparent 30%,
-    rgba(245,217,138,0.06) 50%,
-    transparent 70%
-  );
+  position: absolute; inset: 0;
+  background: linear-gradient(108deg,
+    transparent 28%, rgba(245,217,138,0.07) 50%, transparent 72%);
   transform: translateX(-100%);
-  transition: transform 0.4s ease;
+  transition: transform 0.42s ease;
 }
-
-.link-btn:hover::before {
-  transform: translateX(100%);
-}
+.link-btn:hover::before { transform: translateX(100%); }
 
 .link-btn:hover {
-  border-color: rgba(200,151,58,0.45);
+  border-color: rgba(200,151,58,0.42);
   background:
     linear-gradient(135deg,
-      rgba(255,200,100,0.07) 0%,
-      transparent 40%,
-      rgba(0,0,0,0.1) 100%
+      rgba(255,195,90,0.08) 0%,
+      transparent 38%,
+      rgba(0,0,0,0.12) 100%
     ),
-    rgba(28,16,5,0.80);
+    rgba(24,14,5,0.85);
   box-shadow:
-    inset 0 1px 0 rgba(245,217,138,0.10),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    0 4px 16px rgba(0,0,0,0.5),
-    0 0 16px rgba(200,151,58,0.10);
+    inset 0 1px 0 rgba(245,217,138,0.11),
+    inset 0 -1px 0 rgba(0,0,0,0.32),
+    0 4px 18px rgba(0,0,0,0.52),
+    /* Ember glow on hover */
+    0 0 14px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.14),
+    0 0 30px rgba(var(--mood-gold-r,200),var(--mood-gold-g,151),var(--mood-gold-b,58),0.06);
   transform: translateY(-1px);
   color: var(--gold-pale);
 }
-
-.link-btn:active {
-  transform: translateY(0);
-  opacity: 0.85;
-}
+.link-btn:active { transform: translateY(0); opacity: 0.82; }
 
 /* Icon badge */
 .link-ico {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  display: grid;
-  place-items: center;
+  width: 33px; height: 33px;
+  border-radius: 7px;
+  display: grid; place-items: center;
   font-family: 'Cinzel', serif;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12px; font-weight: 600;
   flex-shrink: 0;
   color: var(--gold-mid);
   background:
     linear-gradient(135deg,
-      rgba(200,151,58,0.18) 0%,
-      rgba(100,65,15,0.25) 100%
+      rgba(200,151,58,0.20) 0%,
+      rgba(90,55,12,0.28) 100%
     );
-  border: 1px solid rgba(200,151,58,0.30);
-  box-shadow: inset 0 1px 0 rgba(245,217,138,0.12);
+  border: 1px solid rgba(200,151,58,0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(245,217,138,0.14),
+    inset 0 -1px 0 rgba(0,0,0,0.25);
   transition: all 0.22s ease;
 }
-
 .link-btn:hover .link-ico {
   background:
     linear-gradient(135deg,
-      rgba(200,151,58,0.28) 0%,
-      rgba(120,80,20,0.35) 100%
+      rgba(200,151,58,0.32) 0%,
+      rgba(110,70,16,0.40) 100%
     );
-  border-color: rgba(200,151,58,0.55);
+  border-color: rgba(200,151,58,0.58);
   color: var(--gold-shine);
+  box-shadow:
+    inset 0 1px 0 rgba(245,217,138,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.25),
+    0 0 10px rgba(200,151,58,0.3);
 }
 
 .link-txt {
   font-family: 'Raleway', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.35px;
   transition: color 0.22s ease;
 }
 
-/* Featured button — special gold treatment */
+/* FEATURED BUTTON */
 .link-btn.featured-btn {
+  padding: 15px 14px;
   background:
     linear-gradient(135deg,
-      rgba(200,151,58,0.12) 0%,
-      rgba(120,80,15,0.15) 50%,
-      rgba(200,151,58,0.08) 100%
+      rgba(200,151,58,0.14) 0%,
+      rgba(110,70,12,0.18) 52%,
+      rgba(200,151,58,0.09) 100%
     ),
-    rgba(20,12,4,0.80);
-  border-color: rgba(200,151,58,0.50);
-  padding: 16px 14px;
+    rgba(18,10,3,0.88);
+  border-color: rgba(200,151,58,0.55);
   box-shadow:
-    inset 0 1px 0 rgba(245,217,138,0.10),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    0 4px 20px rgba(0,0,0,0.5),
-    0 0 24px rgba(200,151,58,0.15);
+    inset 0 1px 0 rgba(245,217,138,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+    0 5px 22px rgba(0,0,0,0.55),
+    0 0 22px rgba(200,151,58,0.18),
+    0 0 50px rgba(200,151,58,0.07);
+  animation: featuredPulse 3.5s ease-in-out infinite;
 }
-
 .link-btn.featured-btn .link-ico {
   background:
     linear-gradient(135deg,
-      rgba(200,151,58,0.30) 0%,
-      rgba(120,80,15,0.40) 100%
+      rgba(200,151,58,0.35) 0%,
+      rgba(110,70,12,0.45) 100%
     );
-  border-color: rgba(200,151,58,0.55);
+  border-color: rgba(200,151,58,0.60);
   color: var(--gold-shine);
-  width: 34px;
-  height: 34px;
-  font-size: 13px;
+  width: 36px; height: 36px;
+  font-size: 14px;
 }
-
 .link-btn.featured-btn .link-txt {
   font-size: 15px;
   font-weight: 600;
   color: var(--gold-pale);
+}
+@keyframes featuredPulse {
+  0%,100% { box-shadow: inset 0 1px 0 rgba(245,217,138,0.12),inset 0 -1px 0 rgba(0,0,0,0.35),0 5px 22px rgba(0,0,0,0.55),0 0 20px rgba(200,151,58,0.16),0 0 48px rgba(200,151,58,0.06); }
+  50%      { box-shadow: inset 0 1px 0 rgba(245,217,138,0.18),inset 0 -1px 0 rgba(0,0,0,0.35),0 5px 22px rgba(0,0,0,0.55),0 0 35px rgba(200,151,58,0.30),0 0 80px rgba(200,151,58,0.12); }
 }
 
 /* ============================================
@@ -535,59 +552,75 @@ body::after {
   padding: 10px 4px;
   font-style: italic;
   font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 0.5px;
 }
 
 /* ============================================
    FOOTER
    ============================================ */
 .foot {
-  margin-top: 24px;
+  margin-top: 28px;
   text-align: center;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
-  letter-spacing: 3px;
+  font-size: 9px;
+  letter-spacing: 4px;
   color: var(--text-muted);
-  opacity: 0.6;
+  opacity: 0.5;
+  text-transform: uppercase;
 }
 
 /* ============================================
-   MOOD CYCLING — warm wood tones
+   MOOD CLASSES — 12 wood tones
+   Each sets --mood-gold + RGB breakdown for box-shadow rgba()
    ============================================ */
+.mood-amber    { --mood-gold: #c8973a; --mood-gold-r:200; --mood-gold-g:151; --mood-gold-b:58;  --mood-duration:4s;   }
+.mood-copper   { --mood-gold: #b8722a; --mood-gold-r:184; --mood-gold-g:114; --mood-gold-b:42;  --mood-duration:3s;   }
+.mood-bronze   { --mood-gold: #d4964a; --mood-gold-r:212; --mood-gold-g:150; --mood-gold-b:74;  --mood-duration:5s;   }
+.mood-antique  { --mood-gold: #e8bc5a; --mood-gold-r:232; --mood-gold-g:188; --mood-gold-b:90;  --mood-duration:6s;   }
+.mood-mahogany { --mood-gold: #a0522d; --mood-gold-r:160; --mood-gold-g:82;  --mood-gold-b:45;  --mood-duration:3.5s; }
+.mood-teak     { --mood-gold: #c8832a; --mood-gold-r:200; --mood-gold-g:131; --mood-gold-b:42;  --mood-duration:4.5s; }
+.mood-rosewood { --mood-gold: #c0503c; --mood-gold-r:192; --mood-gold-g:80;  --mood-gold-b:60;  --mood-duration:2.8s; }
+.mood-ebony    { --mood-gold: #d4a840; --mood-gold-r:212; --mood-gold-g:168; --mood-gold-b:64;  --mood-duration:7s;   }
+.mood-walnut   { --mood-gold: #9a6820; --mood-gold-r:154; --mood-gold-g:104; --mood-gold-b:32;  --mood-duration:5.5s; }
+.mood-cedar    { --mood-gold: #c06030; --mood-gold-r:192; --mood-gold-g:96;  --mood-gold-b:48;  --mood-duration:3.2s; }
+.mood-oak      { --mood-gold: #d4b060; --mood-gold-r:212; --mood-gold-g:176; --mood-gold-b:96;  --mood-duration:6.5s; }
+.mood-pine     { --mood-gold: #b89040; --mood-gold-r:184; --mood-gold-g:144; --mood-gold-b:64;  --mood-duration:4.2s; }
 
-/* 12 warm mood states — JS cycles these */
-.mood-amber    { --mood-gold: #c8973a; --mood-gold-raw: 200,151,58;  --mood-duration: 4s; }
-.mood-copper   { --mood-gold: #b8722a; --mood-gold-raw: 184,114,42;  --mood-duration: 3s; }
-.mood-bronze   { --mood-gold: #d4964a; --mood-gold-raw: 212,150,74;  --mood-duration: 5s; }
-.mood-antique  { --mood-gold: #e8bc5a; --mood-gold-raw: 232,188,90;  --mood-duration: 6s; }
-.mood-mahogany { --mood-gold: #a0522d; --mood-gold-raw: 160,82,45;   --mood-duration: 3.5s; }
-.mood-teak     { --mood-gold: #c8832a; --mood-gold-raw: 200,131,42;  --mood-duration: 4.5s; }
-.mood-rosewood { --mood-gold: #b85040; --mood-gold-raw: 184,80,64;   --mood-duration: 2.8s; }
-.mood-ebony    { --mood-gold: #d4a840; --mood-gold-raw: 212,168,64;  --mood-duration: 7s; }
-.mood-walnut   { --mood-gold: #9a6820; --mood-gold-raw: 154,104,32;  --mood-duration: 5.5s; }
-.mood-cedar    { --mood-gold: #c06030; --mood-gold-raw: 192,96,48;   --mood-duration: 3.2s; }
-.mood-oak      { --mood-gold: #d4b060; --mood-gold-raw: 212,176,96;  --mood-duration: 6.5s; }
-.mood-pine     { --mood-gold: #b89040; --mood-gold-raw: 184,144,64;  --mood-duration: 4.2s; }
+/* ============================================
+   WOOD TEXTURE GRADIENT THEMES — 12 variants
+   Applied by JS on .wood-card via --card-wood-bg
+   ============================================ */
+.wood-tex-ebony     { --card-wood-bg: linear-gradient(165deg, rgba(18,10,4,0.98) 0%, rgba(8,4,1,0.99) 45%, rgba(14,7,2,0.98) 100%); --wood-grain-angle: 91deg; }
+.wood-tex-oak       { --card-wood-bg: linear-gradient(170deg, rgba(72,44,18,0.96) 0%, rgba(48,28,10,0.97) 45%, rgba(60,36,14,0.96) 100%); --wood-grain-angle: 93deg; }
+.wood-tex-walnut    { --card-wood-bg: linear-gradient(168deg, rgba(38,22,8,0.97) 0%, rgba(20,11,3,0.98) 48%, rgba(32,18,6,0.97) 100%); --wood-grain-angle: 92deg; }
+.wood-tex-mahogany  { --card-wood-bg: linear-gradient(174deg, rgba(55,18,10,0.97) 0%, rgba(30,9,4,0.98) 50%, rgba(44,14,7,0.97) 100%); --wood-grain-angle: 90deg; }
+.wood-tex-teak      { --card-wood-bg: linear-gradient(162deg, rgba(62,38,12,0.96) 0%, rgba(38,22,6,0.97) 42%, rgba(52,32,10,0.96) 100%); --wood-grain-angle: 94deg; }
+.wood-tex-cherry    { --card-wood-bg: linear-gradient(170deg, rgba(52,18,12,0.97) 0%, rgba(28,8,5,0.98) 50%, rgba(42,14,9,0.97) 100%); --wood-grain-angle: 91.5deg; }
+.wood-tex-cedar     { --card-wood-bg: linear-gradient(166deg, rgba(58,28,10,0.97) 0%, rgba(34,15,4,0.98) 46%, rgba(48,22,8,0.97) 100%); --wood-grain-angle: 92.5deg; }
+.wood-tex-ash       { --card-wood-bg: linear-gradient(172deg, rgba(55,42,28,0.96) 0%, rgba(34,25,15,0.97) 50%, rgba(46,34,20,0.96) 100%); --wood-grain-angle: 89.5deg; }
+.wood-tex-rosewood  { --card-wood-bg: linear-gradient(168deg, rgba(48,16,14,0.97) 0%, rgba(24,6,5,0.98) 48%, rgba(38,12,10,0.97) 100%); --wood-grain-angle: 93.5deg; }
+.wood-tex-birch     { --card-wood-bg: linear-gradient(175deg, rgba(68,52,32,0.95) 0%, rgba(44,32,18,0.96) 45%, rgba(58,44,26,0.95) 100%); --wood-grain-angle: 90.5deg; }
+.wood-tex-burnt     { --card-wood-bg: linear-gradient(163deg, rgba(22,10,4,0.99) 0%, rgba(10,4,1,1.0) 40%, rgba(18,8,3,0.99) 100%); --wood-grain-angle: 91.5deg; }
+.wood-tex-pine      { --card-wood-bg: linear-gradient(169deg, rgba(65,42,16,0.96) 0%, rgba(42,26,8,0.97) 48%, rgba(54,34,12,0.96) 100%); --wood-grain-angle: 92deg; }
 
 /* ============================================
    MOBILE
    ============================================ */
 @media (max-width: 480px) {
-  .hero-name   { letter-spacing: 2px; }
-  .hero-title  { letter-spacing: 4px; }
-  .link-txt    { font-size: 13px; }
-  .card-content { padding: 14px 12px; }
+  .hero-name  { letter-spacing: 1px; font-size: clamp(20px, 7.5vw, 40px); }
+  .hero-title { letter-spacing: 3px; }
+  .link-txt   { font-size: 13px; }
+  .card-content { padding: 16px 13px; }
 }
 
 /* ============================================
    REDUCED MOTION
    ============================================ */
 @media (prefers-reduced-motion: reduce) {
-  .hero-name   { animation: none !important; }
-  .wood-card   { animation: none !important; }
-  body::before { animation: none !important; }
+  .hero-name, .wood-card, body::before, .link-btn.featured-btn {
+    animation: none !important;
+  }
 }
 
-/* Tap fix */
 * { -webkit-tap-highlight-color: transparent; }
 a, button { outline: none; }
-a:focus, button:focus { outline: none; }
